@@ -14,14 +14,14 @@ export default function Gamepad() {
                 <h3>Joystick</h3>
                 {gamepads[gamepadId].axes &&
                     gamepads[gamepadId].axes.map((axis, index) => (
-                        <div>
+                        <div key={index}>
                             {index}: {axis}
                         </div>
                     ))}
                 <h3>Buttons</h3>
                 {gamepads[gamepadId].buttons &&
                     gamepads[gamepadId].buttons.map((button, index) => (
-                        <div>
+                        <div key={index}>
                             {index}: {button.value}
                         </div>
                     ))}

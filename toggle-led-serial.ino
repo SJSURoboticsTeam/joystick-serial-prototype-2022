@@ -16,9 +16,9 @@ void setup() {
 }
 
 void loop() {
-  char userInput = inputSerial.read();
-//  Serial.print("User inputed: ");
-//  Serial.println(c);
+  auto userInput = inputSerial.read();
+  Serial.print("User inputed: ");
+  Serial.println(userInput);
   if (userInput == '0') { 
     digitalWrite(ledPin, LOW);
     delay(1000);
