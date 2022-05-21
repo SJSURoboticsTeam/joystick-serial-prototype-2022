@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useGamepads } from 'react-gamepads';
 
 
-export default function Gamepad() {
+export default function Gamepad(props) {
     const [gamepads, setGamepads] = useState({});
     useGamepads(gamepads => setGamepads(gamepads));
 
@@ -11,8 +11,8 @@ export default function Gamepad() {
         return (
             <div>
                 <h2>Gamepads</h2>
-                {/* <h2>{gamepads[gamepadId].id}</h2> */}
                 <h3>Joystick</h3>
+                {console.log(gamepads[gamepadId].buttons[0].pressed)}
                 {gamepads[gamepadId].axes &&
                     gamepads[gamepadId].axes.map((axis, index) => (
                         <div key={index}>

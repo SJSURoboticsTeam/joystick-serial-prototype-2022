@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 
-export default function Serial() {
+export default function Serial(props) {
     const [responses, setResponses] = useState(["example", "of", "responses"])
-    const [commands, setCommands] = useState("");
+    const [userInput, setUserInput] = useState("");
     const [port, setPort] = useState<SerialPort>();
 
     const connect = async () => {
@@ -17,14 +17,14 @@ export default function Serial() {
     async function handleSubmit(e) {
         e.preventDefault();
         await writeCommands();
-        console.log(`Sent: ${commands}`);
-        setCommands("");
+        console.log(`Sent: ${userInput}`);
+        setUserInput("");
     }
 
     async function writeCommands() {
         const encoder = new TextEncoder();
         const writer = port.writable.getWriter();
-        await writer.write(encoder.encode(commands));
+        await writer.write(encoder.encode(userInput));
         writer.releaseLock();
     }
 
@@ -40,7 +40,7 @@ export default function Serial() {
             <button onClick={() => connect()}>Connect</button>
             <button onClick={() => console.log(port)}>Status</button>
             <form onSubmit={handleSubmit}>
-                <input placeholder='send 0 to toggle off led' type="text" value={commands} onChange={(e) => setCommands(e.target.value)} />
+                <input placeholder='send 0 to toggle off led' type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} />
                 <button type='submit'>Send</button>
             </form>
             <button onClick={() => disconnect()}>Disconnect</button>
