@@ -1,75 +1,50 @@
 import React, { useState } from 'react'
 
-export default function Serial(props) {
-    const [serialCommand, setSerialCommand] = useState("");
-    const [isConnected, setIsConnected] = useState(false);
-
-    let port: SerialPort | undefined;
+export default function Serial() {
+    const [responses, setResponses] = useState(["example", "of", "responses"])
+    const [commands, setCommands] = useState("");
+    const [port, setPort] = useState<SerialPort>();
 
     const connect = async () => {
-        try {
-            port = await navigator.serial.requestPort();
-            await port.open({ baudRate: 9600 });
-            console.log("connected!");
-            setIsConnected(true);
-
-            // if (port.readable) {
-            //     const textDecoder = new TextDecoderStream();
-            //     const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
-            //     const reader = textDecoder.readable.getReader();
-            //     const value = await reader.read();
-            //     if (value) {
-            //         console.log(value);
-            //     }
-
-            //     reader.releaseLock();
-            // }
-
-            // if (port.writable) {
-            //     const textEncoder = new TextEncoderStream();
-            //     const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
-            //     const writer = textEncoder.writable.getWriter();
-            //     await writer.write("0");
-            //     writer.releaseLock();
-            // }
-            // await port.close();
-        }
-        catch (error) {
-            console.error("unable to connect!", error);
-        }
+        await setPort(await navigator.serial.requestPort());
+        await port.open({ baudRate: 9600 });
     }
 
     const disconnect = async () => {
         await port.close();
-        console.log("disconnected!");
-        setIsConnected(false);
     }
 
-    const write = async () => {
-        try {
-            const writer = port.writable.getWriter();
-            const data = new Uint8Array([48, 48, 48, 48, 48]); // hello
-            await writer.write(data);
-            writer.releaseLock();
-        } catch (error) {
-            console.log("unable to write to port!", error);
-        }
-    }
-
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
-        write();
-        setSerialCommand("");
-        console.log("submitted");
+        await writeCommands();
+        console.log(`Sent: ${commands}`);
+        setCommands("");
     }
+
+    async function writeCommands() {
+        const encoder = new TextEncoder();
+        const writer = port.writable.getWriter();
+        await writer.write(encoder.encode(commands));
+        writer.releaseLock();
+    }
+
+    // TODO: Figure out how to read response from device
+    // https://web.dev/serial/#read-port
+    const getResponses = responses.map((response, index) =>
+        <div key={index}>{index}: {response}</div>
+    )
 
     return (
         <div>
-            {isConnected ? <button onClick={() => disconnect()}> Disconnect </button> : <button onClick={() => connect()}> Connect </button>}
+            <h2>Serial</h2>
+            <button onClick={() => connect()}>Connect</button>
+            <button onClick={() => console.log(port)}>Status</button>
             <form onSubmit={handleSubmit}>
-                <input type="text" value={serialCommand} onChange={(e) => setSerialCommand(e.target.value)} />
+                <input placeholder='send 0 to toggle off led' type="text" value={commands} onChange={(e) => setCommands(e.target.value)} />
                 <button type='submit'>Send</button>
             </form>
+            <button onClick={() => disconnect()}>Disconnect</button>
+            {getResponses}
         </div>
     )
 }

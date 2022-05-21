@@ -10,12 +10,13 @@ export default function Gamepad() {
         // console.log("displaying gamepad", gamepads[gamepadId]);
         return (
             <div>
-                <h2>{gamepads[gamepadId].id}</h2>
+                <h2>Gamepads</h2>
+                {/* <h2>{gamepads[gamepadId].id}</h2> */}
                 <h3>Joystick</h3>
                 {gamepads[gamepadId].axes &&
                     gamepads[gamepadId].axes.map((axis, index) => (
                         <div key={index}>
-                            {index}: {axis}
+                            {index}: {axis.toFixed(2)}
                         </div>
                     ))}
                 <h3>Buttons</h3>
