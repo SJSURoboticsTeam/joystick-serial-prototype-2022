@@ -1,27 +1,28 @@
 import React, { useState } from 'react'
+import { DriveCommandDTO } from '../dto/drive-commands.dto'
 
-export default function DriveCommandStatus(props) {
+export default function DriveCommandStatus(props: DriveCommandDTO) {
+    const [commands, setCommands] = useState<DriveCommandDTO>(props)
     return (
         <div>
             <h1>Drive Command Status</h1>
             <form>
                 <label> Speed
-                    <input type="text" value={props.speed} placeholder={props.speed} />
+                    <input type="text" value={commands.speed} />
                 </label>
                 <label> Angle
-                    <input type="text" value={props.angle} placeholder={props.angle} />
+                    <input type="text" value={commands.angle} />
                 </label>
                 <label> Mode
-                    <input type="text" value={props.mode} placeholder={props.mode} />
+                    <input type="text" value={commands.mode} />
                 </label>
                 <label> Wheel Orientation
-                    <input type="text" value={props.wheel_orientation} placeholder={props.wheel_orientation} />
+                    <input type="text" value={commands.wheel_orientation} />
                 </label>
             </form>
         </div >
     )
 }
-
 // ex:
 // const currentCommands = commands.map(command =>
 //     <DriveCommandStatus
