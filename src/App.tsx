@@ -12,7 +12,7 @@ function App(props) {
   const [port, setPort] = useState<SerialPort>();
 
   function updateCommands() {
-    const newCommand = [{ speed: gamepads[0]?.axes[1], angle: gamepads[0]?.axes[0], mode: 'D', wheel_orientation: 0 }];
+    const newCommand = [{ speed: gamepads[0]?.axes[1], angle: gamepads[0]?.axes[5], mode: 'D', wheel_orientation: 0 }];
     setCommands(newCommand);
   }
 
