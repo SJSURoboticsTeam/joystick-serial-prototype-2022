@@ -1,17 +1,14 @@
 import React, { useState } from 'react'
 import { useGamepads } from 'react-gamepads';
 
-
-export default function Gamepad() {
+export default function Gamepad(props) {
     const [gamepads, setGamepads] = useState({});
     useGamepads(gamepads => setGamepads(gamepads));
 
     const gamepadDisplay = Object.keys(gamepads).map(gamepadId => {
-        // console.log("displaying gamepad", gamepads[gamepadId]);
         return (
             <div>
                 <h2>Gamepads</h2>
-                {/* <h2>{gamepads[gamepadId].id}</h2> */}
                 <h3>Joystick</h3>
                 {gamepads[gamepadId].axes &&
                     gamepads[gamepadId].axes.map((axis, index) => (
@@ -26,7 +23,6 @@ export default function Gamepad() {
                             {index}: {button.value}
                         </div>
                     ))}
-
             </div>
         );
     });
