@@ -41,7 +41,7 @@ function App(props) {
 
   return (
     <div className="App">
-      <h1>Joystick Telemetry Testing</h1>
+      <h1>Joystick-Serial Testing</h1>
       <div>Commands: {JSON.stringify(commands)}</div>
       <button onClick={updateCommands}>Update Commands</button>
       <h2>Serial</h2>
