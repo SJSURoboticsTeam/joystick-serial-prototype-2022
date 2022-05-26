@@ -86,31 +86,31 @@ export default function Serial() {
     )
 
     return (
-        <div>
+        <div className='serial'>
             <h2>Serial</h2>
-            <div>
-                <button onClick={() => connect()}>Connect</button>
-                <button onClick={() => console.log(port)}>Status</button>
-                <button onClick={() => disconnect()}>Disconnect</button>
+            <div className='btn-group'>
+                <button className='btn btn__primary' onClick={() => connect()}>Connect</button>
+                <button className='btn' onClick={() => alert(port)}>Status</button>
+                <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button>
             </div>
 
-            <form onSubmit={handleSubmit}>
-                <label> Speed
-                    <input name="speed" value={speed} onChange={(e) => setSpeed(e.target.value)} />
+            <form className='serial-form' onSubmit={handleSubmit}>
+                <label className='label_lg'> Speed
+                    <input autoComplete='false' className='input-text' name="speed" value={speed} onChange={(e) => setSpeed(e.target.value)} />
                 </label>
 
-                <label> Angle
-                    <input name="angle" value={angle} onChange={(e) => setAngle(e.target.value)} />
+                <label className='label_lg'> Angle
+                    <input autoComplete='false' className='input-text' name="angle" value={angle} onChange={(e) => setAngle(e.target.value)} />
                 </label>
 
-                <label> Mode
-                    <input name="mode" value={mode} onChange={(e) => setMode(e.target.value)} />
+                <label className='label_lg'> Mode
+                    <input autoComplete='false' className='input-text' name="mode" value={mode} onChange={(e) => setMode(e.target.value)} />
                 </label>
 
-                <label> Wheel Orientation
-                    <input name="wheel_orientation" value={wheel_orientation} onChange={(e) => setWheelOrientation(e.target.value)} />
+                <label className='label_lg'> Wheel Orientation
+                    <input autoComplete='false' className='input-text' name="wheel_orientation" value={wheel_orientation} onChange={(e) => setWheelOrientation(e.target.value)} />
                 </label>
-                <button type="submit">Send</button>
+                <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
 
         </div>
