@@ -1,9 +1,15 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useGamepads } from 'react-gamepads';
 
 export default function Serial() {
-    const [responses, setResponses] = useState(["example", "of", "responses"])
-    const [commands, setCommands] = useState("");
     const [port, setPort] = useState<SerialPort>();
+    const [gamepads, setGamepads] = useState({});
+    useGamepads(gamepads => setGamepads(gamepads));
+
+    const [speed, setSpeed] = useState("0");
+    const [angle, setAngle] = useState("0");
+    const [mode, setMode] = useState("D");
+    const [wheel_orientation, setWheelOrientation] = useState("0");
 
     const connect = async () => {
         await setPort(await navigator.serial.requestPort());
@@ -14,37 +20,99 @@ export default function Serial() {
         await port.close();
     }
 
+    // TODO: Needs to be tested on mcu
+    async function writeCommands() {
+        try {
+            const command = speed + "," + angle + "," + mode + "," + wheel_orientation;
+            const encoder = new TextEncoder();
+            const writer = port.writable.getWriter();
+            await writer.write(encoder.encode(command));
+            writer.releaseLock();
+        } catch (error) {
+            console.error("Serial is not connected most likely!");
+        }
+
+    }
+
+    // TODO: This will be annoying most likely
+    async function readRoverStatus() {
+        return;
+    }
+
     async function handleSubmit(e) {
         e.preventDefault();
         await writeCommands();
-        console.log(`Sent: ${commands}`);
-        setCommands("");
     }
 
-    async function writeCommands() {
-        const encoder = new TextEncoder();
-        const writer = port.writable.getWriter();
-        await writer.write(encoder.encode(commands));
-        writer.releaseLock();
-    }
+    useEffect(() => {
+        const updateState = async () => {
+            setAngle(gamepads[0]?.axes[0]);
+            setSpeed(gamepads[0]?.axes[6]);
 
-    // TODO: Figure out how to read response from device
-    // https://web.dev/serial/#read-port
-    const getResponses = responses.map((response, index) =>
-        <div key={index}>{index}: {response}</div>
+            if (gamepads[0]?.buttons[7].value) {
+                setMode("D");
+            }
+            if (gamepads[0]?.buttons[9].value) {
+                setMode("T");
+            }
+            if (gamepads[0]?.buttons[11].value) {
+                setMode("S");
+            }
+
+            if (gamepads[0]?.buttons[6].value) {
+                setWheelOrientation("0");
+            }
+            if (gamepads[0]?.buttons[8].value) {
+                setWheelOrientation("1");
+            }
+            if (gamepads[0]?.buttons[10].value) {
+                setWheelOrientation("2");
+            }
+            await writeCommands();
+        }
+        updateState();
+
+    },
+        [
+            gamepads[0]?.axes[1], // left/right joystick movement
+            gamepads[0]?.axes[6], // +/- knob
+            gamepads[0]?.buttons[11].value, // button marked 10
+            gamepads[0]?.buttons[9].value, // button marked 8
+            gamepads[0]?.buttons[7].value, // button marked 7
+            gamepads[0]?.buttons[6].value, // button marked 6
+            gamepads[0]?.buttons[8].value, // button marked 8
+            gamepads[0]?.buttons[10].value // button marked 10
+        ]
     )
 
     return (
         <div>
             <h2>Serial</h2>
-            <button onClick={() => connect()}>Connect</button>
-            <button onClick={() => console.log(port)}>Status</button>
+            <div>
+                <button onClick={() => connect()}>Connect</button>
+                <button onClick={() => console.log(port)}>Status</button>
+                <button onClick={() => disconnect()}>Disconnect</button>
+            </div>
+
             <form onSubmit={handleSubmit}>
-                <input placeholder='send 0 to toggle off led' type="text" value={commands} onChange={(e) => setCommands(e.target.value)} />
-                <button type='submit'>Send</button>
+                <label> Speed
+                    <input name="speed" value={speed} onChange={(e) => setSpeed(e.target.value)} />
+                </label>
+
+                <label> Angle
+                    <input name="angle" value={angle} onChange={(e) => setAngle(e.target.value)} />
+                </label>
+
+                <label> Mode
+                    <input name="mode" value={mode} onChange={(e) => setMode(e.target.value)} />
+                </label>
+
+                <label> Wheel Orientation
+                    <input name="wheel_orientation" value={wheel_orientation} onChange={(e) => setWheelOrientation(e.target.value)} />
+                </label>
+                <button type="submit">Send</button>
             </form>
-            <button onClick={() => disconnect()}>Disconnect</button>
-            {getResponses}
+
         </div>
     )
 }

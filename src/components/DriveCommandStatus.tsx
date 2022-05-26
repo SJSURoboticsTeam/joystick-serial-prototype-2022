@@ -1,33 +1,29 @@
 import React, { useState } from 'react'
+import { useForm } from './useForm'
 
 export default function DriveCommandStatus(props) {
+    const [state, handleChange] = useForm({ speed: 0, angle: 0, mode: 'D', wheel_orientation: 0 })
+
     return (
         <div>
             <h1>Drive Command Status</h1>
             <form>
                 <label> Speed
-                    <input type="text" value={props.speed} placeholder={props.speed} />
+                    <input name="speed" value={state.speed} onChange={handleChange} />
                 </label>
+
                 <label> Angle
-                    <input type="text" value={props.angle} placeholder={props.angle} />
+                    <input name="angle" value={state.angle} onChange={handleChange} />
                 </label>
+
                 <label> Mode
-                    <input type="text" value={props.mode} placeholder={props.mode} />
+                    <input name="mode" value={state.mode} onChange={handleChange} />
                 </label>
+
                 <label> Wheel Orientation
-                    <input type="text" value={props.wheel_orientation} placeholder={props.wheel_orientation} />
+                    <input name="wheel_orientation" value={state.wheel_orientation} onChange={handleChange} />
                 </label>
             </form>
         </div >
     )
 }
-
-// ex:
-// const currentCommands = commands.map(command =>
-//     <DriveCommandStatus
-//       speed={command.speed}
-//       angle={command.angle}
-//       mode={command.mode}
-//       wheel_orientation={command.wheel_orientation}
-//     />
-//   );

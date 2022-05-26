@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useGamepads } from 'react-gamepads';
 
-export default function Gamepad(props) {
+export default function Gamepad() {
     const [gamepads, setGamepads] = useState({});
     useGamepads(gamepads => setGamepads(gamepads));
 
