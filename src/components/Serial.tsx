@@ -35,9 +35,9 @@ export default function Serial() {
     }
 
     // TODO: This will be annoying most likely
-    async function readRoverStatus() {
-        return;
-    }
+    // async function readRoverStatus() {
+    //     return;
+    // }
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -76,12 +76,12 @@ export default function Serial() {
         [
             gamepads[0]?.axes[1], // left/right joystick movement
             gamepads[0]?.axes[6], // +/- knob
-            gamepads[0]?.buttons[11].value, // button marked 10
-            gamepads[0]?.buttons[9].value, // button marked 8
-            gamepads[0]?.buttons[7].value, // button marked 7
-            gamepads[0]?.buttons[6].value, // button marked 6
-            gamepads[0]?.buttons[8].value, // button marked 8
-            gamepads[0]?.buttons[10].value // button marked 10
+            gamepads[0]?.buttons[11]?.value, // button marked 10
+            gamepads[0]?.buttons[9]?.value, // button marked 8
+            gamepads[0]?.buttons[7]?.value, // button marked 7
+            gamepads[0]?.buttons[6]?.value, // button marked 6
+            gamepads[0]?.buttons[8]?.value, // button marked 8
+            gamepads[0]?.buttons[10]?.value // button marked 10
         ]
     )
 

@@ -7,7 +7,7 @@ body{
 .grid-container {
   background: #eee;
   max-width: 1600px;
-  max-height: 734px;
+  /* max-height: 734px; */
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
