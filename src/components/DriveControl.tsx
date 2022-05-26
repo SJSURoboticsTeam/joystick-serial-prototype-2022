@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
 
-export default function Serial() {
+export default function DriveControl() {
     const [port, setPort] = useState<SerialPort>();
     const [gamepads, setGamepads] = useState({});
     useGamepads(gamepads => setGamepads(gamepads));
@@ -87,8 +87,9 @@ export default function Serial() {
 
     return (
         <div className='serial'>
-            <h2>Serial</h2>
+            <h2>Drive Control</h2>
             <div className='btn-group'>
+                <h3>Serial</h3>
                 <button className='btn btn__primary' onClick={() => connect()}>Connect</button>
                 <button className='btn' onClick={() => alert(port)}>Status</button>
                 <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button>

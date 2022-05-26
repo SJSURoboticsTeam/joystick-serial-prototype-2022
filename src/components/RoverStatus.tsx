@@ -1,7 +1,7 @@
 import React from 'react'
 
-export default function RoverStatus() {
+export default function RoverStatus(props) {
     return (
-        <div>RoverStatus</div>
+        <div>{props.name} Status</div>
     )
 }
