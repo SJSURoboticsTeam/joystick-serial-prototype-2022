@@ -11,12 +11,12 @@ function App() {
     <div className="grid-container">
       <DriveControl />
       <DriveStatus />
-      <ArmControl />
+      {/* <ArmControl />
       <ArmStatus />
       <Camera name="1" />
       <Camera name="2" />
       <Camera name="3" />
-      <Camera name="4" />
+      <Camera name="4" /> */}
     </div>
   );
 }
