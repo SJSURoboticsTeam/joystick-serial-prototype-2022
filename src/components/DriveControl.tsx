@@ -52,10 +52,15 @@ export default function DriveControl() {
 
     useEffect(() => {
         const updateState = async () => {
-            const angle = (gamepads[0]?.axes[5])*45
-            const speed = -(gamepads[0]?.axes[1])*100
-            setAngle(angle.toString());
-            setSpeed(speed.toString());
+            const newAngle = (gamepads[0]?.axes[5]) * 45
+            const newSpeed = -(gamepads[0]?.axes[1]) * 100
+            setSpeed("0");
+            setAngle(angle);
+
+            if (gamepads[0].buttons[0].pressed) {
+                setSpeed(newSpeed.toString());
+                setAngle(newAngle.toString());
+            }
 
             if (gamepads[0]?.buttons[7].value) {
                 setMode("D");
@@ -81,16 +86,7 @@ export default function DriveControl() {
         updateState();
 
     },
-        [
-            gamepads[0]?.axes[5], // left/right joystick movement
-            gamepads[0]?.axes[1], // +/- knob
-            gamepads[0]?.buttons[11]?.value, // button marked 10
-            gamepads[0]?.buttons[9]?.value, // button marked 8
-            gamepads[0]?.buttons[7]?.value, // button marked 7
-            gamepads[0]?.buttons[6]?.value, // button marked 6
-            gamepads[0]?.buttons[8]?.value, // button marked 8
-            gamepads[0]?.buttons[10]?.value // button marked 10
-        ]
+        [gamepads[0]]
     )
 
     return (
