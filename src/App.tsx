@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import ReactPlayer from 'react-player'
 
 import DriveControl from './components/DriveControl';
-import ArmControl from './components/ArmControl';
 import DriveStatus from './components/DriveStatus';
+import ArmControl from './components/ArmControl';
 import ArmStatus from './components/ArmStatus'
 import Camera from './components/Camera'
 
@@ -27,10 +28,10 @@ function App() {
       <div className="grid-container">
         {toggleMode ? <DriveControl /> : <ArmControl />}
         {toggleMode ? <DriveStatus /> : <ArmStatus />}
-        {toggleCamera1 && <Camera name="1" />}
-        {toggleCamera2 && <Camera name="2" />}
-        {toggleCamera3 && <Camera name="3" />}
-        {toggleCamera4 && <Camera name="4" />}
+        {toggleCamera1 && <Camera name="1" src="http://192.168.1.10:8000/stream.mjpg" />}
+        {toggleCamera2 && <Camera name="2" src="network ip address, make it static" />}
+        {toggleCamera3 && <Camera name="3" src="network ip address, make it static" />}
+        {toggleCamera4 && <Camera name="4" src="network ip address, make it static" />}
       </div>
     </div >
   );
