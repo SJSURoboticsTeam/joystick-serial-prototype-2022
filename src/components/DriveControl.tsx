@@ -20,7 +20,6 @@ export default function DriveControl() {
         await port.close();
     }
 
-    // TODO: Needs to be tested on mcu
     async function writeCommands() {
         try {
             const commands = {
@@ -39,11 +38,6 @@ export default function DriveControl() {
         }
 
     }
-
-    // TODO: This will be annoying most likely
-    // async function readRoverStatus() {
-    //     return;
-    // }
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -89,13 +83,29 @@ export default function DriveControl() {
         [gamepads[0]]
     )
 
+    async function readSerial() {
+        const textDecoder = new TextDecoderStream();
+        const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+        const reader = textDecoder.readable.getReader();
+
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) {
+                reader.releaseLock();
+                break;
+            }
+            console.log(value);
+        }
+    }
+
     return (
         <div className='serial'>
             <h2>Drive Control</h2>
             <div className='btn-group'>
                 <h3>Serial</h3>
                 <button className='btn btn__primary' onClick={() => connect()}>Connect</button>
-                <button className='btn' onClick={() => alert(port)}>Status</button>
+                <button className='btn' onClick={() => readSerial()}>Read</button>
+                <button className='btn' onClick={() => console.log(port)}>Status</button>
                 <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button>
             </div>
 
@@ -117,7 +127,6 @@ export default function DriveControl() {
                 </label>
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
-
-        </div>
+        </div >
     )
 }
