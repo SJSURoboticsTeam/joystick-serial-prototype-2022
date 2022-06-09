@@ -17,8 +17,7 @@ void setup() {
 
 void loop() {
   auto userInput = inputSerial.read();
-  Serial.print("User inputed: ");
-  Serial.println(userInput);
+  Serial.println("Arduino Serial Print...");
   if (userInput == '0') { 
     digitalWrite(ledPin, LOW);
     delay(1000);

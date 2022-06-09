@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import ReactPlayer from 'react-player'
 
 import DriveControl from './components/DriveControl';
 import DriveStatus from './components/DriveStatus';
