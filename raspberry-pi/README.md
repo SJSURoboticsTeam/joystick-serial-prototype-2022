@@ -18,7 +18,7 @@
   ```
   then navigate to
   ```
-  http://pi-address:8082/jsmpg.js
+  http://raspberrypi:8082/jsmpg.js
   ``` 
   ---
 ### Basic Streaming Application - MJPG
@@ -27,5 +27,5 @@
   ```
   then navigate to
   ```
-  http://pi-address:8082/stream.mjpg
+  http://raspberrypi:8000/stream.mjpg
   ```  

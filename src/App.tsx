@@ -27,7 +27,7 @@ function App() {
       <div className="grid-container">
         {toggleMode ? <DriveControl /> : <ArmControl />}
         {toggleMode ? <DriveStatus /> : <ArmStatus />}
-        {toggleCamera1 && <Camera name="1" src="http://192.168.1.10:8082/index.html" />}
+        {toggleCamera1 && <Camera name="1" src="http://raspberrypi:8000/stream.mjpg" />}
         {toggleCamera2 && <Camera name="2" src="network ip address, make it static" />}
         {toggleCamera3 && <Camera name="3" src="network ip address, make it static" />}
         {toggleCamera4 && <Camera name="4" src="network ip address, make it static" />}
