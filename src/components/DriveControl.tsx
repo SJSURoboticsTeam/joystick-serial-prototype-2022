@@ -9,7 +9,7 @@ export default function DriveControl() {
     const [speed, setSpeed] = useState("0");
     const [angle, setAngle] = useState("0");
     const [mode, setMode] = useState("D");
-    const [wheel_orientation, setWheelOrientation] = useState("0");
+    const [wheelOrientation, setWheelOrientation] = useState("0");
 
     const connect = async () => {
         await setPort(await navigator.serial.requestPort());
@@ -26,7 +26,7 @@ export default function DriveControl() {
                 "drive_mode": String(mode),
                 "speed": parseInt(speed),
                 "angle": parseInt(angle),
-                "wheel_orientation": parseInt(wheel_orientation)
+                "wheel_orientation": parseInt(wheelOrientation)
             }
             const encoder = new TextEncoder();
             const writer = port.writable.getWriter();
@@ -123,7 +123,7 @@ export default function DriveControl() {
                 </label>
 
                 <label className='label_lg'> Wheel Orientation
-                    <input autoComplete='false' className='input-text' name="wheel_orientation" value={wheel_orientation} onChange={(e) => setWheelOrientation(e.target.value)} />
+                    <input autoComplete='false' className='input-text' name="wheel_orientation" value={wheelOrientation} onChange={(e) => setWheelOrientation(e.target.value)} />
                 </label>
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
