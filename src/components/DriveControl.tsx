@@ -2,7 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
 
 export default function DriveControl() {
+    const [isConnected, setIsConnected] = useState(false);
+    const [ports, setPorts] = useState(navigator.serial.getPorts());
     const [port, setPort] = useState<SerialPort>();
+    const [reader, setReader] = useState<ReadableStreamDefaultReader>();
+    const [decoder, setDecoder] = useState<TextDecoder>(new TextDecoder("utf-8"));
+    const [encoder, setEncoder] = useState<TextEncoder>(new TextEncoder());
+
     const [gamepads, setGamepads] = useState({});
     useGamepads(gamepads => setGamepads(gamepads));
 
@@ -12,12 +18,34 @@ export default function DriveControl() {
     const [wheelOrientation, setWheelOrientation] = useState("0");
 
     const connect = async () => {
-        await setPort(await navigator.serial.requestPort());
-        await port.open({ baudRate: 9600 });
+        let newPort = await navigator.serial.requestPort();
+        await newPort.open({ baudRate: 9600 });
+        await newPort.setSignals({ dataTerminalReady: false, requestToSend: false });
+        setPort(newPort);
+        setIsConnected(true);
     }
 
     const disconnect = async () => {
+        if (reader && reader.cancel) {
+            reader.cancel();
+        }
         await port.close();
+        setIsConnected(false);
+    }
+
+    async function readSerial() {
+        const textDecoder = new TextDecoderStream();
+        const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+        const reader = textDecoder.readable.getReader();
+
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) {
+                reader.releaseLock();
+                break;
+            }
+            console.log(value);
+        }
     }
 
     async function writeCommands() {
@@ -37,11 +65,6 @@ export default function DriveControl() {
             console.error("Serial is not connected most likely!");
         }
 
-    }
-
-    async function handleSubmit(e) {
-        e.preventDefault();
-        await writeCommands();
     }
 
     useEffect(() => {
@@ -83,19 +106,9 @@ export default function DriveControl() {
         [gamepads[0]]
     )
 
-    async function readSerial() {
-        const textDecoder = new TextDecoderStream();
-        const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
-        const reader = textDecoder.readable.getReader();
-
-        while (true) {
-            const { value, done } = await reader.read();
-            if (done) {
-                reader.releaseLock();
-                break;
-            }
-            console.log(value);
-        }
+    async function handleSubmit(e) {
+        e.preventDefault();
+        await writeCommands();
     }
 
     return (
