@@ -5,9 +5,10 @@ export default function DriveControl() {
     const [isConnected, setIsConnected] = useState(false);
     const [ports, setPorts] = useState(navigator.serial.getPorts());
     const [port, setPort] = useState<SerialPort>();
-    const [reader, setReader] = useState<ReadableStreamDefaultReader>();
     const [decoder, setDecoder] = useState<TextDecoder>(new TextDecoder("utf-8"));
     const [encoder, setEncoder] = useState<TextEncoder>(new TextEncoder());
+    const [reader, setReader] = useState<ReadableStreamDefaultReader>();
+    const [writer, setWriter] = useState<WritableStreamDefaultWriter>();
 
     const [gamepads, setGamepads] = useState({});
     useGamepads(gamepads => setGamepads(gamepads));
@@ -22,12 +23,14 @@ export default function DriveControl() {
         await newPort.open({ baudRate: 9600 });
         await newPort.setSignals({ dataTerminalReady: false, requestToSend: false });
         setReader(newPort.readable.getReader())
+        setWriter(newPort.writable.getWriter())
         setPort(newPort);
         setIsConnected(true);
     }
 
     const disconnect = async () => {
         if (reader && reader.cancel) {
+            reader.releaseLock();
             reader.cancel();
         }
         await port.close();
@@ -46,12 +49,17 @@ export default function DriveControl() {
                 console.log(decoded);
             }
         } catch (error) {
-
+            disconnect();
+        } finally {
+            // TODO: Figure out how to properly close reader, this doesn't work...
+            let closeReader = reader;
+            closeReader.cancel();
+            closeReader.releaseLock();
+            setReader(closeReader);
         }
-
     }
 
-    async function writeCommands() {
+    async function writeSerial() {
         try {
             const commands = {
                 "drive_mode": String(mode),
@@ -59,11 +67,11 @@ export default function DriveControl() {
                 "angle": parseInt(angle),
                 "wheel_orientation": parseInt(wheelOrientation)
             }
-            const encoder = new TextEncoder();
-            const writer = port.writable.getWriter();
-            await writer.write(encoder.encode(JSON.stringify(commands)));
-            writer.releaseLock();
-            console.log(JSON.stringify(commands));
+            console.log(encoder);
+            if (writer) {
+                await writer.write(encoder.encode(JSON.stringify(commands)));
+            }
+            // writer.releaseLock();
         } catch (error) {
             console.error("Serial is not connected most likely!");
         }
@@ -101,7 +109,7 @@ export default function DriveControl() {
             if (gamepads[0]?.buttons[10].value) {
                 setWheelOrientation("2");
             }
-            await writeCommands();
+            await writeSerial();
         }
         updateState();
 
@@ -111,7 +119,7 @@ export default function DriveControl() {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        await writeCommands();
+        await writeSerial();
     }
 
     return (
@@ -121,6 +129,7 @@ export default function DriveControl() {
                 <h3>Serial</h3>
                 <button className='btn btn__primary' onClick={() => connect()}>Connect</button>
                 <button className='btn' onClick={() => readSerial()}>Read</button>
+                <button className='btn' onClick={() => writeSerial()}>Write</button>
                 <button className='btn' onClick={() => console.log(port)}>Status</button>
                 <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button>
             </div>
