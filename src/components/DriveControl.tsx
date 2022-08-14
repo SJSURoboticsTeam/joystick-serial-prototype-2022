@@ -21,6 +21,7 @@ export default function DriveControl() {
         let newPort = await navigator.serial.requestPort();
         await newPort.open({ baudRate: 9600 });
         await newPort.setSignals({ dataTerminalReady: false, requestToSend: false });
+        setReader(newPort.readable.getReader())
         setPort(newPort);
         setIsConnected(true);
     }
@@ -34,18 +35,20 @@ export default function DriveControl() {
     }
 
     async function readSerial() {
-        const textDecoder = new TextDecoderStream();
-        const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
-        const reader = textDecoder.readable.getReader();
-
-        while (true) {
-            const { value, done } = await reader.read();
-            if (done) {
-                reader.releaseLock();
-                break;
+        try {
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) {
+                    break;
+                }
+                let decoded = decoder.decode(value);
+                decoded = decoded.replace(/\n/g, "\r\n");
+                console.log(decoded);
             }
-            console.log(value);
+        } catch (error) {
+
         }
+
     }
 
     async function writeCommands() {
