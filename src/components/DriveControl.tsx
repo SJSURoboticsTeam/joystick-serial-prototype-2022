@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
+import Terminal from './Terminal';
 
 export default function DriveControl() {
     const [isConnected, setIsConnected] = useState(false);
@@ -21,8 +22,11 @@ export default function DriveControl() {
         let newPort = await navigator.serial.requestPort();
         await newPort.open({ baudRate: 9600 });
         await newPort.setSignals({ dataTerminalReady: false, requestToSend: false });
+        // setDecoder(new TextDecoder("utf-8"))
+        // setEncoder(new TextEncoder());
         setReader(newPort.readable.getReader())
         setWriter(newPort.writable.getWriter())
+        // setReadableStreamClosed(newPort.readable.pipeTo(decoder))
         setPort(newPort);
         setIsConnected(true);
     }
@@ -43,7 +47,8 @@ export default function DriveControl() {
                 if (done) {
                     break;
                 }
-                let decoded = decoder.decode(value);
+                // let decoded = await decoder.decode(value);
+                let decoded = new TextDecoder().decode(value);
                 decoded = decoded.replace(/\n/g, "\r\n");
                 console.log(decoded);
             }
@@ -148,6 +153,7 @@ export default function DriveControl() {
                 </label>
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
+            <Terminal />
         </div >
     )
 }

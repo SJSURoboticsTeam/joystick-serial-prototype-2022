@@ -4,6 +4,7 @@ import DriveControl from './components/DriveControl';
 import ArmControl from './components/ArmControl';
 import Camera from './components/Camera'
 import Status from './components/Status';
+import Terminal from './components/Terminal';
 
 function App() {
   const [toggleMode, setToggleMode] = useState(true)
@@ -25,7 +26,10 @@ function App() {
 
       <div className="grid-container">
         {toggleMode ? <DriveControl /> : <ArmControl />}
-        <Status roverStatus={roverStatus} />
+        <div>
+          <Terminal />
+          <Status roverStatus={roverStatus} />
+        </div>
         {toggleCamera1 && <Camera name="1" src="http://raspberrypi:8000/stream.mjpg" />}
         {toggleCamera2 && <Camera name="2" src="http://raspberrypi:8001/stream.mjpg" />}
         {toggleCamera3 && <Camera name="3" src="http://raspberrypi:8002/stream.mjpg" />}
