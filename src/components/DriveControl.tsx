@@ -3,7 +3,6 @@ import { useGamepads } from 'react-gamepads';
 
 export default function DriveControl() {
     const [isConnected, setIsConnected] = useState(false);
-    const [ports, setPorts] = useState(navigator.serial.getPorts());
     const [port, setPort] = useState<SerialPort>();
     const [decoder, setDecoder] = useState<TextDecoder>(new TextDecoder("utf-8"));
     const [encoder, setEncoder] = useState<TextEncoder>(new TextEncoder());
@@ -67,11 +66,9 @@ export default function DriveControl() {
                 "angle": parseInt(angle),
                 "wheel_orientation": parseInt(wheelOrientation)
             }
-            console.log(encoder);
             if (writer) {
                 await writer.write(encoder.encode(JSON.stringify(commands)));
             }
-            // writer.releaseLock();
         } catch (error) {
             console.error("Serial is not connected most likely!");
         }
@@ -85,34 +82,33 @@ export default function DriveControl() {
             setSpeed("0");
             setAngle(angle);
 
-            if (gamepads[0].buttons[0].pressed) {
+            if (gamepads[0]?.buttons[0]?.pressed) {
                 setSpeed(newSpeed.toString());
                 setAngle(newAngle.toString());
             }
 
-            if (gamepads[0]?.buttons[7].value) {
+            if (gamepads[0]?.buttons[7]?.value) {
                 setMode("D");
             }
-            if (gamepads[0]?.buttons[9].value) {
+            if (gamepads[0]?.buttons[9]?.value) {
                 setMode("T");
             }
-            if (gamepads[0]?.buttons[11].value) {
+            if (gamepads[0]?.buttons[11]?.value) {
                 setMode("S");
             }
 
-            if (gamepads[0]?.buttons[6].value) {
+            if (gamepads[0]?.buttons[6]?.value) {
                 setWheelOrientation("0");
             }
-            if (gamepads[0]?.buttons[8].value) {
+            if (gamepads[0]?.buttons[8]?.value) {
                 setWheelOrientation("1");
             }
-            if (gamepads[0]?.buttons[10].value) {
+            if (gamepads[0]?.buttons[10]?.value) {
                 setWheelOrientation("2");
             }
             await writeSerial();
         }
         updateState();
-
     },
         [gamepads[0]]
     )
