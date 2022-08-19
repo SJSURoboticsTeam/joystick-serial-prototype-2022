@@ -20,7 +20,7 @@ export default function DriveControl() {
 
     const connect = async () => {
         let newPort = await navigator.serial.requestPort();
-        await newPort.open({ baudRate: 9600 });
+        await newPort.open({ baudRate: 38400 });
         await newPort.setSignals({ dataTerminalReady: false, requestToSend: false });
         // setDecoder(new TextDecoder("utf-8"))
         // setEncoder(new TextEncoder());
@@ -73,7 +73,8 @@ export default function DriveControl() {
             }
             if (writer) {
                 await writer.write(encoder.encode(JSON.stringify(commands)));
-                writer.releaseLock();
+                console.log('Wrote: ', JSON.stringify(commands));
+                // writer.releaseLock();
             }
         } catch (error) {
             console.error("Serial is not connected most likely!");
