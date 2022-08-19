@@ -73,6 +73,7 @@ export default function DriveControl() {
             }
             if (writer) {
                 await writer.write(encoder.encode(JSON.stringify(commands)));
+                writer.releaseLock();
             }
         } catch (error) {
             console.error("Serial is not connected most likely!");
