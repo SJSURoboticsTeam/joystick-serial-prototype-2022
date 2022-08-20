@@ -74,7 +74,6 @@ export default function DriveControl() {
             if (writer) {
                 await writer.write(encoder.encode(JSON.stringify(commands)));
                 console.log('Wrote: ', JSON.stringify(commands));
-                // writer.releaseLock();
             }
         } catch (error) {
             console.error("Serial is not connected most likely!");
@@ -82,9 +81,10 @@ export default function DriveControl() {
 
     }
 
+    //might need to change the buttons that are associated to your controller/joystick
     useEffect(() => {
         const updateState = async () => {
-            const newAngle = (gamepads[0]?.axes[5]) * 45
+            const newAngle = (gamepads[0]?.axes[2]) * 45
             const newSpeed = -(gamepads[0]?.axes[1]) * 100
             setSpeed("0");
             setAngle(angle);
