@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
+import { setTimeout } from 'timers/promises';
 import Terminal from './Terminal';
 
 export default function DriveControl() {
@@ -9,6 +10,7 @@ export default function DriveControl() {
     const [encoder, setEncoder] = useState<TextEncoder>(new TextEncoder());
     const [reader, setReader] = useState<ReadableStreamDefaultReader>();
     const [writer, setWriter] = useState<WritableStreamDefaultWriter>();
+    const [timeExpired, setTimeExpired] = useState(false)
 
     const [gamepads, setGamepads] = useState({});
     useGamepads(gamepads => setGamepads(gamepads));
@@ -71,16 +73,20 @@ export default function DriveControl() {
                 "angle": parseInt(angle),
                 "wheel_orientation": parseInt(wheelOrientation)
             }
-            if (writer) {
+            if (writer && port) {
                 await writer.write(encoder.encode(JSON.stringify(commands)));
                 console.log('Wrote: ', JSON.stringify(commands));
-                // writer.releaseLock();
             }
         } catch (error) {
             console.error("Serial is not connected most likely!");
         }
 
     }
+
+    useEffect(() => {
+        const test = setInterval(writeSerial, 2000);
+        return () => clearInterval(test);
+    }, []);
 
     useEffect(() => {
         const updateState = async () => {
@@ -113,7 +119,6 @@ export default function DriveControl() {
             if (gamepads[0]?.buttons[10]?.value) {
                 setWheelOrientation("2");
             }
-            await writeSerial();
         }
         updateState();
     },
