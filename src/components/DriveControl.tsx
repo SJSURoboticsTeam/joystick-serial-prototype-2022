@@ -6,13 +6,11 @@ import Terminal from './Terminal';
 export default function DriveControl(props) {
     let serialStream = "";
     const [isConnected, setIsConnected] = useState(false);
-    const [port, setPort] = useState<SerialPort>();
-    const [decoder, setDecoder] = useState<TextDecoder>(new TextDecoder("utf-8"));
+    const [decoder, setDecoder] = useState<TextDecoder>(new TextDecoder("utf-8"))
     const [encoder, setEncoder] = useState<TextEncoder>(new TextEncoder());
+    const [port, setPort] = useState<SerialPort>();
     const [reader, setReader] = useState<ReadableStreamDefaultReader>();
     const [writer, setWriter] = useState<WritableStreamDefaultWriter>();
-    const [timeExpired, setTimeExpired] = useState(false)
-
     const [gamepads, setGamepads] = useState({});
     useGamepads(gamepads => setGamepads(gamepads));
 
@@ -25,11 +23,8 @@ export default function DriveControl(props) {
         let newPort = await navigator.serial.requestPort();
         await newPort.open({ baudRate: 38400 });
         await newPort.setSignals({ dataTerminalReady: false, requestToSend: false });
-        // setDecoder(new TextDecoder("utf-8"))
-        // setEncoder(new TextEncoder());
-        setReader(newPort.readable.getReader())
-        setWriter(newPort.writable.getWriter())
-        // setReadableStreamClosed(newPort.readable.pipeTo(decoder))
+        setReader(newPort.readable.getReader());
+        setWriter(newPort.writable.getWriter());
         setPort(newPort);
         setIsConnected(true);
     }
@@ -70,16 +65,16 @@ export default function DriveControl(props) {
                 "angle": parseInt(angle),
                 "wheel_orientation": parseInt(wheelOrientation)
             }
-            if (writer && port) {
+            if (writer) {
                 await writer.write(encoder.encode(JSON.stringify(commands)));
                 console.log('Wrote: ', JSON.stringify(commands));
             }
         } catch (error) {
             console.error("Serial is not connected most likely!");
         }
-
     }
 
+    //might need to change the buttons that are associated to your controller/joystick
     useEffect(() => {
         const test = setInterval(writeSerial, 2000);
         return () => clearInterval(test);
@@ -87,7 +82,7 @@ export default function DriveControl(props) {
 
     useEffect(() => {
         const updateState = async () => {
-            const newAngle = (gamepads[0]?.axes[5]) * 45
+            const newAngle = (gamepads[0]?.axes[2]) * 45
             const newSpeed = -(gamepads[0]?.axes[1]) * 100
             setSpeed("0");
             setAngle(angle);
@@ -96,7 +91,6 @@ export default function DriveControl(props) {
                 setSpeed(newSpeed.toString());
                 setAngle(newAngle.toString());
             }
-
             if (gamepads[0]?.buttons[7]?.value) {
                 setMode("D");
             }
@@ -106,7 +100,6 @@ export default function DriveControl(props) {
             if (gamepads[0]?.buttons[11]?.value) {
                 setMode("S");
             }
-
             if (gamepads[0]?.buttons[6]?.value) {
                 setWheelOrientation("0");
             }
@@ -135,7 +128,7 @@ export default function DriveControl(props) {
                 <button className='btn btn__primary' onClick={() => connect()}>Connect</button>
                 <button className='btn' onClick={() => readSerial()}>Read</button>
                 <button className='btn' onClick={() => writeSerial()}>Write</button>
-                <button className='btn' onClick={() => console.log(port)}>Status</button>
+                <button className='btn' onClick={() => console.log(port, reader, writer)}>Status</button>
                 <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button>
             </div>
 
