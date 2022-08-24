@@ -5,8 +5,13 @@ import Terminal from './Terminal';
 export default function DriveControl(props) {
     const [isConnected, setIsConnected] = useState(false);
     const [port, setPort] = useState<SerialPort>();
+    const [decoder, setDecoder] = useState<TextDecoder>(new TextDecoder("utf-8"));
+    const [encoder, setEncoder] = useState<TextEncoder>(new TextEncoder());
     const [reader, setReader] = useState<ReadableStreamDefaultReader>();
     const [writer, setWriter] = useState<WritableStreamDefaultWriter>();
+    let serialResponse = "";
+
+
     const [gamepads, setGamepads] = useState({});
     useGamepads(gamepads => setGamepads(gamepads));
 
@@ -35,19 +40,23 @@ export default function DriveControl(props) {
     }
 
     async function readSerial() {
-        try {
-            while (true) {
-                const { value, done } = await reader.read();
-                if (done) {
-                    break;
-                }
-                let decoded = await new TextDecoder().decode(value);
-                decoded = decoded.replace(/\n/g, "\r\n");
-                // decoded = JSON.parse(decoded);
-                await props.setRoverStatus(decoded);
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) {
+                break;
             }
-        } catch (error) {
-            disconnect();
+
+            let decoded = await new TextDecoder().decode(value);
+            serialResponse += await decoded;
+            console.log("output: ", serialResponse);
+            if (serialResponse.includes("{") && serialResponse.includes("}")) {
+                serialResponse = JSON.parse(serialResponse);
+                console.log("Parsed JSON: ", serialResponse);
+                props.setRoverStatus(serialResponse);
+                serialResponse = "";
+            }
+
+
         }
     }
 
@@ -59,16 +68,21 @@ export default function DriveControl(props) {
                 "angle": parseInt(angle),
                 "wheel_orientation": parseInt(wheelOrientation)
             }
-            if (writer) {
-                await writer.write(new TextEncoder().encode(JSON.stringify(commands)));
+            if (writer && port) {
+                await writer.write(encoder.encode(JSON.stringify(commands)));
                 console.log('Wrote: ', JSON.stringify(commands));
             }
         } catch (error) {
             console.error("Serial is not connected most likely!");
         }
+
     }
 
-    //might need to change the buttons that are associated to your controller/joystick
+    useEffect(() => {
+        const test = setInterval(writeSerial, 2000);
+        return () => clearInterval(test);
+    }, []);
+
     useEffect(() => {
         const updateState = async () => {
             const newAngle = (gamepads[0]?.axes[2]) * 45
@@ -80,6 +94,7 @@ export default function DriveControl(props) {
                 setSpeed(newSpeed.toString());
                 setAngle(newAngle.toString());
             }
+
             if (gamepads[0]?.buttons[7]?.value) {
                 setMode("D");
             }
@@ -89,6 +104,7 @@ export default function DriveControl(props) {
             if (gamepads[0]?.buttons[11]?.value) {
                 setMode("S");
             }
+
             if (gamepads[0]?.buttons[6]?.value) {
                 setWheelOrientation("0");
             }
@@ -98,7 +114,6 @@ export default function DriveControl(props) {
             if (gamepads[0]?.buttons[10]?.value) {
                 setWheelOrientation("2");
             }
-            await writeSerial();
         }
         updateState();
     },

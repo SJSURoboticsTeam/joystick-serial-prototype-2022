@@ -12,7 +12,7 @@ function App() {
   const [toggleCamera2, setToggleCamera2] = useState(false)
   const [toggleCamera3, setToggleCamera3] = useState(false)
   const [toggleCamera4, setToggleCamera4] = useState(false)
-  const [roverStatus, setRoverStatus] = useState()
+  const [roverStatus, setRoverStatus] = useState({})
 
   return (
     <div>
@@ -34,7 +34,7 @@ function App() {
         {toggleCamera3 && <Camera name="3" src="http://raspberrypi:8002/stream.mjpg" />}
         {toggleCamera4 && <Camera name="4" src="http://raspberrypi:8003/stream.mjpg" />}
       </div>
-    </div >
+    </div>
   );
 }
 
