@@ -3,7 +3,8 @@ import { useGamepads } from 'react-gamepads';
 import { setTimeout } from 'timers/promises';
 import Terminal from './Terminal';
 
-export default function DriveControl() {
+export default function DriveControl(props) {
+    let serialStream = "";
     const [isConnected, setIsConnected] = useState(false);
     const [port, setPort] = useState<SerialPort>();
     const [decoder, setDecoder] = useState<TextDecoder>(new TextDecoder("utf-8"));
@@ -43,25 +44,21 @@ export default function DriveControl() {
     }
 
     async function readSerial() {
-        try {
-            while (true) {
-                const { value, done } = await reader.read();
-                if (done) {
-                    break;
-                }
-                // let decoded = await decoder.decode(value);
-                let decoded = new TextDecoder().decode(value);
-                decoded = decoded.replace(/\n/g, "\r\n");
-                console.log(decoded);
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) {
+                break;
             }
-        } catch (error) {
-            disconnect();
-        } finally {
-            // TODO: Figure out how to properly close reader, this doesn't work...
-            let closeReader = reader;
-            closeReader.cancel();
-            closeReader.releaseLock();
-            setReader(closeReader);
+
+            let decoded = await new TextDecoder().decode(value);
+            serialStream += await decoded;
+            console.log("output: ", serialStream);
+            if (serialStream.includes("{") && serialStream.includes("}")) {
+                serialStream = JSON.parse(serialStream);
+                console.log("Parsed JSON: ", serialStream);
+                props.setRoverStatus(serialStream);
+                serialStream = "";
+            }
         }
     }
 
@@ -160,7 +157,6 @@ export default function DriveControl() {
                 </label>
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
-            <Terminal />
         </div >
     )
 }
