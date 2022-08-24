@@ -2,14 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
 import Terminal from './Terminal';
 
-export default function DriveControl() {
+export default function DriveControl(props) {
     const [isConnected, setIsConnected] = useState(false);
     const [port, setPort] = useState<SerialPort>();
-    const [decoder, setDecoder] = useState<TextDecoder>(new TextDecoder("utf-8"));
-    const [encoder, setEncoder] = useState<TextEncoder>(new TextEncoder());
     const [reader, setReader] = useState<ReadableStreamDefaultReader>();
     const [writer, setWriter] = useState<WritableStreamDefaultWriter>();
-
     const [gamepads, setGamepads] = useState({});
     useGamepads(gamepads => setGamepads(gamepads));
 
@@ -22,11 +19,8 @@ export default function DriveControl() {
         let newPort = await navigator.serial.requestPort();
         await newPort.open({ baudRate: 38400 });
         await newPort.setSignals({ dataTerminalReady: false, requestToSend: false });
-        // setDecoder(new TextDecoder("utf-8"))
-        // setEncoder(new TextEncoder());
-        setReader(newPort.readable.getReader())
-        setWriter(newPort.writable.getWriter())
-        // setReadableStreamClosed(newPort.readable.pipeTo(decoder))
+        setReader(newPort.readable.getReader());
+        setWriter(newPort.writable.getWriter());
         setPort(newPort);
         setIsConnected(true);
     }
@@ -47,19 +41,13 @@ export default function DriveControl() {
                 if (done) {
                     break;
                 }
-                // let decoded = await decoder.decode(value);
-                let decoded = new TextDecoder().decode(value);
+                let decoded = await new TextDecoder().decode(value);
                 decoded = decoded.replace(/\n/g, "\r\n");
-                console.log(decoded);
+                // decoded = JSON.parse(decoded);
+                await props.setRoverStatus(decoded);
             }
         } catch (error) {
             disconnect();
-        } finally {
-            // TODO: Figure out how to properly close reader, this doesn't work...
-            let closeReader = reader;
-            closeReader.cancel();
-            closeReader.releaseLock();
-            setReader(closeReader);
         }
     }
 
@@ -72,13 +60,12 @@ export default function DriveControl() {
                 "wheel_orientation": parseInt(wheelOrientation)
             }
             if (writer) {
-                await writer.write(encoder.encode(JSON.stringify(commands)));
+                await writer.write(new TextEncoder().encode(JSON.stringify(commands)));
                 console.log('Wrote: ', JSON.stringify(commands));
             }
         } catch (error) {
             console.error("Serial is not connected most likely!");
         }
-
     }
 
     //might need to change the buttons that are associated to your controller/joystick
@@ -93,7 +80,6 @@ export default function DriveControl() {
                 setSpeed(newSpeed.toString());
                 setAngle(newAngle.toString());
             }
-
             if (gamepads[0]?.buttons[7]?.value) {
                 setMode("D");
             }
@@ -103,7 +89,6 @@ export default function DriveControl() {
             if (gamepads[0]?.buttons[11]?.value) {
                 setMode("S");
             }
-
             if (gamepads[0]?.buttons[6]?.value) {
                 setWheelOrientation("0");
             }
@@ -133,7 +118,7 @@ export default function DriveControl() {
                 <button className='btn btn__primary' onClick={() => connect()}>Connect</button>
                 <button className='btn' onClick={() => readSerial()}>Read</button>
                 <button className='btn' onClick={() => writeSerial()}>Write</button>
-                <button className='btn' onClick={() => console.log(port)}>Status</button>
+                <button className='btn' onClick={() => console.log(port, reader, writer)}>Status</button>
                 <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button>
             </div>
 
@@ -155,7 +140,6 @@ export default function DriveControl() {
                 </label>
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
-            <Terminal />
         </div >
     )
 }
