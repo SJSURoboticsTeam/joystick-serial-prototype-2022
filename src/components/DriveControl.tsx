@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
-import { setTimeout } from 'timers/promises';
 import Terminal from './Terminal';
 
 export default function DriveControl(props) {
-    let serialStream = "";
     const [isConnected, setIsConnected] = useState(false);
-    const [decoder, setDecoder] = useState<TextDecoder>(new TextDecoder("utf-8"))
-    const [encoder, setEncoder] = useState<TextEncoder>(new TextEncoder());
     const [port, setPort] = useState<SerialPort>();
+    const [decoder, setDecoder] = useState<TextDecoder>(new TextDecoder("utf-8"));
+    const [encoder, setEncoder] = useState<TextEncoder>(new TextEncoder());
     const [reader, setReader] = useState<ReadableStreamDefaultReader>();
     const [writer, setWriter] = useState<WritableStreamDefaultWriter>();
+    let serialResponse = "";
+
+
     const [gamepads, setGamepads] = useState({});
     useGamepads(gamepads => setGamepads(gamepads));
 
@@ -46,14 +47,16 @@ export default function DriveControl(props) {
             }
 
             let decoded = await new TextDecoder().decode(value);
-            serialStream += await decoded;
-            console.log("output: ", serialStream);
-            if (serialStream.includes("{") && serialStream.includes("}")) {
-                serialStream = JSON.parse(serialStream);
-                console.log("Parsed JSON: ", serialStream);
-                props.setRoverStatus(serialStream);
-                serialStream = "";
+            serialResponse += await decoded;
+            console.log("output: ", serialResponse);
+            if (serialResponse.includes("{") && serialResponse.includes("}")) {
+                serialResponse = JSON.parse(serialResponse);
+                console.log("Parsed JSON: ", serialResponse);
+                props.setRoverStatus(serialResponse);
+                serialResponse = "";
             }
+
+
         }
     }
 
@@ -65,16 +68,16 @@ export default function DriveControl(props) {
                 "angle": parseInt(angle),
                 "wheel_orientation": parseInt(wheelOrientation)
             }
-            if (writer) {
+            if (writer && port) {
                 await writer.write(encoder.encode(JSON.stringify(commands)));
                 console.log('Wrote: ', JSON.stringify(commands));
             }
         } catch (error) {
             console.error("Serial is not connected most likely!");
         }
+
     }
 
-    //might need to change the buttons that are associated to your controller/joystick
     useEffect(() => {
         const test = setInterval(writeSerial, 2000);
         return () => clearInterval(test);
@@ -91,6 +94,7 @@ export default function DriveControl(props) {
                 setSpeed(newSpeed.toString());
                 setAngle(newAngle.toString());
             }
+
             if (gamepads[0]?.buttons[7]?.value) {
                 setMode("D");
             }
@@ -100,6 +104,7 @@ export default function DriveControl(props) {
             if (gamepads[0]?.buttons[11]?.value) {
                 setMode("S");
             }
+
             if (gamepads[0]?.buttons[6]?.value) {
                 setWheelOrientation("0");
             }
@@ -128,7 +133,7 @@ export default function DriveControl(props) {
                 <button className='btn btn__primary' onClick={() => connect()}>Connect</button>
                 <button className='btn' onClick={() => readSerial()}>Read</button>
                 <button className='btn' onClick={() => writeSerial()}>Write</button>
-                <button className='btn' onClick={() => console.log(port, reader, writer)}>Status</button>
+                <button className='btn' onClick={() => console.log(port)}>Status</button>
                 <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button>
             </div>
 
@@ -150,6 +155,7 @@ export default function DriveControl(props) {
                 </label>
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
+            <Terminal />
         </div >
     )
 }
