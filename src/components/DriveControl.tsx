@@ -133,7 +133,7 @@ export default function DriveControl(props) {
                 <button className='btn btn__primary' onClick={() => connect()}>Connect</button>
                 <button className='btn' onClick={() => readSerial()}>Read</button>
                 <button className='btn' onClick={() => writeSerial()}>Write</button>
-                <button className='btn' onClick={() => console.log(port)}>Status</button>
+                <button className='btn' onClick={() => console.log(port, reader, writer)}>Status</button>
                 <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button>
             </div>
 
@@ -155,7 +155,6 @@ export default function DriveControl(props) {
                 </label>
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
-            <Terminal />
         </div >
     )
 }
