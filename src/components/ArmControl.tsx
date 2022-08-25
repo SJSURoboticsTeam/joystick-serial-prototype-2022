@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import { GamepadsContext } from 'react-gamepads';
+import { useState } from 'react'
 
 export default function ArmControl(props) {
     const [speed, setSpeed] = useState("0");

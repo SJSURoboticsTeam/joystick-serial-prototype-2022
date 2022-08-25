@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import DriveControl from './components/DriveControl';
 import ArmControl from './components/ArmControl';
@@ -8,6 +8,11 @@ import Status from './components/Status';
 function App() {
   const [toggleMode, setToggleMode] = useState(true)
   const [roverStatus, setRoverStatus] = useState({})
+  const [roverCommands, setRoverCommands] = useState()
+
+  useEffect(() => {
+    console.log(roverCommands)
+  }, [roverCommands])
 
   return (
     <div>
@@ -16,7 +21,7 @@ function App() {
       </header>
 
       <div className="grid-container">
-        {toggleMode ? <DriveControl setRoverStatus={setRoverStatus} /> : <ArmControl />}
+        {toggleMode ? <DriveControl setRoverStatus={setRoverStatus} setRoverCommands={setRoverCommands} /> : <ArmControl />}
         <div>
           <Status roverStatus={roverStatus} />
         </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
 
 export default function DriveControl(props) {
@@ -103,6 +103,7 @@ export default function DriveControl(props) {
             if (gamepads[0]?.buttons[10]?.value) {
                 setWheelOrientation("2");
             }
+            props.setRoverCommands(speed)
         }
         updateState();
     },
