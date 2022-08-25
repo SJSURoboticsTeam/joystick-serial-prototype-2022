@@ -4,7 +4,6 @@ import DriveControl from './components/DriveControl';
 import ArmControl from './components/ArmControl';
 import Camera from './components/Camera'
 import Status from './components/Status';
-import Terminal from './components/Terminal';
 
 function App() {
   const [toggleMode, setToggleMode] = useState(true)
