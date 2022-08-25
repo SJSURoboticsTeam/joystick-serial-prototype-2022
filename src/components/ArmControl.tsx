@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { GamepadsContext } from 'react-gamepads';
 
 export default function ArmControl(props) {
     const [speed, setSpeed] = useState("0");
@@ -20,12 +21,10 @@ export default function ArmControl(props) {
         <div className='serial'>
             <h2>Arm Control</h2>
             <div className='btn-group'>
-                <h3>Serial</h3>
                 <button className='btn btn__primary'>Connect</button>
                 <button className='btn'>Status</button>
                 <button className='btn btn__danger'>Disconnect</button>
             </div>
-
             <form className='serial-form' onSubmit={handleSubmit}>
                 <label className='label_lg'> Speed
                     <input autoComplete='false' className='input-text' name="speed" value={speed} onChange={(e) => setSpeed(e.target.value)} />

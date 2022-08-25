@@ -1,24 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
-import Terminal from './Terminal';
 
 export default function DriveControl(props) {
-    const [isConnected, setIsConnected] = useState(false);
-    const [port, setPort] = useState<SerialPort>();
+    useGamepads(gamepads => setGamepads(gamepads));
     const [decoder, setDecoder] = useState<TextDecoder>(new TextDecoder("utf-8"));
     const [encoder, setEncoder] = useState<TextEncoder>(new TextEncoder());
     const [reader, setReader] = useState<ReadableStreamDefaultReader>();
     const [writer, setWriter] = useState<WritableStreamDefaultWriter>();
-    let serialResponse = "";
-
+    const [port, setPort] = useState<SerialPort>();
 
     const [gamepads, setGamepads] = useState({});
-    useGamepads(gamepads => setGamepads(gamepads));
-
+    const [isConnected, setIsConnected] = useState(false);
+    const [wheelOrientation, setWheelOrientation] = useState("0");
     const [speed, setSpeed] = useState("0");
     const [angle, setAngle] = useState("0");
     const [mode, setMode] = useState("D");
-    const [wheelOrientation, setWheelOrientation] = useState("0");
+    let serialResponse = "";
 
     const connect = async () => {
         let newPort = await navigator.serial.requestPort();
@@ -45,7 +42,6 @@ export default function DriveControl(props) {
             if (done) {
                 break;
             }
-
             let decoded = await new TextDecoder().decode(value);
             serialResponse += await decoded;
             console.log("output: ", serialResponse);
@@ -55,8 +51,6 @@ export default function DriveControl(props) {
                 props.setRoverStatus(serialResponse);
                 serialResponse = "";
             }
-
-
         }
     }
 
@@ -79,13 +73,8 @@ export default function DriveControl(props) {
     }
 
     useEffect(() => {
-        const test = setInterval(writeSerial, 2000);
-        return () => clearInterval(test);
-    }, []);
-
-    useEffect(() => {
         const updateState = async () => {
-            const newAngle = (gamepads[0]?.axes[2]) * 45
+            const newAngle = (gamepads[0]?.axes[5]) * 45
             const newSpeed = -(gamepads[0]?.axes[1]) * 100
             setSpeed("0");
             setAngle(angle);
@@ -129,12 +118,11 @@ export default function DriveControl(props) {
         <div className='serial'>
             <h2>Drive Control</h2>
             <div className='btn-group'>
-                <h3>Serial</h3>
-                <button className='btn btn__primary' onClick={() => connect()}>Connect</button>
+                {isConnected ? <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button> : <button className='btn btn__primary' onClick={() => connect()}>Connect</button>}
                 <button className='btn' onClick={() => readSerial()}>Read</button>
                 <button className='btn' onClick={() => writeSerial()}>Write</button>
                 <button className='btn' onClick={() => console.log(port, reader, writer)}>Status</button>
-                <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button>
+
             </div>
 
             <form className='serial-form' onSubmit={handleSubmit}>
