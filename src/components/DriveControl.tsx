@@ -10,11 +10,8 @@ export default function DriveControl(props) {
     const [reader, setReader] = useState<ReadableStreamDefaultReader>();
     const [writer, setWriter] = useState<WritableStreamDefaultWriter>();
     let serialResponse = "";
-
-
     const [gamepads, setGamepads] = useState({});
     useGamepads(gamepads => setGamepads(gamepads));
-
     const [speed, setSpeed] = useState("0");
     const [angle, setAngle] = useState("0");
     const [mode, setMode] = useState("D");
@@ -55,8 +52,6 @@ export default function DriveControl(props) {
                 props.setRoverStatus(serialResponse);
                 serialResponse = "";
             }
-
-
         }
     }
 
@@ -129,7 +124,6 @@ export default function DriveControl(props) {
         <div className='serial'>
             <h2>Drive Control</h2>
             <div className='btn-group'>
-                <h3>Serial</h3>
                 <button className='btn btn__primary' onClick={() => connect()}>Connect</button>
                 <button className='btn' onClick={() => readSerial()}>Read</button>
                 <button className='btn' onClick={() => writeSerial()}>Write</button>
