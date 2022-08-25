@@ -14,6 +14,17 @@ function App() {
     console.log(roverCommands)
   }, [roverCommands])
 
+  function writeSerial() {
+    console.log("write: ", roverCommands);
+  }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      writeSerial();
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div>
       <header className='btn-group'>

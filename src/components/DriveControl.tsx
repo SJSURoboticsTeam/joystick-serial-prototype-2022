@@ -107,7 +107,7 @@ export default function DriveControl(props) {
         }
         updateState();
     },
-        [gamepads[0]]
+        [gamepads[0], speed]
     )
 
     async function handleSubmit(e) {
