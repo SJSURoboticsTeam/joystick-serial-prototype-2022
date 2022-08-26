@@ -19,11 +19,6 @@ export default function ArmControl(props) {
     return (
         <div className='serial'>
             <h2>Arm Control</h2>
-            <div className='btn-group'>
-                <button className='btn btn__primary'>Connect</button>
-                <button className='btn'>Status</button>
-                <button className='btn btn__danger'>Disconnect</button>
-            </div>
             <form className='serial-form' onSubmit={handleSubmit}>
                 <label className='label_lg'> Speed
                     <input autoComplete='false' className='input-text' name="speed" value={speed} onChange={(e) => setSpeed(e.target.value)} />
