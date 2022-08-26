@@ -1,10 +1,12 @@
-import React from 'react'
+import { memo } from 'react'
 
-export default function Status(props) {
+const Status = ({ roverStatus }) => {
     return (
-        <>
+        <div>
             <h2>Rover Status</h2>
-            <pre>{JSON.stringify(props.roverStatus, null, 2)}</pre>
-        </>
+            <pre>{JSON.stringify(roverStatus, null, 2)}</pre>
+        </div>
     )
 }
+
+export default memo(Status);
