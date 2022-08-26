@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 export default function Serial(props) {
+    let serialResponse = "";
+    const [port, setPort] = useState<SerialPort>();
     const [isConnected, setIsConnected] = useState(false);
-    const [encoder, setEncoder] = useState<TextEncoder>(new TextEncoder());
     const [reader, setReader] = useState<ReadableStreamDefaultReader>();
     const [writer, setWriter] = useState<WritableStreamDefaultWriter>();
-    const [port, setPort] = useState<SerialPort>();
-    let serialResponse = "";
 
     const connect = async () => {
         let newPort = await navigator.serial.requestPort();
@@ -61,11 +60,6 @@ export default function Serial(props) {
             console.error("Serial is not connected most likely!");
         }
     }
-
-    // useEffect(() => {
-    //     console.log("serial: ", props.roverCommands)
-    // }, [props])
-
 
     return (
         <>
