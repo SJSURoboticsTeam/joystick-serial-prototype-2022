@@ -15,12 +15,12 @@ function App() {
   //   console.log(roverCommands)
   // }, [roverCommands])
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      console.log("Printing commands every second: ", roverCommands);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [roverCommands]);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     console.log("Printing commands every second: ", roverCommands);
+  //   }, 1000);
+  //   return () => clearInterval(interval);
+  // }, [roverCommands]);
 
   return (
     <div>

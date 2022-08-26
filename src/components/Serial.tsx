@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function Serial(props) {
     let serialResponse = "";
@@ -9,7 +9,8 @@ export default function Serial(props) {
 
     const connect = async () => {
         let newPort = await navigator.serial.requestPort();
-        await newPort.open({ baudRate: 38400 });
+        // await newPort.open({ baudRate: 38400 });
+        await newPort.open({ baudRate: 9600 });
         await newPort.setSignals({ dataTerminalReady: false, requestToSend: false });
         setReader(newPort.readable.getReader());
         setWriter(newPort.writable.getWriter());
@@ -60,6 +61,14 @@ export default function Serial(props) {
             console.error("Serial is not connected most likely!");
         }
     }
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            console.log("Printing commands every second: ", props.roverCommands);
+            writeSerial();
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [props.roverCommands]);
 
     return (
         <>
