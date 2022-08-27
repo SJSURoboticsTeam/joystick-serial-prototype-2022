@@ -52,7 +52,6 @@ export default function Serial(props) {
 
             if (serialResponse != undefined){
                 console.log("Array:", responseArray);
-                console.log("output: ", serialResponse);
                 if (serialResponse.includes("{") && serialResponse.includes("}")) {
                     serialResponse = responseArray.pop();
                     serialResponse = JSON.parse(serialResponse);
@@ -67,10 +66,12 @@ export default function Serial(props) {
 
     async function writeSerial() {
         const newCommandString = JSON.stringify({
+            "heartbeat_count": 1,
+            "is_operational": 1,
+            "wheel_shift": parseInt(props.roverCommands.wheelOrientation),
             "drive_mode": String(props.roverCommands.mode),
             "speed": parseInt(props.roverCommands.speed),
-            "angle": parseInt(props.roverCommands.angle),
-            "wheel_orientation": parseInt(props.roverCommands.wheelOrientation)
+            "angle": parseInt(props.roverCommands.angle)
         });
         //console.log('Wrote:', newCommandString);
         try {
