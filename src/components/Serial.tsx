@@ -41,13 +41,27 @@ export default function Serial(props) {
             }
             let decoded = await new TextDecoder().decode(value);
             serialResponse += await decoded;
-            console.log("output: ", serialResponse);
-            if (serialResponse.includes("{") && serialResponse.includes("}")) {
-                serialResponse = JSON.parse(serialResponse);
-                console.log("Parsed JSON: ", serialResponse);
-                props.setRoverStatus(serialResponse);
-                serialResponse = "";
+
+            let responseArray = [];
+            serialResponse.split('\n').forEach(line => {
+                if (line.includes('{') && line.includes('}')) {
+                    responseArray.push(line);
+                    console.log(line);
+                }
+            })
+
+            if (serialResponse != undefined){
+                console.log("Array:", responseArray);
+                console.log("output: ", serialResponse);
+                if (serialResponse.includes("{") && serialResponse.includes("}")) {
+                    serialResponse = responseArray.pop();
+                    serialResponse = JSON.parse(serialResponse);
+                    console.log("Parsed JSON: ", serialResponse);
+                    props.setRoverStatus(serialResponse);
+                    serialResponse = "";
+                }
             }
+
         }
     }
 
@@ -72,7 +86,7 @@ export default function Serial(props) {
         const interval = setInterval(() => {
             //console.log("Printing commands every second: ", props.roverCommands);
             writeSerial();
-        }, 300);
+        }, 50);
         return () => clearInterval(interval);
     }, [props.roverCommands]);
 
