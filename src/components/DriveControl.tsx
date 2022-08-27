@@ -10,7 +10,7 @@ export default function DriveControl(props) {
     const [wheelOrientation, setWheelOrientation] = useState("0");
 
     async function getGamepadCommands() {
-        const newAngle = (gamepads[0]?.axes[5]) * 45
+        const newAngle = (gamepads[0]?.axes[2]) * 45
         const newSpeed = -(gamepads[0]?.axes[1]) * 100
         setAngle(angle);
         setSpeed("0");
