@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
 
-export default function DriveControl(props) {
+export default function DriveControl({ setRoverCommands }) {
     useGamepads(gamepads => setGamepads(gamepads));
     const [gamepads, setGamepads] = useState({});
     const [mode, setMode] = useState("D");
@@ -36,12 +36,12 @@ export default function DriveControl(props) {
         if (gamepads[0]?.buttons[10]?.value) {
             setWheelOrientation("2");
         }
-        await props.setRoverCommands({ speed, angle, mode, wheelOrientation })
+        await setRoverCommands({ speed, angle, mode, wheelOrientation })
     }
 
     async function handleSubmit(e) {
         e.preventDefault();
-        await props.setRoverCommands({ speed, angle, mode, wheelOrientation })
+        await setRoverCommands({ speed, angle, mode, wheelOrientation })
     }
 
     useEffect(() => {

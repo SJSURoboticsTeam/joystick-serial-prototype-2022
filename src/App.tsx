@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import DriveControl from './components/DriveControl';
 import ArmControl from './components/ArmControl';
@@ -11,17 +11,6 @@ function App() {
   const [roverStatus, setRoverStatus] = useState({})
   const [roverCommands, setRoverCommands] = useState({})
 
-  // useEffect(() => {
-  //   console.log(roverCommands)
-  // }, [roverCommands])
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     console.log("Printing commands every second: ", roverCommands);
-  //   }, 1000);
-  //   return () => clearInterval(interval);
-  // }, [roverCommands]);
-
   return (
     <div>
       <header className='btn-group'>
@@ -30,7 +19,7 @@ function App() {
       </header>
 
       <div className="grid-container">
-        {toggleMode ? <DriveControl setRoverStatus={setRoverStatus} setRoverCommands={setRoverCommands} /> : <ArmControl />}
+        {toggleMode ? <DriveControl setRoverCommands={setRoverCommands} /> : <ArmControl />}
         <Status roverStatus={roverStatus} />
         <Camera name="1" src="http://raspberrypi:8000/stream.mjpg" />
         <Camera name="2" src="http://raspberrypi:8001/stream.mjpg" />
