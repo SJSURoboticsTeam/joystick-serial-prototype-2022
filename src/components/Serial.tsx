@@ -7,16 +7,21 @@ export default function Serial(props) {
     const [reader, setReader] = useState<ReadableStreamDefaultReader>();
     const [writer, setWriter] = useState<WritableStreamDefaultWriter>();
 
+    function timeout(delay: number) {
+        return new Promise( res => setTimeout(res, delay) );
+    }
+
     const connect = async () => {
         let newPort = await navigator.serial.requestPort();
-        // await newPort.open({ baudRate: 9600 });
+        // await newPort.open({ baudRate: 38400 });
         await newPort.open({ baudRate: 38400 });
         await newPort.setSignals({ dataTerminalReady: false, requestToSend: false });
         setReader(newPort.readable.getReader());
         setWriter(newPort.writable.getWriter());
         setPort(newPort);
         setIsConnected(true);
-
+        // await timeout(300); //for 1 sec delay
+        // await readSerial();
     }
 
     const disconnect = async () => {
@@ -45,8 +50,9 @@ export default function Serial(props) {
                 }
             })
 
-            if (serialResponse !== undefined) {
+            if (serialResponse != undefined){
                 console.log("Array:", responseArray);
+                console.log("output: ", serialResponse);
                 if (serialResponse.includes("{") && serialResponse.includes("}")) {
                     serialResponse = responseArray.pop();
                     serialResponse = JSON.parse(serialResponse);
@@ -61,12 +67,10 @@ export default function Serial(props) {
 
     async function writeSerial() {
         const newCommandString = JSON.stringify({
-            "heartbeat_count": 1,
-            "is_operational": 1,
-            "wheel_shift": parseInt(props.roverCommands.wheelOrientation),
             "drive_mode": String(props.roverCommands.mode),
             "speed": parseInt(props.roverCommands.speed),
-            "angle": parseInt(props.roverCommands.angle)
+            "angle": parseInt(props.roverCommands.angle),
+            "wheel_orientation": parseInt(props.roverCommands.wheelOrientation)
         });
         //console.log('Wrote:', newCommandString);
         try {
