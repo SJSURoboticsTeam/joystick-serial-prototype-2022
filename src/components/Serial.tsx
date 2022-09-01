@@ -66,10 +66,10 @@ export default function Serial({ roverCommands, setRoverStatus }) {
         const newCommandString = JSON.stringify({
             "heartbeat_count": heartbeatCount,
             "is_operational": 1,
+            "wheel_shift": parseInt(roverCommands.wheelOrientation),
             "drive_mode": String(roverCommands.mode),
             "speed": parseInt(roverCommands.speed),
-            "angle": parseInt(roverCommands.angle),
-            "wheel_orientation": parseInt(roverCommands.wheelOrientation)
+            "angle": parseInt(roverCommands.angle)
         });
         try {
             if (isConnected && writer.current) {
