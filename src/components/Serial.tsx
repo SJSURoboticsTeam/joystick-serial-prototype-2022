@@ -1,73 +1,76 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-export default function Serial(props) {
+export default function Serial({ roverCommands, setRoverStatus }) {
     let serialResponse = "";
-    const [port, setPort] = useState<SerialPort>();
+    const port = useRef<SerialPort>(undefined);
+    const reader = useRef<ReadableStreamDefaultReader>();
+    const writer = useRef<WritableStreamDefaultWriter>();
     const [isConnected, setIsConnected] = useState(false);
-    const [reader, setReader] = useState<ReadableStreamDefaultReader>();
-    const [writer, setWriter] = useState<WritableStreamDefaultWriter>();
 
     const connect = async () => {
-        let newPort = await navigator.serial.requestPort();
-        await newPort.open({ baudRate: 38400 });
-        await newPort.setSignals({ dataTerminalReady: false, requestToSend: false });
-        setReader(newPort.readable.getReader());
-        setWriter(newPort.writable.getWriter());
-        setPort(newPort);
+        port.current = await navigator.serial.requestPort();
+        await port.current.open({ baudRate: 9600 });
+        await port.current.setSignals({ dataTerminalReady: false, requestToSend: false });
+        reader.current = port.current.readable.getReader();
+        writer.current = port.current.writable.getWriter();
         setIsConnected(true);
     }
 
     const disconnect = async () => {
-        if (reader && reader.cancel) {
-            reader.releaseLock();
-            reader.cancel();
+        if (reader.current) {
+            reader.current.cancel();
+            writer.current.abort();
+            reader.current.releaseLock();
+            writer.current.releaseLock();
+            port.current.close();
+            port.current = undefined;
+            reader.current = undefined;
+            writer.current = undefined;
         }
-        await port.close();
         setIsConnected(false);
     }
 
     async function readSerial() {
-        while (true) {
-            const { value, done } = await reader.read();
+        while (isConnected) {
+            const { value, done } = await reader.current.read();
             if (done) {
                 break;
             }
             let decoded = await new TextDecoder().decode(value);
             serialResponse += await decoded;
+            parseSerial();
+        }
+    }
 
-            let responseArray = [];
-            serialResponse.split('\n').forEach(line => {
-                if (line.includes('{') && line.includes('}')) {
-                    responseArray.push(line);
-                    console.log(line);
-                }
-            })
+    function parseSerial() {
+        let responseArray: string[] = [];
+        serialResponse.split("\n").forEach(line => {
+            if (line.includes('{') && line.includes('}')) {
+                responseArray.push(line);
+            }
+        })
 
-            if (serialResponse != undefined) {
-                console.log("Array:", responseArray);
-                console.log("output: ", serialResponse);
-                if (serialResponse.includes("{") && serialResponse.includes("}")) {
-                    serialResponse = responseArray.pop();
-                    serialResponse = JSON.parse(serialResponse);
-                    console.log("Parsed JSON: ", serialResponse);
-                    props.setRoverStatus(serialResponse);
-                    serialResponse = "";
-                }
+        let newCommand: string | undefined = responseArray.pop();
+        if (newCommand != undefined) {
+            if (newCommand.includes("{") && newCommand.includes("}")) {
+                console.log("newCommand:", newCommand);
+                newCommand = JSON.parse(newCommand);
+                setRoverStatus(newCommand);
+                serialResponse = "";
             }
         }
     }
 
     async function writeSerial() {
         const newCommandString = JSON.stringify({
-            "drive_mode": String(props.roverCommands.mode),
-            "speed": parseInt(props.roverCommands.speed),
-            "angle": parseInt(props.roverCommands.angle),
-            "wheel_orientation": parseInt(props.roverCommands.wheelOrientation)
+            "drive_mode": String(roverCommands.mode),
+            "speed": parseInt(roverCommands.speed),
+            "angle": parseInt(roverCommands.angle),
+            "wheel_orientation": parseInt(roverCommands.wheelOrientation)
         });
-        //console.log('Wrote:', newCommandString);
         try {
-            if (writer && port) {
-                await writer.write(new TextEncoder().encode(newCommandString));
+            if (isConnected) {
+                await writer.current.write(new TextEncoder().encode(newCommandString));
             }
         } catch (error) {
             console.error("Serial is not connected most likely!");
@@ -76,11 +79,10 @@ export default function Serial(props) {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            //console.log("Printing commands every second: ", props.roverCommands);
             writeSerial();
         }, 50);
         return () => clearInterval(interval);
-    }, [props.roverCommands]);
+    }, [roverCommands]); // does this need to be here?
 
     return (
         <>
