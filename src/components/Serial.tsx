@@ -7,7 +7,7 @@ export default function Serial({ roverCommands, setRoverStatus }) {
     const writer = useRef<WritableStreamDefaultWriter>();
     const [isConnected, setIsConnected] = useState(false);
 
-    const connect = async () => {
+    async function connect() {
         port.current = await navigator.serial.requestPort();
         await port.current.open({ baudRate: 9600 });
         await port.current.setSignals({ dataTerminalReady: false, requestToSend: false });
@@ -16,7 +16,7 @@ export default function Serial({ roverCommands, setRoverStatus }) {
         setIsConnected(true);
     }
 
-    const disconnect = async () => {
+    async function disconnect() {
         if (reader.current) {
             reader.current.cancel();
             writer.current.abort();
@@ -69,11 +69,11 @@ export default function Serial({ roverCommands, setRoverStatus }) {
             "wheel_orientation": parseInt(roverCommands.wheelOrientation)
         });
         try {
-            if (isConnected) {
+            if (isConnected && writer.current) {
                 await writer.current.write(new TextEncoder().encode(newCommandString));
             }
         } catch (error) {
-            console.error("Serial is not connected most likely!");
+            writer.current.abort();
         }
     }
 
