@@ -8,7 +8,7 @@ import Serial from './components/Serial'
 
 function App() {
   const [toggleMode, setToggleMode] = useState(true)
-  const [roverStatus, setRoverStatus] = useState({ heartbeat_count: 0 })
+  const [roverStatus, setRoverStatus] = useState({ heartbeat_count: 3 })
   const [roverCommands, setRoverCommands] = useState({})
 
 
@@ -16,7 +16,7 @@ function App() {
     <div>
       <header className='btn-group'>
         <button className='btn btn__primary' onClick={() => setToggleMode(!toggleMode)}>Toggle Mode</button>
-        <Serial setRoverStatus={setRoverStatus} roverStatus={roverStatus} roverCommands={roverCommands} />
+        <Serial setRoverStatus={setRoverStatus} roverCommands={roverCommands} />
       </header>
 
       <div className="grid-container">

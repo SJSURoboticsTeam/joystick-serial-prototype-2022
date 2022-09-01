@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-export default function Serial({ roverCommands, roverStatus, setRoverStatus }) {
+export default function Serial({ roverCommands, setRoverStatus }) {
     let serialResponse = "";
     const port = useRef<SerialPort>(undefined);
     const reader = useRef<ReadableStreamDefaultReader>();
@@ -78,13 +78,8 @@ export default function Serial({ roverCommands, roverStatus, setRoverStatus }) {
     async function writeSerial() {
         try {
             if (isConnected && writer.current) {
-                // update roverCommands with rover status heartbeat_count
-                let commands = roverCommands;
-                commands.heartbeat_count = roverStatus.heartbeat_count;
-                commands = JSON.stringify(commands);
-
-                await writer.current.write(new TextEncoder().encode(commands));
-                console.log("wroteCommand:", commands);
+                console.log(roverCommands);
+                await writer.current.write(new TextEncoder().encode(JSON.stringify(roverCommands)));
             }
         } catch (error) {
             console.error(error);
@@ -97,7 +92,7 @@ export default function Serial({ roverCommands, roverStatus, setRoverStatus }) {
             writeSerial();
         }, 50);
         return () => clearInterval(interval);
-    }, []); // does this need to be here?
+    }, [roverCommands]);
 
     return (
         <>

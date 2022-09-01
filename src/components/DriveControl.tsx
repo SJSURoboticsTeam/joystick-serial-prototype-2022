@@ -51,14 +51,13 @@ export default function DriveControl({ setRoverCommands }) {
 
     function createRoverCommand() {
         const newCommand = {
-            "heartbeat_count": 0,
+            "heartbeat_count": 0, // TODO: get this from the rover
             "is_operational": isOperational,
             "wheel_shift": parseInt(wheelShift),
             "drive_mode": mode,
             "speed": parseInt(speed),
             "angle": parseInt(angle)
         };
-        console.log(newCommand);
         return newCommand;
     }
 
