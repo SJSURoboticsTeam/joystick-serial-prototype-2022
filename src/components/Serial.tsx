@@ -63,6 +63,7 @@ export default function Serial({ roverCommands, setRoverStatus }) {
     }
 
     async function writeSerial() {
+        // TODO: move this out of the writeSerial function, should be passed as a prop through roverCommands
         const newCommandString = JSON.stringify({
             "heartbeat_count": heartbeatCount,
             "is_operational": 1,
@@ -71,6 +72,7 @@ export default function Serial({ roverCommands, setRoverStatus }) {
             "speed": parseInt(roverCommands.speed),
             "angle": parseInt(roverCommands.angle)
         });
+
         try {
             if (isConnected && writer.current) {
                 console.log("wroteCommand:", newCommandString);
