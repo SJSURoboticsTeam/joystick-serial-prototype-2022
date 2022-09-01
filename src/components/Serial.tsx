@@ -1,34 +1,45 @@
 import { useEffect, useRef, useState } from 'react'
 
-export default function Serial({ roverCommands, setRoverStatus }) {
+export default function Serial({ roverCommands, roverStatus, setRoverStatus }) {
     let serialResponse = "";
     const port = useRef<SerialPort>(undefined);
     const reader = useRef<ReadableStreamDefaultReader>();
     const writer = useRef<WritableStreamDefaultWriter>();
     const [isConnected, setIsConnected] = useState(false);
-    const [heartbeatCount, setHeartbeatCount] = useState(0);
 
     async function connect() {
-        port.current = await navigator.serial.requestPort();
-        await port.current.open({ baudRate: 38400 });
-        await port.current.setSignals({ dataTerminalReady: false, requestToSend: false });
-        reader.current = port.current.readable.getReader();
-        writer.current = port.current.writable.getWriter();
-        setIsConnected(true);
+        try {
+            port.current = await navigator.serial.requestPort();
+            await port.current.open({ baudRate: 38400 });
+            await port.current.setSignals({ dataTerminalReady: false, requestToSend: false });
+            reader.current = port.current.readable.getReader();
+            writer.current = port.current.writable.getWriter();
+            setIsConnected(true);
+        } catch (error) {
+            console.error(error);
+            setIsConnected(false);
+        }
     }
 
     async function disconnect() {
-        if (reader.current) {
-            reader.current.cancel();
-            writer.current.abort();
-            reader.current.releaseLock();
-            writer.current.releaseLock();
-            port.current.close();
-            port.current = undefined;
-            reader.current = undefined;
-            writer.current = undefined;
+        try {
+            if (reader.current) {
+                reader.current.cancel();
+                writer.current.abort();
+                reader.current.releaseLock();
+                writer.current.releaseLock();
+                port.current.close();
+                port.current = undefined;
+                reader.current = undefined;
+                writer.current = undefined;
+                setIsConnected(false);
+            }
         }
-        setIsConnected(false);
+        catch (error) {
+            console.error(error);
+            setIsConnected(true);
+        }
+
     }
 
     async function readSerial() {
@@ -39,6 +50,7 @@ export default function Serial({ roverCommands, setRoverStatus }) {
             }
             let decoded = await new TextDecoder().decode(value);
             console.log(decoded);
+            setRoverStatus({ "heartbeat_count": 23 });
             // serialResponse += await decoded;
             // parseSerial();
         }
@@ -64,21 +76,18 @@ export default function Serial({ roverCommands, setRoverStatus }) {
     }
 
     async function writeSerial() {
-        const newCommandString = JSON.stringify({
-            "heartbeat_count": heartbeatCount,
-            "is_operational": 1,
-            "wheel_shift": parseInt(roverCommands.wheelOrientation),
-            "drive_mode": String(roverCommands.mode),
-            "speed": parseInt(roverCommands.speed),
-            "angle": parseInt(roverCommands.angle)
-        });
         try {
             if (isConnected && writer.current) {
-                console.log("wroteCommand:", newCommandString);
+                // update roverCommands with rover status heartbeat_count
+                let commands = roverCommands;
+                commands.heartbeat_count = roverStatus.heartbeat_count;
+                commands = JSON.stringify(commands);
 
-                await writer.current.write(new TextEncoder().encode(newCommandString));
+                await writer.current.write(new TextEncoder().encode(commands));
+                console.log("wroteCommand:", commands);
             }
         } catch (error) {
+            console.error(error);
             writer.current.abort();
         }
     }
@@ -86,10 +95,9 @@ export default function Serial({ roverCommands, setRoverStatus }) {
     useEffect(() => {
         const interval = setInterval(() => {
             writeSerial();
-            setHeartbeatCount(heartbeatCount + 1);
         }, 50);
         return () => clearInterval(interval);
-    }, [roverCommands]); // does this need to be here?
+    }, []); // does this need to be here?
 
     return (
         <>

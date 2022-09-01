@@ -41,16 +41,23 @@ export default function DriveControl({ setRoverCommands }) {
         if (gamepads[0]?.buttons[10]?.value) {
             setWheelShift("2");
         }
-        await setRoverCommands(createRoverCommand());
+        await setRoverCommands(await createRoverCommand());
     }
 
     async function handleSubmit(e) {
         e.preventDefault();
-        await setRoverCommands(createRoverCommand());
+        await setRoverCommands(await createRoverCommand());
     }
 
     function createRoverCommand() {
-        const newCommand = JSON.stringify({ "heartbeat_count": 0, "is_operational": isOperational, "wheel_shift": wheelShift, "drive_mode": mode, speed, angle, });
+        const newCommand = {
+            "heartbeat_count": 0,
+            "is_operational": isOperational,
+            "wheel_shift": parseInt(wheelShift),
+            "drive_mode": mode,
+            "speed": parseInt(speed),
+            "angle": parseInt(angle)
+        };
         console.log(newCommand);
         return newCommand;
     }

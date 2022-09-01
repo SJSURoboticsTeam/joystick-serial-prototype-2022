@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import DriveControl from './components/DriveControl';
 import ArmControl from './components/ArmControl';
@@ -8,14 +8,15 @@ import Serial from './components/Serial'
 
 function App() {
   const [toggleMode, setToggleMode] = useState(true)
-  const [roverStatus, setRoverStatus] = useState({})
+  const [roverStatus, setRoverStatus] = useState({ heartbeat_count: 0 })
   const [roverCommands, setRoverCommands] = useState({})
+
 
   return (
     <div>
       <header className='btn-group'>
         <button className='btn btn__primary' onClick={() => setToggleMode(!toggleMode)}>Toggle Mode</button>
-        <Serial setRoverStatus={setRoverStatus} roverCommands={roverCommands} />
+        <Serial setRoverStatus={setRoverStatus} roverStatus={roverStatus} roverCommands={roverCommands} />
       </header>
 
       <div className="grid-container">
