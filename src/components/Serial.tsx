@@ -6,6 +6,7 @@ export default function Serial({ roverCommands, setRoverStatus }) {
     const reader = useRef<ReadableStreamDefaultReader>();
     const writer = useRef<WritableStreamDefaultWriter>();
     const [isConnected, setIsConnected] = useState(false);
+    const [heartbeatCount, setHeartbeatCount] = useState(0);
 
     async function connect() {
         port.current = await navigator.serial.requestPort();
@@ -63,6 +64,8 @@ export default function Serial({ roverCommands, setRoverStatus }) {
 
     async function writeSerial() {
         const newCommandString = JSON.stringify({
+            "heartbeat_count": heartbeatCount,
+            "is_operational": 1,
             "drive_mode": String(roverCommands.mode),
             "speed": parseInt(roverCommands.speed),
             "angle": parseInt(roverCommands.angle),
@@ -70,6 +73,8 @@ export default function Serial({ roverCommands, setRoverStatus }) {
         });
         try {
             if (isConnected && writer.current) {
+                console.log("wroteCommand:", newCommandString);
+
                 await writer.current.write(new TextEncoder().encode(newCommandString));
             }
         } catch (error) {
@@ -80,6 +85,7 @@ export default function Serial({ roverCommands, setRoverStatus }) {
     useEffect(() => {
         const interval = setInterval(() => {
             writeSerial();
+            setHeartbeatCount(heartbeatCount + 1);
         }, 50);
         return () => clearInterval(interval);
     }, [roverCommands]); // does this need to be here?
