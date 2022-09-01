@@ -10,7 +10,7 @@ export default function Serial({ roverCommands, setRoverStatus }) {
 
     async function connect() {
         port.current = await navigator.serial.requestPort();
-        await port.current.open({ baudRate: 9600 });
+        await port.current.open({ baudRate: 38400 });
         await port.current.setSignals({ dataTerminalReady: false, requestToSend: false });
         reader.current = port.current.readable.getReader();
         writer.current = port.current.writable.getWriter();
@@ -38,8 +38,9 @@ export default function Serial({ roverCommands, setRoverStatus }) {
                 break;
             }
             let decoded = await new TextDecoder().decode(value);
-            serialResponse += await decoded;
-            parseSerial();
+            console.log(decoded);
+            // serialResponse += await decoded;
+            // parseSerial();
         }
     }
 
