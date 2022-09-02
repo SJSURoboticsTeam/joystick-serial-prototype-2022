@@ -49,9 +49,8 @@ export default function Serial({ roverCommands, setRoverStatus }) {
                 break;
             }
             let decoded = await new TextDecoder().decode(value);
+            serialResponse += await decoded;
             console.log(decoded);
-            setRoverStatus({ "heartbeat_count": 23 });
-            // serialResponse += await decoded;
             // parseSerial();
         }
     }
@@ -92,7 +91,7 @@ export default function Serial({ roverCommands, setRoverStatus }) {
             writeSerial();
         }, 50);
         return () => clearInterval(interval);
-    }, [roverCommands]);
+    }, [writeSerial]);
 
     return (
         <>

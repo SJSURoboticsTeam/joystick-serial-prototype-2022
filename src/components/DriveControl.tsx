@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
 
-export default function DriveControl({ setRoverCommands }) {
+export default function DriveControl({ roverStatus, setRoverCommands }) {
     useGamepads(gamepads => setGamepads(gamepads));
     const [gamepads, setGamepads] = useState({});
     const [mode, setMode] = useState("D");
@@ -50,8 +50,9 @@ export default function DriveControl({ setRoverCommands }) {
     }
 
     function createRoverCommand() {
+        const heartbeat_count = roverStatus.heartbeat_count ? roverStatus.heartbeat_count : 0;
         const newCommand = {
-            "heartbeat_count": 0, // TODO: get this from the rover
+            "heartbeat_count": heartbeat_count,
             "is_operational": isOperational,
             "wheel_shift": parseInt(wheelShift),
             "drive_mode": mode,

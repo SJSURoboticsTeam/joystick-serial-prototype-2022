@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import DriveControl from './components/DriveControl';
 import ArmControl from './components/ArmControl';
@@ -20,7 +20,7 @@ function App() {
       </header>
 
       <div className="grid-container">
-        {toggleMode ? <DriveControl setRoverCommands={setRoverCommands} /> : <ArmControl />}
+        {toggleMode ? <DriveControl roverStatus={roverStatus} setRoverCommands={setRoverCommands} /> : <ArmControl />}
         <Status roverStatus={roverStatus} />
         <Camera name="1" src="http://raspberrypi:8000/stream.mjpg" />
         <Camera name="2" src="http://raspberrypi:8001/stream.mjpg" />
