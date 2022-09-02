@@ -6,29 +6,40 @@ export default function Serial({ roverCommands, setRoverStatus }) {
     const reader = useRef<ReadableStreamDefaultReader>();
     const writer = useRef<WritableStreamDefaultWriter>();
     const [isConnected, setIsConnected] = useState(false);
-    const [heartbeatCount, setHeartbeatCount] = useState(0);
 
     async function connect() {
-        port.current = await navigator.serial.requestPort();
-        await port.current.open({ baudRate: 9600 });
-        await port.current.setSignals({ dataTerminalReady: false, requestToSend: false });
-        reader.current = port.current.readable.getReader();
-        writer.current = port.current.writable.getWriter();
-        setIsConnected(true);
+        try {
+            port.current = await navigator.serial.requestPort();
+            await port.current.open({ baudRate: 38400 });
+            await port.current.setSignals({ dataTerminalReady: false, requestToSend: false });
+            reader.current = port.current.readable.getReader();
+            writer.current = port.current.writable.getWriter();
+            setIsConnected(true);
+        } catch (error) {
+            console.error(error);
+            setIsConnected(false);
+        }
     }
 
     async function disconnect() {
-        if (reader.current) {
-            reader.current.cancel();
-            writer.current.abort();
-            reader.current.releaseLock();
-            writer.current.releaseLock();
-            port.current.close();
-            port.current = undefined;
-            reader.current = undefined;
-            writer.current = undefined;
+        try {
+            if (reader.current) {
+                reader.current.cancel();
+                writer.current.abort();
+                reader.current.releaseLock();
+                writer.current.releaseLock();
+                port.current.close();
+                port.current = undefined;
+                reader.current = undefined;
+                writer.current = undefined;
+                setIsConnected(false);
+            }
         }
-        setIsConnected(false);
+        catch (error) {
+            console.error(error);
+            setIsConnected(true);
+        }
+
     }
 
     async function readSerial() {
@@ -39,7 +50,8 @@ export default function Serial({ roverCommands, setRoverStatus }) {
             }
             let decoded = await new TextDecoder().decode(value);
             serialResponse += await decoded;
-            parseSerial();
+            console.log(decoded);
+            // parseSerial();
         }
     }
 
@@ -63,23 +75,13 @@ export default function Serial({ roverCommands, setRoverStatus }) {
     }
 
     async function writeSerial() {
-        // TODO: move this out of the writeSerial function, should be passed as a prop through roverCommands
-        const newCommandString = JSON.stringify({
-            "heartbeat_count": heartbeatCount,
-            "is_operational": 1,
-            "wheel_shift": parseInt(roverCommands.wheelOrientation),
-            "drive_mode": String(roverCommands.mode),
-            "speed": parseInt(roverCommands.speed),
-            "angle": parseInt(roverCommands.angle)
-        });
-
         try {
             if (isConnected && writer.current) {
-                console.log("wroteCommand:", newCommandString);
-
-                await writer.current.write(new TextEncoder().encode(newCommandString));
+                console.log(roverCommands);
+                await writer.current.write(new TextEncoder().encode(JSON.stringify(roverCommands)));
             }
         } catch (error) {
+            console.error(error);
             writer.current.abort();
         }
     }
@@ -87,10 +89,9 @@ export default function Serial({ roverCommands, setRoverStatus }) {
     useEffect(() => {
         const interval = setInterval(() => {
             writeSerial();
-            setHeartbeatCount(heartbeatCount + 1);
         }, 50);
         return () => clearInterval(interval);
-    }, [roverCommands]); // does this need to be here?
+    }, [writeSerial]);
 
     return (
         <>

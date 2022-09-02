@@ -1,22 +1,27 @@
 import { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
 
-export default function DriveControl({ setRoverCommands }) {
+export default function DriveControl({ roverStatus, setRoverCommands }) {
     useGamepads(gamepads => setGamepads(gamepads));
     const [gamepads, setGamepads] = useState({});
     const [mode, setMode] = useState("D");
     const [speed, setSpeed] = useState("0");
     const [angle, setAngle] = useState("0");
-    const [wheelShift, setWheelShift] = useState("0");
+    const [wheelOrientation, setWheelOrientation] = useState("0");
+    const [isOperational, setIsOperational] = useState(1);
 
     async function getGamepadCommands() {
-        const newAngle = (gamepads[0]?.axes[2]) * 45
-        const newSpeed = -(gamepads[0]?.axes[1]) * 100
+        const newAngle: number = (gamepads[0]?.axes[2]) * 45;
+        const newSpeed: number = -(gamepads[0]?.axes[1]) * 100;
+        const truncatedAngle = parseInt(newAngle.toFixed(0));
+        const truncatedSpeed = parseInt(newSpeed.toFixed(0));
+
         setAngle(angle);
         setSpeed("0");
+
         if (gamepads[0]?.buttons[0]?.pressed) {
-            setSpeed(newSpeed.toString());
-            setAngle(newAngle.toString());
+            setSpeed(truncatedSpeed.toString());
+            setAngle(truncatedAngle.toString());
         }
         if (gamepads[0]?.buttons[7]?.value) {
             setMode("D");
@@ -28,20 +33,33 @@ export default function DriveControl({ setRoverCommands }) {
             setMode("S");
         }
         if (gamepads[0]?.buttons[6]?.value) {
-            setWheelShift("0");
+            setWheelOrientation("0");
         }
         if (gamepads[0]?.buttons[8]?.value) {
-            setWheelShift("1");
+            setWheelOrientation("1");
         }
         if (gamepads[0]?.buttons[10]?.value) {
-            setWheelShift("2");
+            setWheelOrientation("2");
         }
-        await setRoverCommands({ speed, angle, mode, wheelShift })
+        await setRoverCommands(await createRoverCommand());
     }
 
     async function handleSubmit(e) {
         e.preventDefault();
-        await setRoverCommands({ speed, angle, mode, wheelShift })
+        await setRoverCommands(await createRoverCommand());
+    }
+
+    function createRoverCommand() {
+        const heartbeat_count = roverStatus.heartbeat_count ? roverStatus.heartbeat_count : 0;
+        const newCommand = {
+            "heartbeat_count": heartbeat_count,
+            "is_operational": isOperational,
+            "wheel_orientation": parseInt(wheelOrientation),
+            "drive_mode": mode,
+            "speed": parseInt(speed),
+            "angle": parseInt(angle)
+        };
+        return newCommand;
     }
 
     useEffect(() => {
@@ -55,16 +73,16 @@ export default function DriveControl({ setRoverCommands }) {
             <h2>Drive Control</h2>
             <form className='serial-form' onSubmit={handleSubmit}>
                 <label className='label_lg'> Speed
-                    <input autoComplete='false' className='input-text' name="speed" value={speed} onChange={(e) => setSpeed(e.target.value)} />
+                    <input autoComplete='false' className='input-text' value={speed} onChange={(e) => setSpeed(e.target.value)} />
                 </label>
                 <label className='label_lg'> Angle
-                    <input autoComplete='false' className='input-text' name="angle" value={angle} onChange={(e) => setAngle(e.target.value)} />
+                    <input autoComplete='false' className='input-text' value={angle} onChange={(e) => setAngle(e.target.value)} />
                 </label>
-                <label className='label_lg'> Mode
-                    <input autoComplete='false' className='input-text' name="mode" value={mode} onChange={(e) => setMode(e.target.value)} />
+                <label className='label_lg'> Drive Mode
+                    <input autoComplete='false' className='input-text' value={mode} onChange={(e) => setMode(e.target.value)} />
                 </label>
                 <label className='label_lg'> Wheel Shift
-                    <input autoComplete='false' className='input-text' name="wheel_orientation" value={wheelShift} onChange={(e) => setWheelShift(e.target.value)} />
+                    <input autoComplete='false' className='input-text' value={wheelOrientation} onChange={(e) => setWheelOrientation(e.target.value)} />
                 </label>
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
