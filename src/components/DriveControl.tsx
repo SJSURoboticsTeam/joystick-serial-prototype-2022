@@ -7,7 +7,7 @@ export default function DriveControl({ roverStatus, setRoverCommands }) {
     const [mode, setMode] = useState("D");
     const [speed, setSpeed] = useState("0");
     const [angle, setAngle] = useState("0");
-    const [wheelShift, setWheelShift] = useState("0");
+    const [wheelOrientation, setWheelOrientation] = useState("0");
     const [isOperational, setIsOperational] = useState(1);
 
     async function getGamepadCommands() {
@@ -33,13 +33,13 @@ export default function DriveControl({ roverStatus, setRoverCommands }) {
             setMode("S");
         }
         if (gamepads[0]?.buttons[6]?.value) {
-            setWheelShift("0");
+            setWheelOrientation("0");
         }
         if (gamepads[0]?.buttons[8]?.value) {
-            setWheelShift("1");
+            setWheelOrientation("1");
         }
         if (gamepads[0]?.buttons[10]?.value) {
-            setWheelShift("2");
+            setWheelOrientation("2");
         }
         await setRoverCommands(await createRoverCommand());
     }
@@ -54,7 +54,7 @@ export default function DriveControl({ roverStatus, setRoverCommands }) {
         const newCommand = {
             "heartbeat_count": heartbeat_count,
             "is_operational": isOperational,
-            "wheel_shift": parseInt(wheelShift),
+            "wheel_orientation": parseInt(wheelOrientation),
             "drive_mode": mode,
             "speed": parseInt(speed),
             "angle": parseInt(angle)
@@ -82,7 +82,7 @@ export default function DriveControl({ roverStatus, setRoverCommands }) {
                     <input autoComplete='false' className='input-text' value={mode} onChange={(e) => setMode(e.target.value)} />
                 </label>
                 <label className='label_lg'> Wheel Shift
-                    <input autoComplete='false' className='input-text' value={wheelShift} onChange={(e) => setWheelShift(e.target.value)} />
+                    <input autoComplete='false' className='input-text' value={wheelOrientation} onChange={(e) => setWheelOrientation(e.target.value)} />
                 </label>
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
