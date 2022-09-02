@@ -8,7 +8,7 @@ import Serial from './components/Serial'
 
 function App() {
   const [toggleMode, setToggleMode] = useState(true)
-  const [roverStatus, setRoverStatus] = useState({ heartbeat_count: 3 })
+  const [roverStatus, setRoverStatus] = useState({ heartbeat_count: 0 })
   const [roverCommands, setRoverCommands] = useState({})
 
 
