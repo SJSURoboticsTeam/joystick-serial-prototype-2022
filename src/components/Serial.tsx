@@ -50,8 +50,8 @@ export default function Serial({ roverCommands, setRoverStatus }) {
             }
             let decoded = await new TextDecoder().decode(value);
             serialResponse += await decoded;
-            console.log(decoded);
-            // parseSerial();
+            //console.log(decoded);
+            parseSerial();
         }
     }
 
@@ -77,7 +77,7 @@ export default function Serial({ roverCommands, setRoverStatus }) {
     async function writeSerial() {
         try {
             if (isConnected && writer.current) {
-                console.log(roverCommands);
+                //console.log(roverCommands);
                 await writer.current.write(new TextEncoder().encode(JSON.stringify(roverCommands)));
             }
         } catch (error) {
