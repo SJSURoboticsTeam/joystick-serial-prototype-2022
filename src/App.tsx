@@ -8,8 +8,9 @@ import Serial from './components/Serial'
 
 function App() {
   const [toggleMode, setToggleMode] = useState(true)
-  const [roverStatus, setRoverStatus] = useState({})
+  const [roverStatus, setRoverStatus] = useState({ heartbeat_count: 0 })
   const [roverCommands, setRoverCommands] = useState({})
+
 
   return (
     <div>
@@ -19,7 +20,7 @@ function App() {
       </header>
 
       <div className="grid-container">
-        {toggleMode ? <DriveControl setRoverCommands={setRoverCommands} /> : <ArmControl />}
+        {toggleMode ? <DriveControl roverStatus={roverStatus} setRoverCommands={setRoverCommands} /> : <ArmControl />}
         <Status roverStatus={roverStatus} />
         <Camera name="1" src="http://raspberrypi:8000/stream.mjpg" />
         <Camera name="2" src="http://raspberrypi:8001/stream.mjpg" />
