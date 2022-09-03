@@ -81,7 +81,7 @@ export default function DriveControl({ roverStatus, setRoverCommands }) {
                 <label className='label_lg'> Drive Mode
                     <input autoComplete='false' className='input-text' value={mode} onChange={(e) => setMode(e.target.value)} />
                 </label>
-                <label className='label_lg'> Wheel Shift
+                <label className='label_lg'> Wheel Orientation
                     <input autoComplete='false' className='input-text' value={wheelOrientation} onChange={(e) => setWheelOrientation(e.target.value)} />
                 </label>
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>

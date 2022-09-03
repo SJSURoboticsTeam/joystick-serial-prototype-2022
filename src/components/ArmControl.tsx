@@ -23,7 +23,6 @@ export default function ArmControl({ roverStatus, setRoverCommands }) {
             "wrist_pitch": parseInt(wristPitch),
             "wrist_yaw": parseInt(wristYaw)
         };
-        console.log(newCommand);
         return newCommand;
     }
 
