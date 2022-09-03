@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function ArmControl(props) {
+export default function ArmControl({ roverStatus, setRoverCommands }) {
     const [speed, setSpeed] = useState("0");
     const [mode, setMode] = useState("D");
     const [rotundaAngle, setRotundaAngle] = useState("0");
@@ -8,12 +8,27 @@ export default function ArmControl(props) {
     const [elbowAngle, setElbowAngle] = useState("0");
     const [wristPitch, setWristPitch] = useState("0");
     const [wristYaw, setWristYaw] = useState("0");
+    const [isOperational, setIsOperational] = useState(1);
 
-    function handleSubmit(e) {
+    function createRoverCommand() {
+        const heartbeat_count = roverStatus.heartbeat_count ? roverStatus.heartbeat_count : 0;
+        const newCommand = {
+            "heartbeat_count": heartbeat_count,
+            "is_operational": isOperational,
+            "speed": parseInt(speed),
+            "joint_mode": mode,
+            "rotunda_angle": parseInt(rotundaAngle),
+            "shoulder_angle": parseInt(shoulderAngle),
+            "elbow_angle": parseInt(elbowAngle),
+            "wrist_pitch": parseInt(wristPitch),
+            "wrist_yaw": parseInt(wristYaw)
+        };
+        return newCommand;
+    }
+
+    async function handleSubmit(e) {
         e.preventDefault();
-        const encoder = new TextEncoder();
-        console.log(encoder.encode(speed));
-        setSpeed("");
+        await setRoverCommands(await createRoverCommand());
     }
 
     return (

@@ -77,7 +77,6 @@ export default function Serial({ roverCommands, setRoverStatus }) {
     async function writeSerial() {
         try {
             if (isConnected && writer.current) {
-                //console.log(roverCommands);
                 await writer.current.write(new TextEncoder().encode(JSON.stringify(roverCommands)));
             }
         } catch (error) {
