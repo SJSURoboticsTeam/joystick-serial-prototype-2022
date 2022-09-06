@@ -11,7 +11,7 @@ export default function DriveControl({ roverStatus, setRoverCommands }) {
     const [isOperational, setIsOperational] = useState(1);
 
     async function getGamepadCommands() {
-        const newAngle: number = (gamepads[0]?.axes[2]) * 45;
+        const newAngle: number = (gamepads[0]?.axes[2]) * 12;
         const newSpeed: number = -(gamepads[0]?.axes[1]) * 100;
         const truncatedAngle = parseInt(newAngle.toFixed(0));
         const truncatedSpeed = parseInt(newSpeed.toFixed(0));
