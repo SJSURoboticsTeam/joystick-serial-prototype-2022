@@ -34,6 +34,7 @@ export default function Serial({ roverCommands, setRoverStatus }) {
                 reader.current = undefined;
                 writer.current = undefined;
                 setIsConnected(false);
+                setDataTerminalMode(false);
             }
         }
         catch (error) {
