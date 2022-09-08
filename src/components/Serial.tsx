@@ -6,6 +6,7 @@ export default function Serial({ roverCommands, setRoverStatus }) {
     const reader = useRef<ReadableStreamDefaultReader>();
     const writer = useRef<WritableStreamDefaultWriter>();
     const [isConnected, setIsConnected] = useState(false);
+    const [dataTerminalMode, setDataTerminalMode] = useState(false);
 
     async function connect() {
         try {
@@ -39,8 +40,20 @@ export default function Serial({ roverCommands, setRoverStatus }) {
             console.error(error);
             setIsConnected(true);
         }
-
     }
+
+    async function toggleDataTerminalMode() {
+        try {
+            if (port.current) {
+                await port.current.setSignals({ dataTerminalReady: !dataTerminalMode, requestToSend: !dataTerminalMode });
+                setDataTerminalMode(!dataTerminalMode);
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
+
 
     async function readSerial() {
         while (isConnected) {
@@ -90,14 +103,13 @@ export default function Serial({ roverCommands, setRoverStatus }) {
             writeSerial();
         }, 50);
         return () => clearInterval(interval);
-    }, [writeSerial]);
+    }, [writeSerial, roverCommands]);
 
     return (
         <>
             {isConnected ? <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button> : <button className='btn btn__primary' onClick={() => connect()}>Connect</button>}
-            <button className='btn' onClick={() => readSerial()}>Read</button>
-            <button className='btn' onClick={() => writeSerial()}>Write</button>
-            <button className='btn' onClick={() => console.log(port, reader, writer)}>Status</button>
+            <button className='btn btn__primary' onClick={() => readSerial()}>Read</button>
+            {dataTerminalMode ? <button className='btn btn__danger' onClick={() => toggleDataTerminalMode()}>Toggle DTR OFF</button> : <button className='btn btn__primary' onClick={() => toggleDataTerminalMode()}>Toggle DTR ON</button>}
         </>
     )
 }
