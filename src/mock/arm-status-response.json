@@ -1,4 +1,9 @@
 {
-    "something": 123,
-    "else": 234
+  "heartbeat_count": 0,
+  "is_operational": 1,
+  "speed": 5,
+  "joint_mode": "D",
+  "joint_angles": [0, 0, 100, 0, 0],
+  "hand_mode": "I",
+  "hand_angles": [0, 0, 0, 0, 0]
 }
