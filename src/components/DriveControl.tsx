@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
+import { DriveFormat } from '../dto/commands';
 
 export default function DriveControl({ roverStatus, setRoverCommands }) {
     useGamepads(gamepads => setGamepads(gamepads));
@@ -51,7 +52,7 @@ export default function DriveControl({ roverStatus, setRoverCommands }) {
 
     function createRoverCommand() {
         const heartbeat_count = roverStatus.heartbeat_count ? roverStatus.heartbeat_count : 0;
-        const newCommand = {
+        const newCommand: DriveFormat = {
             "heartbeat_count": heartbeat_count,
             "is_operational": isOperational,
             "wheel_orientation": parseInt(wheelOrientation),
