@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
-export default function Serial({ roverCommands, setRoverStatus }) {
-    let serialResponse = "";
+export default function Serial({ commands, setStatus }) {
+    let rawSerial: string = "";
     const port = useRef<SerialPort>(undefined);
     const reader = useRef<ReadableStreamDefaultReader>();
     const writer = useRef<WritableStreamDefaultWriter>();
@@ -22,7 +22,7 @@ export default function Serial({ roverCommands, setRoverStatus }) {
         }
     }
 
-    async function disconnect() {
+    function disconnect() {
         try {
             if (reader.current) {
                 reader.current.cancel();
@@ -43,6 +43,55 @@ export default function Serial({ roverCommands, setRoverStatus }) {
         }
     }
 
+    async function readSerial() {
+        while (isConnected) {
+            const { value, done } = await reader.current.read();
+            if (done) {
+                break;
+            }
+            let decoded = await new TextDecoder().decode(value);
+            rawSerial += await decoded;
+            console.log(decoded);
+            if (hasRoverStatus()) {
+                await writeSerial();
+            }
+        }
+    }
+
+    async function writeSerial() {
+        try {
+            if (isConnected && writer.current) {
+                await writer.current.write(new TextEncoder().encode(commands.current + "\n"));
+            }
+        } catch (error) {
+            console.error(error);
+            writer.current.abort();
+        }
+    }
+
+    async function hasRoverStatus() {
+        try {
+            let responseArray: string[] = [];
+            rawSerial.split("\n").forEach(line => {
+                if (line.indexOf("{") < line.indexOf("}")) {
+                    line = line.substring(line.indexOf("{"), line.indexOf("}") + 1);
+                    responseArray.push(line);
+                }
+            })
+
+            let newStatus: string | undefined;
+            newStatus = responseArray.pop() as string;
+            if (newStatus != undefined) {
+                newStatus = JSON.parse(newStatus);
+                setStatus(newStatus);
+                return true;
+            }
+            return false;
+        } catch (error) {
+            return false;
+        }
+    }
+
     async function toggleDataTerminalMode() {
         try {
             if (port.current) {
@@ -55,62 +104,15 @@ export default function Serial({ roverCommands, setRoverStatus }) {
         }
     }
 
-
-    async function readSerial() {
-        while (isConnected) {
-            const { value, done } = await reader.current.read();
-            if (done) {
-                break;
-            }
-            let decoded = await new TextDecoder().decode(value);
-            serialResponse += await decoded;
-            console.log(decoded);
-            parseSerial();
-        }
-    }
-
-    function parseSerial() {
-        let responseArray: string[] = [];
-        serialResponse.split("\n").forEach(line => {
-            if (line.includes('{') && line.includes('}')) {
-                responseArray.push(line);
-            }
-        })
-
-        let newCommand: string | undefined = responseArray.pop();
-        if (newCommand != undefined) {
-            if (newCommand.includes("{") && newCommand.includes("}")) {
-                console.log("newCommand:", newCommand);
-                newCommand = JSON.parse(newCommand);
-                setRoverStatus(newCommand);
-                serialResponse = "";
-            }
-        }
-    }
-
-    async function writeSerial() {
-        try {
-            if (isConnected && writer.current) {
-                await writer.current.write(new TextEncoder().encode(JSON.stringify(roverCommands)));
-                console.log(roverCommands);
-            }
-        } catch (error) {
-            console.error(error);
-            writer.current.abort();
-        }
-    }
-
     useEffect(() => {
-        const interval = setInterval(() => {
-            writeSerial();
-        }, 50);
-        return () => clearInterval(interval);
-    }, [writeSerial, roverCommands]);
+        if (isConnected) {
+            readSerial();
+        }
+    }, [isConnected]);
 
     return (
         <>
             {isConnected ? <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button> : <button className='btn btn__primary' onClick={() => connect()}>Connect</button>}
-            <button className='btn btn__primary' onClick={() => readSerial()}>Read</button>
             {dataTerminalMode ? <button className='btn btn__danger' onClick={() => toggleDataTerminalMode()}>Toggle DTR OFF</button> : <button className='btn btn__primary' onClick={() => toggleDataTerminalMode()}>Toggle DTR ON</button>}
         </>
     )

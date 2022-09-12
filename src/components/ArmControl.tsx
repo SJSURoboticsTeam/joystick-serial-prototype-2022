@@ -1,66 +1,89 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { ArmFormat } from '../dto/commands';
 
-export default function ArmControl({ roverStatus, setRoverCommands }) {
-    const [speed, setSpeed] = useState("0");
-    const [mode, setMode] = useState("D");
-    const [rotundaAngle, setRotundaAngle] = useState("0");
-    const [shoulderAngle, setShoulderAngle] = useState("0");
-    const [elbowAngle, setElbowAngle] = useState("0");
-    const [wristPitch, setWristPitch] = useState("0");
-    const [wristYaw, setWristYaw] = useState("0");
-    const [isOperational, setIsOperational] = useState(1);
-
-    function createRoverCommand() {
-        const heartbeat_count = roverStatus.heartbeat_count ? roverStatus.heartbeat_count : 0;
-        const newCommand = {
-            "heartbeat_count": heartbeat_count,
-            "is_operational": isOperational,
-            "speed": parseInt(speed),
-            "joint_mode": mode,
-            "rotunda_angle": parseInt(rotundaAngle),
-            "shoulder_angle": parseInt(shoulderAngle),
-            "elbow_angle": parseInt(elbowAngle),
-            "wrist_pitch": parseInt(wristPitch),
-            "wrist_yaw": parseInt(wristYaw)
-        };
-        return newCommand;
-    }
+export default function ArmControl({ commands }) {
+    const [armCommands, setArmCommands] = useState<ArmFormat>({ heartbeat_count: 0, is_operational: 1, speed: 0, joint_mode: "D", joint_angles: [0, 0, 0, 0, 0], hand_mode: "C", hand_angles: [0, 0, 0, 0, 0] });
 
     async function handleSubmit(e) {
         e.preventDefault();
-        await setRoverCommands(await createRoverCommand());
+        commands.current = `{"heartbeat_count":${armCommands.heartbeat_count},"is_operational":${armCommands.is_operational},"speed":${armCommands.speed},"joint_mode":"${armCommands.joint_mode}","joint_angles":[${armCommands.joint_angles}],"hand_mode":"${armCommands.hand_mode}","hand_angles":[${armCommands.hand_angles}]}`;
     }
+
+    function handleChange(e) {
+        setArmCommands({ ...armCommands, [e.target.name]: e.target.value });
+    }
+
+    function handleJointAngleChange(e, index) {
+        const newArray = [...armCommands.joint_angles];
+        newArray[index] = e.target.value;
+        setArmCommands({ ...armCommands, joint_angles: newArray });
+    }
+
+    function handleHandAngleChange(e, index) {
+        const newArray = [...armCommands.hand_angles];
+        newArray[index] = e.target.value;
+        setArmCommands({ ...armCommands, hand_angles: newArray });
+    }
+
+    useEffect(() => {
+        handleSubmit(new Event('submit'));
+    }, [armCommands]);
+
 
     return (
         <div className='serial'>
             <h2>Arm Control</h2>
             <form className='serial-form' onSubmit={handleSubmit}>
                 <label className='label_lg'> Speed
-                    <input autoComplete='false' className='input-text' name="speed" value={speed} onChange={(e) => setSpeed(e.target.value)} />
+                    <input className='input-text' type='number' name="speed" value={armCommands.speed} onChange={handleChange} />
                 </label>
 
-                <label className='label_lg'> Mode
-                    <input autoComplete='false' className='input-text' name="mode" value={mode} onChange={(e) => setMode(e.target.value)} />
+                <label className='label_lg'> Joint Mode
+                    <input className='input-text' type='text' name="joint_mode" value={armCommands.joint_mode} onChange={handleChange} />
                 </label>
 
                 <label className='label_lg'> Rotunda Angle
-                    <input autoComplete='false' className='input-text' name="rotundaAngle" value={rotundaAngle} onChange={(e) => setRotundaAngle(e.target.value)} />
+                    <input className='input-text' type='number' name="joint_angles" value={armCommands.joint_angles[0]} onChange={(e) => handleJointAngleChange(e, 0)} />
                 </label>
 
                 <label className='label_lg'> Shoulder Angle
-                    <input autoComplete='false' className='input-text' name="shoulderAngle" value={shoulderAngle} onChange={(e) => setShoulderAngle(e.target.value)} />
+                    <input className='input-text' type='number' name="joint_angles" value={armCommands.joint_angles[1]} onChange={(e) => handleJointAngleChange(e, 1)} />
                 </label>
 
                 <label className='label_lg'> Elbow Angle
-                    <input autoComplete='false' className='input-text' name="elbowAngle" value={elbowAngle} onChange={(e) => setElbowAngle(e.target.value)} />
+                    <input className='input-text' type='number' name="joint_angles" value={armCommands.joint_angles[2]} onChange={(e) => handleJointAngleChange(e, 2)} />
                 </label>
 
-                <label className='label_lg'> Wrist Pitch Angle
-                    <input autoComplete='false' className='input-text' name="wristPitch" value={wristPitch} onChange={(e) => setWristPitch(e.target.value)} />
+                <label className='label_lg'> Left Wrist Angle
+                    <input className='input-text' type='number' name="joint_angles" value={armCommands.joint_angles[3]} onChange={(e) => handleJointAngleChange(e, 3)} />
                 </label>
 
-                <label className='label_lg'> Wrist Yaw Angle
-                    <input autoComplete='false' className='input-text' name="wristYaw" value={wristYaw} onChange={(e) => setWristYaw(e.target.value)} />
+                <label className='label_lg'> Right Wrist Angle
+                    <input className='input-text' type='number' name="joint_angles" value={armCommands.joint_angles[4]} onChange={(e) => handleJointAngleChange(e, 4)} />
+                </label>
+
+                <label className='label_lg'> Hand Mode
+                    <input className='input-text' type='text' name="hand_mode" value={armCommands.hand_mode} onChange={handleChange} />
+                </label>
+
+                <label className='label_lg'> Pinky Finger Angle
+                    <input className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[0]} onChange={(e) => handleHandAngleChange(e, 0)} />
+                </label>
+
+                <label className='label_lg'> Ring Finger Angle
+                    <input className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[1]} onChange={(e) => handleHandAngleChange(e, 1)} />
+                </label>
+
+                <label className='label_lg'> Middle Finger Angle
+                    <input className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[2]} onChange={(e) => handleHandAngleChange(e, 2)} />
+                </label>
+
+                <label className='label_lg'> Index Finger Angle
+                    <input className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[3]} onChange={(e) => handleHandAngleChange(e, 3)} />
+                </label>
+
+                <label className='label_lg'> Thumb Finger Angle
+                    <input className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[4]} onChange={(e) => handleHandAngleChange(e, 4)} />
                 </label>
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
