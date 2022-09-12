@@ -22,7 +22,7 @@ function App() {
       </header>
 
       <div className="grid-container">
-        {toggleMode ? <DriveControl commands={commands} /> : <ArmControl roverStatus={roverStatus} setRoverCommands={setRoverCommands} />}
+        {toggleMode ? <DriveControl commands={commands} /> : <ArmControl commands={commands} />}
         <Status roverStatus={roverStatus} />
         <Camera name="1" src="http://raspberrypi:8000/stream.mjpg" />
         <Camera name="2" src="http://raspberrypi:8001/stream.mjpg" />
