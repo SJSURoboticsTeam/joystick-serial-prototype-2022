@@ -1,10 +1,10 @@
 import { memo } from 'react'
 
-const Status = ({ roverStatus }) => {
+const Status = ({ status }) => {
     return (
         <div>
             <h2>Rover Status</h2>
-            <pre>{JSON.stringify(roverStatus, null, 2)}</pre>
+            <pre>{JSON.stringify(status, null, 2)}</pre>
         </div>
     )
 }

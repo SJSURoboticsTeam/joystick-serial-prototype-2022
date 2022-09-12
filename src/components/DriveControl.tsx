@@ -9,7 +9,7 @@ export default function DriveControl({ commands }) {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        commands.current = await driveCommands;
+        commands.current = `{"heartbeat_count":${driveCommands.heartbeat_count},"is_operational":${driveCommands.is_operational},"wheel_orientation":${driveCommands.wheel_orientation},"drive_mode":"${driveCommands.drive_mode}","speed":${driveCommands.speed},"angle":${driveCommands.angle}}`;
     }
 
     function handleChange(e) {
