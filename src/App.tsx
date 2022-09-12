@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import DriveControl from './components/DriveControl';
 import ArmControl from './components/ArmControl';
@@ -16,8 +16,6 @@ function App() {
     <div>
       <header className='btn-group'>
         <button className='btn btn__primary' onClick={() => setIsDriveControl(!isDriveControl)}>Toggle Mode</button>
-        <button className='btn btn__primary' onClick={() => console.log(commands.current)}>Commands</button>
-        <button className='btn btn__primary' onClick={() => console.log(status)}>Status</button>
         <Serial commands={commands} setStatus={setStatus} />
       </header>
 

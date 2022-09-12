@@ -6,7 +6,7 @@ export default function ArmControl({ commands }) {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        commands.current = await armCommands;
+        commands.current = `{"heartbeat_count":${armCommands.heartbeat_count},"is_operational":${armCommands.is_operational},"speed":${armCommands.speed},"joint_mode":"${armCommands.joint_mode}","joint_angles":[${armCommands.joint_angles}],"hand_mode":"${armCommands.hand_mode}","hand_angles":[${armCommands.hand_angles}]}`;
     }
 
     function handleChange(e) {

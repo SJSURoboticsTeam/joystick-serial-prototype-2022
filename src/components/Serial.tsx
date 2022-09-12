@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 export default function Serial({ commands, setStatus }) {
-    let serialResponse: string = "";
+    let rawSerial: string = "";
     const port = useRef<SerialPort>(undefined);
     const reader = useRef<ReadableStreamDefaultReader>();
     const writer = useRef<WritableStreamDefaultWriter>();
@@ -43,19 +43,6 @@ export default function Serial({ commands, setStatus }) {
         }
     }
 
-    async function toggleDataTerminalMode() {
-        try {
-            if (port.current) {
-                await port.current.setSignals({ dataTerminalReady: !dataTerminalMode, requestToSend: !dataTerminalMode });
-                setDataTerminalMode(!dataTerminalMode);
-            }
-        }
-        catch (error) {
-            console.error(error);
-        }
-    }
-
-
     async function readSerial() {
         while (isConnected) {
             const { value, done } = await reader.current.read();
@@ -63,27 +50,10 @@ export default function Serial({ commands, setStatus }) {
                 break;
             }
             let decoded = await new TextDecoder().decode(value);
-            serialResponse += await decoded;
+            rawSerial += await decoded;
             console.log(decoded);
-            // parseSerial();
-        }
-    }
-
-    function parseSerial() {
-        let responseArray: string[] = [];
-        serialResponse.split("\n").forEach(line => {
-            if (line.includes('{') && line.includes('}')) {
-                responseArray.push(line);
-            }
-        })
-
-        let newResponseStatus: string | undefined = responseArray.pop();
-        if (newResponseStatus != undefined) {
-            if (newResponseStatus.includes("{") && newResponseStatus.includes("}")) {
-                console.log("newResponseStatus:", newResponseStatus);
-                newResponseStatus = JSON.parse(newResponseStatus);
-                setStatus(newResponseStatus);
-                serialResponse = "";
+            if (hasRoverStatus()) {
+                await writeSerial();
             }
         }
     }
@@ -99,18 +69,50 @@ export default function Serial({ commands, setStatus }) {
         }
     }
 
-    // useEffect(() => {
-    //     const interval = setInterval(() => {
-    //         writeSerial();
-    //     }, 50);
-    //     return () => clearInterval(interval);
-    // }, [writeSerial]);
+    async function hasRoverStatus() {
+        try {
+            let responseArray: string[] = [];
+            rawSerial.split("\n").forEach(line => {
+                if (line.indexOf("{") < line.indexOf("}")) {
+                    line = line.substring(line.indexOf("{"), line.indexOf("}") + 1);
+                    responseArray.push(line);
+                }
+            })
+
+            let newStatus: string | undefined;
+            newStatus = responseArray.pop() as string;
+            if (newStatus != undefined) {
+                newStatus = JSON.parse(newStatus);
+                setStatus(newStatus);
+                return true;
+            }
+            return false;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    async function toggleDataTerminalMode() {
+        try {
+            if (port.current) {
+                await port.current.setSignals({ dataTerminalReady: !dataTerminalMode, requestToSend: !dataTerminalMode });
+                setDataTerminalMode(!dataTerminalMode);
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
+
+    useEffect(() => {
+        if (isConnected) {
+            readSerial();
+        }
+    }, [isConnected]);
 
     return (
         <>
             {isConnected ? <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button> : <button className='btn btn__primary' onClick={() => connect()}>Connect</button>}
-            <button className='btn btn__primary' onClick={() => readSerial()}>Read</button>
-            <button className='btn btn__primary' onClick={() => writeSerial()}>Write</button>
             {dataTerminalMode ? <button className='btn btn__danger' onClick={() => toggleDataTerminalMode()}>Toggle DTR OFF</button> : <button className='btn btn__primary' onClick={() => toggleDataTerminalMode()}>Toggle DTR ON</button>}
         </>
     )
