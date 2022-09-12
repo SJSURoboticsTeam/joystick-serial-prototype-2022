@@ -2,14 +2,14 @@ import { useEffect, useState, useRef } from 'react'
 import { useGamepads } from 'react-gamepads';
 import { DriveFormat } from '../dto/commands';
 
-export default function DriveControl({ roverStatus, setRoverCommands }) {
+export default function DriveControl({ commands }) {
     useGamepads(gamepads => setGamepads(gamepads[0]));
-    const [gamepads, setGamepads] = useState<Gamepad>();
-    const [driveCommands, setDriveCommands] = useState<DriveFormat>({ heartbeat_count: 0, is_operational: 1, wheel_orientation: 0, drive_mode: "D", speed: 0, angle: 0 });
+    const [gamepad, setGamepads] = useState<Gamepad>();
+    const [driveCommands, setDriveCommands] = useState<DriveFormat>({ heartbeat_count: 0, is_operational: 1, wheel_orientation: 0, speed: 0, angle: 0, drive_mode: "D" });
 
     async function handleSubmit(e) {
         e.preventDefault();
-        console.log(driveCommands);
+        commands.current = await driveCommands;
     }
 
     function handleChange(e) {
@@ -17,12 +17,13 @@ export default function DriveControl({ roverStatus, setRoverCommands }) {
     }
 
     useEffect(() => {
-        const newWheelOrientation: number = gamepads?.buttons[6]?.value ? 0 : gamepads?.buttons[8]?.value ? 1 : gamepads?.buttons[10]?.value ? 2 : driveCommands.wheel_orientation;
-        const newDriveMode: string = gamepads?.buttons[7]?.value ? "D" : gamepads?.buttons[9]?.value ? "T" : gamepads?.buttons[11]?.value ? "S" : driveCommands.drive_mode;
-        const newSpeed: number = parseInt((-(gamepads?.axes[1]) * 100).toFixed(0));
-        const newAngle: number = parseInt(((gamepads?.axes[2]) * 12).toFixed(0));
+        const newWheelOrientation: number = gamepad?.buttons[6]?.value ? 0 : gamepad?.buttons[8]?.value ? 1 : gamepad?.buttons[10]?.value ? 2 : driveCommands.wheel_orientation;
+        const newDriveMode: string = gamepad?.buttons[7]?.value ? "D" : gamepad?.buttons[9]?.value ? "T" : gamepad?.buttons[11]?.value ? "S" : driveCommands.drive_mode;
+        const newSpeed: number = gamepad?.axes[1] && gamepad?.buttons[0].pressed ? parseInt((-(gamepad?.axes[1]) * 100).toFixed(0)) : 0;
+        const newAngle: number = gamepad?.axes[0] ? parseInt((gamepad?.axes[0] * 12).toFixed(0)) : driveCommands.angle;
         setDriveCommands({ ...driveCommands, wheel_orientation: newWheelOrientation, drive_mode: newDriveMode, angle: newAngle, speed: newSpeed });
-    }, [gamepads]);
+        handleSubmit(new Event('submit'));
+    }, [gamepad]);
 
     return (
         <div className='serial'>
