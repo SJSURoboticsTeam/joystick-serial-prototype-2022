@@ -1,89 +1,44 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useGamepads } from 'react-gamepads';
 import { DriveFormat } from '../dto/commands';
 
 export default function DriveControl({ roverStatus, setRoverCommands }) {
-    useGamepads(gamepads => setGamepads(gamepads));
-    const [gamepads, setGamepads] = useState({});
-    const [mode, setMode] = useState("D");
-    const [speed, setSpeed] = useState("0");
-    const [angle, setAngle] = useState("0");
-    const [wheelOrientation, setWheelOrientation] = useState("0");
-    const [isOperational, setIsOperational] = useState(1);
-
-    async function getGamepadCommands() {
-        const newAngle: number = (gamepads[0]?.axes[2]) * 12;
-        const newSpeed: number = -(gamepads[0]?.axes[1]) * 100;
-        const truncatedAngle = parseInt(newAngle.toFixed(0));
-        const truncatedSpeed = parseInt(newSpeed.toFixed(0));
-
-        setAngle(angle);
-        setSpeed("0");
-
-        if (gamepads[0]?.buttons[0]?.pressed) {
-            setSpeed(truncatedSpeed.toString());
-            setAngle(truncatedAngle.toString());
-        }
-        if (gamepads[0]?.buttons[7]?.value) {
-            setMode("D");
-        }
-        if (gamepads[0]?.buttons[9]?.value) {
-            setMode("T");
-        }
-        if (gamepads[0]?.buttons[11]?.value) {
-            setMode("S");
-        }
-        if (gamepads[0]?.buttons[6]?.value) {
-            setWheelOrientation("0");
-        }
-        if (gamepads[0]?.buttons[8]?.value) {
-            setWheelOrientation("1");
-        }
-        if (gamepads[0]?.buttons[10]?.value) {
-            setWheelOrientation("2");
-        }
-        await setRoverCommands(await createRoverCommand());
-    }
+    useGamepads(gamepads => setGamepads(gamepads[0]));
+    const [gamepads, setGamepads] = useState<Gamepad>();
+    const [driveCommands, setDriveCommands] = useState<DriveFormat>({ heartbeat_count: 0, is_operational: 1, wheel_orientation: 0, drive_mode: "D", speed: 0, angle: 0 });
 
     async function handleSubmit(e) {
         e.preventDefault();
-        await setRoverCommands(await createRoverCommand());
+        console.log(driveCommands);
     }
 
-    function createRoverCommand() {
-        const heartbeat_count = roverStatus.heartbeat_count ? roverStatus.heartbeat_count : 0;
-        const newCommand: DriveFormat = {
-            "heartbeat_count": heartbeat_count,
-            "is_operational": isOperational,
-            "wheel_orientation": parseInt(wheelOrientation),
-            "drive_mode": mode,
-            "speed": parseInt(speed),
-            "angle": parseInt(angle)
-        };
-        return newCommand;
+    function handleChange(e) {
+        setDriveCommands({ ...driveCommands, [e.target.name]: e.target.value });
     }
 
     useEffect(() => {
-        getGamepadCommands();
-    },
-        [gamepads[0]]
-    )
+        const newWheelOrientation: number = gamepads?.buttons[6]?.value ? 0 : gamepads?.buttons[8]?.value ? 1 : gamepads?.buttons[10]?.value ? 2 : driveCommands.wheel_orientation;
+        const newDriveMode: string = gamepads?.buttons[7]?.value ? "D" : gamepads?.buttons[9]?.value ? "T" : gamepads?.buttons[11]?.value ? "S" : driveCommands.drive_mode;
+        const newSpeed: number = parseInt((-(gamepads?.axes[1]) * 100).toFixed(0));
+        const newAngle: number = parseInt(((gamepads?.axes[2]) * 12).toFixed(0));
+        setDriveCommands({ ...driveCommands, wheel_orientation: newWheelOrientation, drive_mode: newDriveMode, angle: newAngle, speed: newSpeed });
+    }, [gamepads]);
 
     return (
         <div className='serial'>
             <h2>Drive Control</h2>
             <form className='serial-form' onSubmit={handleSubmit}>
-                <label className='label_lg'> Speed
-                    <input autoComplete='false' className='input-text' value={speed} onChange={(e) => setSpeed(e.target.value)} />
-                </label>
-                <label className='label_lg'> Angle
-                    <input autoComplete='false' className='input-text' value={angle} onChange={(e) => setAngle(e.target.value)} />
-                </label>
                 <label className='label_lg'> Drive Mode
-                    <input autoComplete='false' className='input-text' value={mode} onChange={(e) => setMode(e.target.value)} />
+                    <input className='input-text' type='text' name='drive_mode' value={driveCommands.drive_mode} onChange={handleChange} />
                 </label>
                 <label className='label_lg'> Wheel Orientation
-                    <input autoComplete='false' className='input-text' value={wheelOrientation} onChange={(e) => setWheelOrientation(e.target.value)} />
+                    <input className='input-text' type='number' name='wheel_orientation' value={driveCommands.wheel_orientation} onChange={handleChange} />
+                </label>
+                <label className='label_lg'> Speed
+                    <input className='input-text' type='number' name='speed' value={driveCommands.speed} onChange={handleChange} />
+                </label>
+                <label className='label_lg'> Angle
+                    <input className='input-text' type='number' name='angle' value={driveCommands.angle} onChange={handleChange} />
                 </label>
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
