@@ -5,31 +5,15 @@ const port = 5000;
 const app = express();
 const networkInterfaces = os.networkInterfaces();
 
-let driveStatus: any = {
+const defaultResponse = {
     "heartbeat_count": 0,
     "is_operational": 0
 };
-let armStatus: any = {
-    "heartbeat_count": 0,
-    "is_operational": 0
-};
-let armCommands: any = {
-    "heartbeat_count": 0,
-    "is_operational": 1,
-    "speed": 5,
-    "joint_mode": "D",
-    "joint_angles": [0, 0, 0, 0, 0],
-    "hand_mode": "I",
-    "hand_angles": [0, 0, 0, 0, 0]
-};
-let driveCommands: any = {
-    "heartbeat_count": 0,
-    "is_operational": 1,
-    "wheel_orientation": 0,
-    "drive_mode": "D",
-    "speed": 0,
-    "angle": 0
-};
+
+let driveStatus: any = defaultResponse;
+let armStatus: any = defaultResponse;
+let armCommands: any = defaultResponse;
+let driveCommands: any = defaultResponse;
 
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true }));
