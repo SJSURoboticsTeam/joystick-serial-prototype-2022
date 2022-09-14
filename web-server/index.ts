@@ -5,43 +5,66 @@ const port = 5000;
 const app = express();
 const networkInterfaces = os.networkInterfaces();
 
-let armStatus = "";
-let armCommands = `{"heartbeat_count":0,"is_operational":1,"speed":0,"joint_mode":"D","joint_angles":[0,0,0,0,0],"hand_mode":"I","hand_angles":[0,0,0,0,0]}`;
-let driveStatus = "";
-let driveCommands = `{"heartbeat_count":0,"is_operational":1,"wheel_orientation":0,"drive_mode":"D","speed":0,"angle":0}`;
+let driveStatus: any = {
+    "heartbeat_count": 0,
+    "is_operational": 0
+};
+let armStatus: any = {
+    "heartbeat_count": 0,
+    "is_operational": 0
+};
+let armCommands: any = {
+    "heartbeat_count": 0,
+    "is_operational": 1,
+    "speed": 5,
+    "joint_mode": "D",
+    "joint_angles": [0, 0, 0, 0, 0],
+    "hand_mode": "I",
+    "hand_angles": [0, 0, 0, 0, 0]
+};
+let driveCommands: any = {
+    "heartbeat_count": 0,
+    "is_operational": 1,
+    "wheel_orientation": 0,
+    "drive_mode": "D",
+    "speed": 0,
+    "angle": 0
+};
 
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname));
 
 app.get("/", (req, res) => {
     res.send("Mission Control Web Server - Built using ExpressJS");
 });
 
-app.get("/drive", (req, res) => {
-    driveStatus = JSON.stringify(req.query);
-    console.log(driveStatus);
-    res.send(driveCommands)
+app.get("/status", (req, res) => {
+    console.log("GET /status");
+    res.json({ armStatus, driveStatus });
 });
 
-app.post("/drive", (req, res) => {
-    driveCommands = req.body;
+app.get("/drive", (req, res) => {
+    driveStatus = (req.query);
+    console.log("GET /drive");
     res.send(driveCommands);
 });
 
 app.get("/arm", (req, res) => {
-    armStatus = JSON.stringify(req.query);
-    console.log(armStatus);
+    armStatus = (req.query);
+    console.log("GET /arm");
     res.send(armCommands);
+});
+
+app.post("/drive", (req, res) => {
+    driveCommands = (req.body);
+    console.log("POST /drive");
+    res.send("Drive Commands Received");
 });
 
 app.post("/arm", (req, res) => {
-    armCommands = req.body;
-    res.send(armCommands);
-});
-
-app.get("/status", (req, res) => {
-    res.json({ armStatus, driveStatus });
+    armCommands = (req.body);
+    console.log("POST /arm");
+    res.send("Arm Commands Received");
 });
 
 app.listen(port, () => {
