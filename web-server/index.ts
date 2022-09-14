@@ -6,9 +6,9 @@ const app = express();
 const networkInterfaces = os.networkInterfaces();
 
 let armStatus = "";
-let armCommands = "";
+let armCommands = `{"heartbeat_count":0,"is_operational":1,"speed":0,"joint_mode":"D","joint_angles":[0,0,0,0,0],"hand_mode":"I","hand_angles":[0,0,0,0,0]}`;
 let driveStatus = "";
-let driveCommands = "";
+let driveCommands = `{"heartbeat_count":0,"is_operational":1,"wheel_orientation":0,"drive_mode":"D","speed":0,"angle":0}`;
 
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true }));
@@ -19,23 +19,29 @@ app.get("/", (req, res) => {
 });
 
 app.get("/drive", (req, res) => {
-    res.send({
-        message: `{"heartbeat_count":0,"is_operational":1,"arm_speed":0,"rotunda_angle":0,"shoulder_angle":0,"elbow_angle":0,"wrist_pitch_angle":0,"wrist_yaw_angle":0,"joint_mode":"D","pinky_angle":0,"ring_angle":0,"middle_angle":0,"index_angle":0,"thumb_angle":0,"hand_mode":"D"}`,
-    });
+    driveStatus = JSON.stringify(req.query);
+    console.log(driveStatus);
+    res.send(driveCommands)
 });
 
 app.post("/drive", (req, res) => {
-    console.log(req.body);
+    driveCommands = req.body;
+    res.send(driveCommands);
 });
 
 app.get("/arm", (req, res) => {
-    res.send({
-        message: `{"heartbeat_count":0,"is_operational":1,"arm_speed":0,"rotunda_angle":0,"shoulder_angle":0,"elbow_angle":0,"wrist_pitch_angle":0,"wrist_yaw_angle":0,"joint_mode":"D","pinky_angle":0,"ring_angle":0,"middle_angle":0,"index_angle":0,"thumb_angle":0,"hand_mode":"D"}`,
-    });
+    armStatus = JSON.stringify(req.query);
+    console.log(armStatus);
+    res.send(armCommands);
 });
 
 app.post("/arm", (req, res) => {
-    console.log(req.body);
+    armCommands = req.body;
+    res.send(armCommands);
+});
+
+app.get("/status", (req, res) => {
+    res.json({ armStatus, driveStatus });
 });
 
 app.listen(port, () => {
