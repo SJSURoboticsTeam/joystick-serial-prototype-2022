@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { ArmFormat } from '../dto/commands';
 
 export default function ArmControl({ commands }) {
-    const [armCommands, setArmCommands] = useState<ArmFormat>({ heartbeat_count: 0, is_operational: 1, speed: 0, joint_mode: "D", joint_angles: [0, 0, 0, 0, 0], hand_mode: "C", hand_angles: [0, 0, 0, 0, 0] });
+    const [armCommands, setArmCommands] = useState<ArmFormat>({ heartbeat_count: 0, is_operational: 1, speed: 0, joint_mode: "S", joint_angles: [0, 0, 0, 0, 0], hand_mode: "I", hand_angles: [88, 88, 88, 88, 88] });
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -27,7 +27,7 @@ export default function ArmControl({ commands }) {
 
     useEffect(() => {
         handleSubmit(new Event('submit'));
-    }, [armCommands]);
+    }, []);
 
 
     return (

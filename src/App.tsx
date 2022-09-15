@@ -10,7 +10,7 @@ import { ArmFormat, DriveFormat } from './dto/commands';
 function App() {
   const commands = useRef<string>("");
   const [isDriveControl, setIsDriveControl] = useState(true)
-  const [status, setStatus] = useState<ArmFormat | DriveFormat>({ heartbeat_count: 0, is_operational: 1, wheel_orientation: 0, drive_mode: "D", speed: 0, angle: 0 });
+  const [status, setStatus] = useState<ArmFormat | DriveFormat>();
 
   return (
     <div>

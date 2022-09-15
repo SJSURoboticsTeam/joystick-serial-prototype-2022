@@ -61,6 +61,7 @@ export default function Serial({ commands, setStatus }) {
     async function writeSerial() {
         try {
             if (isConnected && writer.current) {
+                // console.log(commands.current);
                 await writer.current.write(new TextEncoder().encode(commands.current + "\n"));
             }
         } catch (error) {
