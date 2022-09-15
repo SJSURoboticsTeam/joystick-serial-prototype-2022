@@ -5,7 +5,7 @@ import { DriveFormat } from '../dto/commands';
 export default function DriveControl({ commands }) {
     useGamepads(gamepads => setGamepads(gamepads[0]));
     const [gamepad, setGamepads] = useState<Gamepad>();
-    const [driveCommands, setDriveCommands] = useState<DriveFormat>({ heartbeat_count: 0, is_operational: 1, wheel_orientation: 0, speed: 0, angle: 0, drive_mode: "D" });
+    const [driveCommands, setDriveCommands] = useState<DriveFormat>({ heartbeat_count: 0, is_operational: 1, wheel_orientation: 0, drive_mode: "D", speed: 0, angle: 0 });
 
     async function handleSubmit(e) {
         e.preventDefault();
