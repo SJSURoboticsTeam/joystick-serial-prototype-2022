@@ -7,6 +7,7 @@ export default function ArmControl({ commands }) {
     async function handleSubmit(e) {
         e.preventDefault();
         commands.current = `{"heartbeat_count":${armCommands.heartbeat_count},"is_operational":${armCommands.is_operational},"speed":${armCommands.speed},"joint_mode":"${armCommands.joint_mode}","joint_angles":[${armCommands.joint_angles}],"hand_mode":"${armCommands.hand_mode}","hand_angles":[${armCommands.hand_angles}]}`;
+        console.log(armCommands);
     }
 
     function handleChange(e) {
@@ -39,7 +40,10 @@ export default function ArmControl({ commands }) {
                 </label>
 
                 <label className='label_lg'> Joint Mode
-                    <input className='input-text' type='text' name="joint_mode" value={armCommands.joint_mode} onChange={handleChange} />
+                    <select className='input-text' name='joint_mode' value={armCommands.joint_mode} onChange={handleChange}>
+                        <option value="S">Simultaneous</option>
+                        <option value="C">Condensed</option>
+                    </select>
                 </label>
 
                 <label className='label_lg'> Rotunda Angle
@@ -63,7 +67,12 @@ export default function ArmControl({ commands }) {
                 </label>
 
                 <label className='label_lg'> Hand Mode
-                    <input className='input-text' type='text' name="hand_mode" value={armCommands.hand_mode} onChange={handleChange} />
+                    <select className='input-text' name="hand_mode" value={armCommands.hand_mode} onChange={handleChange} >
+                        <option value="C">Closed</option>
+                        <option value="O">Open</option>
+                        <option value="I">Individual</option>
+                        <option value="S">Simultaneous</option>
+                    </select>
                 </label>
 
                 <label className='label_lg'> Pinky Finger Angle

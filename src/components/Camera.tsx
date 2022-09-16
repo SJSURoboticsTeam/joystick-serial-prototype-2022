@@ -1,10 +1,10 @@
 import React from 'react'
 
-export default function Camera(props) {
+export default function Camera({ name, src }) {
     return (
         <div className='image-container'>
-            <h3 className='img-label'>Camera {props.name}</h3>
-            {/* <img src={props.src} /> */}
+            <h3 className='img-label'>Camera {name}</h3>
+            <img src={src} alt={name} />
         </div>
     )
 }

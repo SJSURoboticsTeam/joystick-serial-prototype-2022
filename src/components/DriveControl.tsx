@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
 import { DriveFormat } from '../dto/commands';
 
@@ -29,18 +29,30 @@ export default function DriveControl({ commands }) {
         <div className='serial'>
             <h2>Drive Control</h2>
             <form className='serial-form' onSubmit={handleSubmit}>
-                <label className='label_lg'> Drive Mode
-                    <input className='input-text' type='text' name='drive_mode' value={driveCommands.drive_mode} onChange={handleChange} />
+                <label className='label_lg'> Joint Mode
+                    <select className='input-text' name='drive_mode' value={driveCommands.drive_mode} onChange={handleChange}>
+                        <option value="D">Drive</option>
+                        <option value="S">Spin</option>
+                        <option value="T">Translate</option>
+                    </select>
                 </label>
+
                 <label className='label_lg'> Wheel Orientation
-                    <input className='input-text' type='number' name='wheel_orientation' value={driveCommands.wheel_orientation} onChange={handleChange} />
+                    <select className='input-text' name='wheel_orientation' value={driveCommands.wheel_orientation} onChange={handleChange}>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
                 </label>
+
                 <label className='label_lg'> Speed
                     <input className='input-text' type='number' name='speed' value={driveCommands.speed} onChange={handleChange} />
                 </label>
+
                 <label className='label_lg'> Angle
                     <input className='input-text' type='number' name='angle' value={driveCommands.angle} onChange={handleChange} />
                 </label>
+
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
         </div >

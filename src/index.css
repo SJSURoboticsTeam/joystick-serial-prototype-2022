@@ -87,6 +87,10 @@ input[type="text"] {
   }
 }
 
+select {
+  background: white;
+}
+
 .form-group>input[type="text"] {
   display: inline-block;
   margin-top: 0.4rem;
