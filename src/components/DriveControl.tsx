@@ -46,11 +46,11 @@ export default function DriveControl({ commands }) {
                 </label>
 
                 <label className='label_lg'> Speed
-                    <input className='input-text' type='number' name='speed' value={driveCommands.speed} onChange={handleChange} />
+                    <input autoComplete='off' className='input-text' type='number' name='speed' max={100} min={-100} value={driveCommands.speed} onChange={handleChange} />
                 </label>
 
                 <label className='label_lg'> Angle
-                    <input className='input-text' type='number' name='angle' value={driveCommands.angle} onChange={handleChange} />
+                    <input autoComplete='off' className='input-text' type='number' name='angle' value={driveCommands.angle} onChange={handleChange} />
                 </label>
 
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>

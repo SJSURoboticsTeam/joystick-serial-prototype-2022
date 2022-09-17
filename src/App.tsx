@@ -6,17 +6,20 @@ import Camera from './components/Camera'
 import Status from './components/Status';
 import Serial from './components/Serial'
 import { ArmFormat, DriveFormat } from './dto/commands';
+import Wifi from './components/Wifi';
 
 function App() {
   const commands = useRef<string>("");
   const [isDriveControl, setIsDriveControl] = useState(true)
+  const [isSerial, setIsSerial] = useState(true);
   const [status, setStatus] = useState<ArmFormat | DriveFormat>();
 
   return (
     <div>
       <header className='btn-group'>
         <button className='btn btn__primary' onClick={() => setIsDriveControl(!isDriveControl)}>Toggle Mode</button>
-        <Serial commands={commands} setStatus={setStatus} />
+        <button className='btn btn__primary' onClick={() => setIsSerial(!isSerial)}>Toggle Connection Type</button>
+        {isSerial ? <Serial commands={commands} setStatus={setStatus} /> : <Wifi commands={commands} setStatus={setStatus} />}
       </header>
 
       <div className="grid-container">
