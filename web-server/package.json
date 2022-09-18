@@ -4,14 +4,15 @@
   "description": "SJSU Robotics 2022 web server for controlling the rover over WiFi",
   "main": "index.js",
   "scripts": {
-    "start": "node build/index.js",
-    "start:dev": "nodemon index.ts",
+    "start": "nodemon index.ts",
     "build": "tsc --project ./",
     "test": "test"
   },
   "author": "SJSU Robotics",
   "license": "ISC",
   "dependencies": {
+    "@types/cors": "^2.8.12",
+    "cors": "^2.8.5",
     "express": "^4.18.1"
   },
   "devDependencies": {

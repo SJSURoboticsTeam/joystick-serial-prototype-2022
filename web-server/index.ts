@@ -1,4 +1,5 @@
 import os from "os";
+import cors from 'cors'
 import express from "express";
 
 const port = 5000;
@@ -15,16 +16,12 @@ let armStatus: any = defaultResponse;
 let armCommands: any = defaultResponse;
 let driveCommands: any = defaultResponse;
 
+app.use(cors());
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
     res.send("Mission Control Web Server - Built using ExpressJS");
-});
-
-app.get("/status", (req, res) => {
-    console.log("GET /status");
-    res.json({ armStatus, driveStatus });
 });
 
 app.get("/drive", (req, res) => {
@@ -33,22 +30,32 @@ app.get("/drive", (req, res) => {
     res.send(driveCommands);
 });
 
-app.get("/arm", (req, res) => {
-    armStatus = (req.query);
-    console.log("GET /arm");
-    res.send(armCommands);
-});
-
 app.post("/drive", (req, res) => {
     driveCommands = (req.body);
     console.log("POST /drive");
     res.send("Drive Commands Received");
 });
 
+app.get("/drive/status", (req, res) => {
+    console.log("GET drive/status");
+    res.json(driveStatus);
+});
+
+app.get("/arm", (req, res) => {
+    armStatus = (req.query);
+    console.log("GET /arm");
+    res.send(armCommands);
+});
+
 app.post("/arm", (req, res) => {
     armCommands = (req.body);
     console.log("POST /arm");
     res.send("Arm Commands Received");
+});
+
+app.get("/arm/status", (req, res) => {
+    console.log("GET arm/status");
+    res.json(armStatus);
 });
 
 app.listen(port, () => {
