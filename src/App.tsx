@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react';
 
-import DriveControl from './components/DriveControl';
-import ArmControl from './components/ArmControl';
+import Wifi from './components/Wifi';
 import Camera from './components/Camera'
 import Status from './components/Status';
 import Serial from './components/Serial'
+import ArmControl from './components/ArmControl';
+import DriveControl from './components/DriveControl';
 import { ArmFormat, DriveFormat } from './dto/commands';
-import Wifi from './components/Wifi';
 
 function App() {
   const commands = useRef<string>("");

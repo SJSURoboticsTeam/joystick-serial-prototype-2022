@@ -3,7 +3,8 @@ import { useGamepads } from 'react-gamepads';
 import { DriveFormat } from '../dto/commands';
 
 export default function DriveControl({ commands }) {
-    useGamepads(gamepads => setGamepads(gamepads[0]));
+    useGamepads(gamepads => { setGamepads(gamepads[0]) }); // will use the first gamepad connected
+
     const [gamepad, setGamepads] = useState<Gamepad>();
     const [driveCommands, setDriveCommands] = useState<DriveFormat>({ heartbeat_count: 0, is_operational: 1, wheel_orientation: 0, drive_mode: "D", speed: 0, angle: 0 });
 
@@ -17,12 +18,24 @@ export default function DriveControl({ commands }) {
     }
 
     useEffect(() => {
-        const newWheelOrientation: number = gamepad?.buttons[6]?.value ? 0 : gamepad?.buttons[8]?.value ? 1 : gamepad?.buttons[10]?.value ? 2 : driveCommands.wheel_orientation;
-        const newDriveMode: string = gamepad?.buttons[7]?.value ? "D" : gamepad?.buttons[9]?.value ? "T" : gamepad?.buttons[11]?.value ? "S" : driveCommands.drive_mode;
-        const newSpeed: number = (gamepad?.axes[1] && gamepad?.buttons[0].pressed) ? parseInt((-(gamepad?.axes[1]) * 100).toFixed(0)) : 0;
-        const newAngle: number = gamepad?.axes[0] ? parseInt((gamepad?.axes[0] * 12).toFixed(0)) : driveCommands.angle;
-        setDriveCommands({ ...driveCommands, wheel_orientation: newWheelOrientation, drive_mode: newDriveMode, angle: newAngle, speed: newSpeed });
-        handleSubmit(new Event('submit'));
+        if (gamepad?.id === "Xbox 360 Controller (XInput STANDARD GAMEPAD)") {
+            const newWheelOrientation: number = gamepad?.buttons[14]?.value ? 0 : gamepad?.buttons[12]?.value ? 1 : gamepad?.buttons[15]?.value ? 2 : driveCommands.wheel_orientation;
+            const newDriveMode: string = gamepad?.buttons[3]?.value ? "D" : gamepad?.buttons[2]?.value ? "T" : gamepad?.buttons[1]?.value ? "S" : driveCommands.drive_mode;
+            const forwardSpeed: number = (gamepad?.buttons[7]?.value) ? parseInt((-(gamepad?.buttons[7]?.value) * -100).toFixed(0)) : 0;
+            const reverseSpeed: number = (gamepad?.buttons[6]?.value) ? parseInt((-(gamepad?.buttons[6]?.value) * 100).toFixed(0)) : 0;
+            const newSpeed: number = (gamepad?.buttons[0]?.pressed) ? driveCommands.speed : forwardSpeed + reverseSpeed;
+            const newAngle: number = gamepad?.axes[0] ? parseInt((gamepad?.axes[0] * 12).toFixed(0)) : driveCommands.angle;
+            setDriveCommands({ ...driveCommands, wheel_orientation: newWheelOrientation, drive_mode: newDriveMode, angle: newAngle, speed: newSpeed });
+            handleSubmit(new Event('submit'));
+        }
+        if (gamepad?.id === "Extreme 3D pro (Vendor: 046d Product: c215)") {
+            const newWheelOrientation: number = gamepad?.buttons[6]?.value ? 0 : gamepad?.buttons[8]?.value ? 1 : gamepad?.buttons[10]?.value ? 2 : driveCommands.wheel_orientation;
+            const newDriveMode: string = gamepad?.buttons[7]?.value ? "D" : gamepad?.buttons[9]?.value ? "T" : gamepad?.buttons[11]?.value ? "S" : driveCommands.drive_mode;
+            const newSpeed: number = gamepad?.buttons[1].pressed ? driveCommands.speed : (gamepad?.axes[1] && gamepad?.buttons[0].pressed) ? parseInt((-(gamepad?.axes[1]) * 100).toFixed(0)) : 0;
+            const newAngle: number = gamepad?.axes[0] ? parseInt((gamepad?.axes[0] * 12).toFixed(0)) : driveCommands.angle;
+            setDriveCommands({ ...driveCommands, wheel_orientation: newWheelOrientation, drive_mode: newDriveMode, angle: newAngle, speed: newSpeed });
+            handleSubmit(new Event('submit'));
+        }
     }, [gamepad]);
 
     return (
