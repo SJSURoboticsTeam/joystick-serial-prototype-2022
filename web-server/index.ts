@@ -66,6 +66,7 @@ app.get("/gps", (req, res) => {
 
 app.post("/gps", (req, res) => {
     gpsStatus = (req.body);
+    console.log(req.body)
     console.log("POST /gps");
     res.send("GPS Data Received");
 });
