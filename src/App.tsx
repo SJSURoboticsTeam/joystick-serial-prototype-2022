@@ -7,6 +7,7 @@ import Serial from './components/Serial'
 import ArmControl from './components/ArmControl';
 import DriveControl from './components/DriveControl';
 import { ArmFormat, DriveFormat } from './dto/commands';
+import MapContainer from './components/GpsMap';
 
 function App() {
   const commands = useRef<string>("");
@@ -29,6 +30,7 @@ function App() {
         <Camera name="1" src="http://raspberrypi:8001/stream.mjpg" />
         <Camera name="2" src="http://raspberrypi:8002/stream.mjpg" />
         <Camera name="3" src="http://raspberrypi:8003/stream.mjpg" />
+        <MapContainer />
       </div>
     </div>
   );
