@@ -9,7 +9,7 @@ function MapContainer(props) {
   }
 
   useEffect(() => {
-    fetch('http://localhost:5000/gps')
+    fetch('http://192.168.50.243:5000/gps')
       .then(res => res.json())
       .then((data) => {
         console.log(data);

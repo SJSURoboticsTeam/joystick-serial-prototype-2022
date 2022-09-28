@@ -11,7 +11,7 @@ const defaultResponse = {
     "is_operational": 0
 };
 
-let gpsStatus: any = { longitude: 0, latitude: 0 };
+let gpsStatus: { longitude: number, latitude: number } = { longitude: 0, latitude: 0 };
 let driveStatus: any = defaultResponse;
 let armStatus: any = defaultResponse;
 let armCommands: any = defaultResponse;
@@ -65,7 +65,7 @@ app.get("/gps", (req, res) => {
 });
 
 app.post("/gps", (req, res) => {
-    gpsStatus = (req.body);
+    gpsStatus = ({ longitude: parseFloat(req.body.longitude), latitude: parseFloat(req.body.latitude) });
     console.log(req.body)
     console.log("POST /gps");
     res.send("GPS Data Received");
