@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  frontend:
+    container_name: mission-control-frontend
+    image: mission-control-frontend
+    build:
+      context: .
+      target: development
+    volumes:
+      - ./src:/app/src
+    ports:
+      - 3000:3000
+  backend:
+    container_name: mission-control-backend
+    image: mission-control-backend
+    build:
+      context: ./server
+      target: development
+    ports:
+      - 5000:5000
