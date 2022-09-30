@@ -179,6 +179,53 @@ select {
   box-shadow: inset 0 0 0 2px;
 }
 
+*:disabled {
+  opacity: 0.3;
+  background: #eeeeee;
+}
+
+.slider {
+  -webkit-appearance: media-slider-horizontal;
+  margin-top: 40px;
+  margin-bottom: 33.5px;
+  border-radius: 25px;
+  background: #d4d4d4;
+  border: 1px solid #000000;
+  outline: none;
+  opacity: 1.0;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: .7;
+  cursor: pointer;
+}
+
+.slider:disabled {
+  opacity: 0.3;
+  background: #eeeeee;
+  border: 1px solid #000000;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: url('lets-go.png');
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: url('lets-go.png');
+  cursor: pointer;
+}
+
 [class*="__lg"] {
   display: inline-block;
   width: 100%;

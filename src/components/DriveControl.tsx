@@ -38,33 +38,65 @@ export default function DriveControl({ commands }) {
         }
     }, [gamepad]);
 
+    useEffect(() => {
+        handleSubmit(new Event('submit'));
+    }, []);
+
     return (
         <div className='serial'>
             <h2>Drive Control</h2>
             <form className='serial-form' onSubmit={handleSubmit}>
-                <label className='label_lg'> Joint Mode
+
+                <label className='label_lg'> Drive Mode</label>
+                <div className='btn-group'>
                     <select className='input-text' name='drive_mode' value={driveCommands.drive_mode} onChange={handleChange}>
                         <option value="D">Drive</option>
                         <option value="S">Spin</option>
                         <option value="T">Translate</option>
                     </select>
-                </label>
+                    <button className='btn btn__primary' onClick={() => setDriveCommands({ ...driveCommands, drive_mode: "D" })}>Drive</button>
+                    <button className='btn btn__primary' onClick={() => setDriveCommands({ ...driveCommands, drive_mode: "S" })}>Spin</button>
+                    <button className='btn btn__primary' onClick={() => setDriveCommands({ ...driveCommands, drive_mode: "T" })}>Translate</button>
+                </div>
 
-                <label className='label_lg'> Wheel Orientation
+                <label className='label_lg'> Wheel Orientation</label>
+                <div className='btn-group'>
                     <select className='input-text' name='wheel_orientation' value={driveCommands.wheel_orientation} onChange={handleChange}>
                         <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
                     </select>
-                </label>
+                    <button className='btn btn__primary' onClick={() => setDriveCommands({ ...driveCommands, wheel_orientation: 0 })}>0</button>
+                    <button className='btn btn__primary' onClick={() => setDriveCommands({ ...driveCommands, wheel_orientation: 1 })}>1</button>
+                    <button className='btn btn__primary' onClick={() => setDriveCommands({ ...driveCommands, wheel_orientation: 2 })}>2</button>
+                </div>
 
-                <label className='label_lg'> Speed
-                    <input autoComplete='off' className='input-text' type='number' name='speed' max={100} min={-100} value={driveCommands.speed} onChange={handleChange} />
-                </label>
+                <div className='btn-group'>
+                    <label className='label_lg'> Speed
+                        <input autoComplete='off' className='input-text' type='number' name='speed' max={100} min={-100} value={driveCommands.speed} onChange={handleChange} />
+                    </label>
+                    <input className='slider' type='range' name='speed' max={100} min={-100} value={driveCommands.speed} onChange={handleChange} />
+                </div>
+                {driveCommands.drive_mode === "S" ?
+                    <>
+                        <div className='btn-group'>
+                            <label className='label_lg'> Angle
+                                <input autoComplete='off' disabled className='input-text' type='number' name='angle' value={driveCommands.angle} onChange={handleChange} />
+                            </label>
+                            <input className='slider' disabled type='range' name='angle' max={12} min={-12} value={driveCommands.angle} onChange={handleChange} />
+                        </div>
+                    </>
+                    :
+                    <>
+                        <div className='btn-group'>
+                            <label className='label_lg'> Angle
+                                <input autoComplete='off' className='input-text' type='number' name='angle' value={driveCommands.angle} onChange={handleChange} />
+                            </label>
+                            <input className='slider' type='range' name='angle' max={12} min={-12} value={driveCommands.angle} onChange={handleChange} />
+                        </div>
+                    </>
+                }
 
-                <label className='label_lg'> Angle
-                    <input autoComplete='off' className='input-text' type='number' name='angle' value={driveCommands.angle} onChange={handleChange} />
-                </label>
 
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
