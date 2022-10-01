@@ -8,6 +8,7 @@ class MapContainer extends Component {
   mapClicked(mapProps, map, clickEvent) {
     const lat = clickEvent.latLng.lat();
     const lng = clickEvent.latLng.lng();
+    setGpsCoords({ longitude: lng, latitude: lat });
   
     this.setState(previousState => {
       return {
