@@ -7,6 +7,7 @@ export default function ArmControl({ commands }) {
     async function handleSubmit(e) {
         e.preventDefault();
         commands.current = `{"heartbeat_count":${armCommands.heartbeat_count},"is_operational":${armCommands.is_operational},"speed":${armCommands.speed},"joint_mode":"${armCommands.joint_mode}","joint_angles":[${armCommands.joint_angles}],"hand_mode":"${armCommands.hand_mode}","hand_angles":[${armCommands.hand_angles}]}`;
+        console.log("Updated arm commands!");
     }
 
     function handleChange(e) {
@@ -30,6 +31,10 @@ export default function ArmControl({ commands }) {
         newArray.fill(e.target.value);
         setArmCommands({ ...armCommands, hand_angles: newArray });
     }
+
+    useEffect(() => {
+        handleSubmit(new Event('submit'));
+    }, [armCommands]);
 
     useEffect(() => {
         handleSubmit(new Event('submit'));

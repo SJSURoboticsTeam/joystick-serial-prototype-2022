@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
+import { DriveFormat, ArmFormat } from '../dto/commands'
 
-export default function Serial({ commands, setStatus }) {
+export default function Serial({ commands, setStatus, isDriveControl }) {
     let rawSerial: string = "";
     const port = useRef<SerialPort>(undefined);
     const reader = useRef<ReadableStreamDefaultReader>();
     const writer = useRef<WritableStreamDefaultWriter>();
     const [isConnected, setIsConnected] = useState(false);
     const [dataTerminalMode, setDataTerminalMode] = useState(false);
+    const [armSerialMode, setArmSerialMode] = useState(false)
 
     async function connect() {
         try {
@@ -43,12 +45,9 @@ export default function Serial({ commands, setStatus }) {
         }
     }
 
-    async function readSerial() {
+    async function handleDriveSerialRead() {
         while (isConnected) {
-            const { value, done } = await reader.current.read();
-            if (done) {
-                break;
-            }
+            const { value } = await reader.current.read();
             let decoded = await new TextDecoder().decode(value);
             rawSerial += await decoded;
             console.log(decoded);
@@ -58,10 +57,22 @@ export default function Serial({ commands, setStatus }) {
         }
     }
 
+    async function handleArmSerialRead() {
+        while (isConnected) {
+            const { value } = await reader.current.read();
+            let decoded = await new TextDecoder().decode(value);
+            rawSerial += await decoded;
+            console.log(decoded);
+            if (hasRoverStatus()) {
+                break;
+            }
+        }
+    }
+
     async function writeSerial() {
         try {
             if (isConnected && writer.current) {
-                // console.log(commands.current);
+                // console.log("writing", commands.current);
                 await writer.current.write(new TextEncoder().encode(commands.current + "\n"));
             }
         } catch (error) {
@@ -106,8 +117,14 @@ export default function Serial({ commands, setStatus }) {
     }
 
     useEffect(() => {
-        if (isConnected) {
-            readSerial();
+        if (isConnected && isDriveControl) {
+            handleDriveSerialRead();
+        }
+        if (isConnected && !isDriveControl) {
+            setInterval(() => {
+                writeSerial();
+                handleArmSerialRead();
+            }, 100);
         }
     }, [isConnected]);
 

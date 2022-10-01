@@ -16,7 +16,7 @@ export default function Wifi({ commands, setStatus }) {
     async function readStatus() {
         if (isConnected) {
             try {
-                let response = await axios.get(webServerAddress);
+                let response = await axios.get(webServerAddress + "/status");
                 setStatus(response.data);
             }
             catch (error) {
