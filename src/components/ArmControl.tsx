@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react'
+import { useGamepads } from 'react-gamepads';
 import { ArmFormat } from '../dto/commands';
 
 export default function ArmControl({ commands }) {
-    const [armCommands, setArmCommands] = useState<ArmFormat>({ heartbeat_count: 0, is_operational: 1, speed: 5, joint_mode: "S", joint_angles: [0, 0, 0, 0, 0], hand_mode: "I", hand_angles: [88, 88, 88, 88, 88] });
+    useGamepads(gamepads => { setGamepads(gamepads[0]) }); // will use the first gamepad connected
+
+    const [gamepad, setGamepads] = useState<Gamepad>();
+    const [armCommands, setArmCommands] = useState<ArmFormat>({ heartbeat_count: 0, is_operational: 1, joint_mode: "S", joint_angles: [0, 0, 0, 0, 0] });
 
     async function handleSubmit(e) {
         e.preventDefault();
-        commands.current = `{"heartbeat_count":${armCommands.heartbeat_count},"is_operational":${armCommands.is_operational},"speed":${armCommands.speed},"joint_mode":"${armCommands.joint_mode}","joint_angles":[${armCommands.joint_angles}],"hand_mode":"${armCommands.hand_mode}","hand_angles":[${armCommands.hand_angles}]}`;
-        console.log("Updated arm commands!");
+        commands.current = `{"heartbeat_count":${armCommands.heartbeat_count},"is_operational":${armCommands.is_operational},"mode":"${armCommands.joint_mode}","angles":[${armCommands.joint_angles}]}`;
     }
 
     function handleChange(e) {
@@ -20,17 +23,33 @@ export default function ArmControl({ commands }) {
         setArmCommands({ ...armCommands, joint_angles: newArray });
     }
 
-    function handleHandAngleChange(e, index) {
-        const newArray = [...armCommands.hand_angles];
-        newArray[index] = e.target.value;
-        setArmCommands({ ...armCommands, hand_angles: newArray });
-    }
+    // function handleHandAngleChange(e, index) {
+    //     const newArray = [...armCommands.hand_angles];
+    //     newArray[index] = e.target.value;
+    //     setArmCommands({ ...armCommands, hand_angles: newArray });
+    // }
 
-    function handleSimultaneousHandModeChange(e) {
-        const newArray = [...armCommands.hand_angles];
-        newArray.fill(e.target.value);
-        setArmCommands({ ...armCommands, hand_angles: newArray });
-    }
+    // function handleSimultaneousHandModeChange(e) {
+    //     const newArray = [...armCommands.hand_angles];
+    //     newArray.fill(e.target.value);
+    //     setArmCommands({ ...armCommands, hand_angles: newArray });
+    // }
+
+    useEffect(() => {
+        if (gamepad?.id.toLowerCase().includes("microsoft")) {
+            const jointMode = armCommands.joint_mode;
+            const rotundaAngle = Math.round(gamepad.axes[0] * 90);
+            const shoulderAngle = Math.round(gamepad.axes[1] * -90);
+            const elbowAngle = Math.round(gamepad.axes[3] * -90);
+            const wristAngle = Math.round(gamepad.axes[2] * 90);
+            // const handMode = gamepad.buttons[0].pressed ? "S" : gamepad.buttons[1].pressed ? "C" : gamepad.buttons[2].pressed ? "O" : gamepad.buttons[3].pressed ? "I" : armCommands.hand_mode;
+            // const handAngle = Math.round(gamepad.buttons[7].value * 87) + 88;
+            // const handAngles = gamepad.buttons[7].value ? [handAngle, handAngle, handAngle, handAngle, handAngle] : armCommands.hand_angles;
+            setArmCommands({ ...armCommands, joint_mode: jointMode, joint_angles: [rotundaAngle, shoulderAngle, elbowAngle, wristAngle] });
+            handleSubmit(new Event('submit'));
+        }
+    }, [gamepad]);
+
 
     useEffect(() => {
         handleSubmit(new Event('submit'));
@@ -129,146 +148,146 @@ export default function ArmControl({ commands }) {
         </>
     )
 
-    const handControl = (
-        <>
-            <label className='label_lg'> Hand Mode </label>
-            <div className='btn-group'>
-                <select className='input-text' name="hand_mode" value={armCommands.hand_mode} onChange={handleChange} >
-                    <option value="C">Closed</option>
-                    <option value="O">Open</option>
-                    <option value="I">Individual</option>
-                    <option value="S">Simultaneous</option>
-                </select>
-                <button className='btn btn__primary' onClick={() => setArmCommands({ ...armCommands, hand_mode: "O", hand_angles: [175, 175, 175, 175, 175] })}>Open</button>
-                <button className='btn btn__primary' onClick={() => setArmCommands({ ...armCommands, hand_mode: "C", hand_angles: [88, 88, 88, 88, 88] })}>Close</button>
-                <button className='btn btn__primary' onClick={() => setArmCommands({ ...armCommands, hand_mode: "S" })}>Simultaneous</button>
-                <button className='btn btn__primary' onClick={() => setArmCommands({ ...armCommands, hand_mode: "I" })}>Individual</button>
-            </div>
+    // const handControl = (
+    //     <>
+    //         <label className='label_lg'> Hand Mode </label>
+    //         <div className='btn-group'>
+    //             <select className='input-text' name="hand_mode" value={armCommands.hand_mode} onChange={handleChange} >
+    //                 <option value="C">Closed</option>
+    //                 <option value="O">Open</option>
+    //                 <option value="I">Individual</option>
+    //                 <option value="S">Simultaneous</option>
+    //             </select>
+    //             <button className='btn btn__primary' onClick={() => setArmCommands({ ...armCommands, hand_mode: "O", hand_angles: [175, 175, 175, 175, 175] })}>Open</button>
+    //             <button className='btn btn__primary' onClick={() => setArmCommands({ ...armCommands, hand_mode: "C", hand_angles: [88, 88, 88, 88, 88] })}>Close</button>
+    //             <button className='btn btn__primary' onClick={() => setArmCommands({ ...armCommands, hand_mode: "S" })}>Simultaneous</button>
+    //             <button className='btn btn__primary' onClick={() => setArmCommands({ ...armCommands, hand_mode: "I" })}>Individual</button>
+    //         </div>
 
-            {(armCommands.hand_mode === "C" || armCommands.hand_mode === "O") &&
-                <>
-                    <div className='btn-group'>
-                        <label className='label_lg'> Pinky Finger Angle
-                            <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[0]} onChange={(e) => handleHandAngleChange(e, 0)} />
-                        </label>
-                        <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[0]} onChange={(e) => handleHandAngleChange(e, 0)} />
-                    </div>
+    //         {(armCommands.hand_mode === "C" || armCommands.hand_mode === "O") &&
+    //             <>
+    //                 <div className='btn-group'>
+    //                     <label className='label_lg'> Pinky Finger Angle
+    //                         <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[0]} onChange={(e) => handleHandAngleChange(e, 0)} />
+    //                     </label>
+    //                     <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[0]} onChange={(e) => handleHandAngleChange(e, 0)} />
+    //                 </div>
 
-                    <div className='btn-group'>
-                        <label className='label_lg'> Ring Finger Angle
-                            <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[1]} onChange={(e) => handleHandAngleChange(e, 1)} />
-                        </label>
-                        <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[1]} onChange={(e) => handleHandAngleChange(e, 1)} />
-                    </div>
+    //                 <div className='btn-group'>
+    //                     <label className='label_lg'> Ring Finger Angle
+    //                         <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[1]} onChange={(e) => handleHandAngleChange(e, 1)} />
+    //                     </label>
+    //                     <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[1]} onChange={(e) => handleHandAngleChange(e, 1)} />
+    //                 </div>
 
-                    <div className='btn-group'>
-                        <label className='label_lg'> Middle Finger Angle
-                            <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[2]} onChange={(e) => handleHandAngleChange(e, 2)} />
-                        </label>
-                        <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[2]} onChange={(e) => handleHandAngleChange(e, 2)} />
-                    </div>
+    //                 <div className='btn-group'>
+    //                     <label className='label_lg'> Middle Finger Angle
+    //                         <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[2]} onChange={(e) => handleHandAngleChange(e, 2)} />
+    //                     </label>
+    //                     <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[2]} onChange={(e) => handleHandAngleChange(e, 2)} />
+    //                 </div>
 
-                    <div className='btn-group'>
-                        <label className='label_lg'> Index Finger Angle
-                            <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[3]} onChange={(e) => handleHandAngleChange(e, 3)} />
-                        </label>
-                        <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[3]} onChange={(e) => handleHandAngleChange(e, 3)} />
-                    </div>
+    //                 <div className='btn-group'>
+    //                     <label className='label_lg'> Index Finger Angle
+    //                         <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[3]} onChange={(e) => handleHandAngleChange(e, 3)} />
+    //                     </label>
+    //                     <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[3]} onChange={(e) => handleHandAngleChange(e, 3)} />
+    //                 </div>
 
-                    <div className='btn-group'>
-                        <label className='label_lg'> Thumb Finger Angle
-                            <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[4]} onChange={(e) => handleHandAngleChange(e, 4)} />
-                        </label>
-                        <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[4]} onChange={(e) => handleHandAngleChange(e, 4)} />
-                    </div>
-                </>
-            }
+    //                 <div className='btn-group'>
+    //                     <label className='label_lg'> Thumb Finger Angle
+    //                         <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[4]} onChange={(e) => handleHandAngleChange(e, 4)} />
+    //                     </label>
+    //                     <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[4]} onChange={(e) => handleHandAngleChange(e, 4)} />
+    //                 </div>
+    //             </>
+    //         }
 
-            {armCommands.hand_mode === "I" &&
-                <>
-                    <div className='btn-group'>
-                        <label className='label_lg'> Pinky Finger Angle
-                            <input autoComplete='off' className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[0]} onChange={(e) => handleHandAngleChange(e, 0)} />
-                        </label>
-                        <input className='slider' type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[0]} onChange={(e) => handleHandAngleChange(e, 0)} />
-                    </div>
+    //         {armCommands.hand_mode === "I" &&
+    //             <>
+    //                 <div className='btn-group'>
+    //                     <label className='label_lg'> Pinky Finger Angle
+    //                         <input autoComplete='off' className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[0]} onChange={(e) => handleHandAngleChange(e, 0)} />
+    //                     </label>
+    //                     <input className='slider' type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[0]} onChange={(e) => handleHandAngleChange(e, 0)} />
+    //                 </div>
 
-                    <div className='btn-group'>
-                        <label className='label_lg'> Ring Finger Angle
-                            <input autoComplete='off' className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[1]} onChange={(e) => handleHandAngleChange(e, 1)} />
-                        </label>
-                        <input className='slider' type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[1]} onChange={(e) => handleHandAngleChange(e, 1)} />
-                    </div>
+    //                 <div className='btn-group'>
+    //                     <label className='label_lg'> Ring Finger Angle
+    //                         <input autoComplete='off' className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[1]} onChange={(e) => handleHandAngleChange(e, 1)} />
+    //                     </label>
+    //                     <input className='slider' type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[1]} onChange={(e) => handleHandAngleChange(e, 1)} />
+    //                 </div>
 
-                    <div className='btn-group'>
-                        <label className='label_lg'> Middle Finger Angle
-                            <input autoComplete='off' className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[2]} onChange={(e) => handleHandAngleChange(e, 2)} />
-                        </label>
-                        <input className='slider' type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[2]} onChange={(e) => handleHandAngleChange(e, 2)} />
-                    </div>
+    //                 <div className='btn-group'>
+    //                     <label className='label_lg'> Middle Finger Angle
+    //                         <input autoComplete='off' className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[2]} onChange={(e) => handleHandAngleChange(e, 2)} />
+    //                     </label>
+    //                     <input className='slider' type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[2]} onChange={(e) => handleHandAngleChange(e, 2)} />
+    //                 </div>
 
-                    <div className='btn-group'>
-                        <label className='label_lg'> Index Finger Angle
-                            <input autoComplete='off' className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[3]} onChange={(e) => handleHandAngleChange(e, 3)} />
-                        </label>
-                        <input className='slider' type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[3]} onChange={(e) => handleHandAngleChange(e, 3)} />
-                    </div>
+    //                 <div className='btn-group'>
+    //                     <label className='label_lg'> Index Finger Angle
+    //                         <input autoComplete='off' className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[3]} onChange={(e) => handleHandAngleChange(e, 3)} />
+    //                     </label>
+    //                     <input className='slider' type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[3]} onChange={(e) => handleHandAngleChange(e, 3)} />
+    //                 </div>
 
-                    <div className='btn-group'>
-                        <label className='label_lg'> Thumb Finger Angle
-                            <input autoComplete='off' className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[4]} onChange={(e) => handleHandAngleChange(e, 4)} />
-                        </label>
-                        <input className='slider' type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[4]} onChange={(e) => handleHandAngleChange(e, 4)} />
-                    </div>
-                </>
-            }
-            {armCommands.hand_mode === "S" &&
-                <>
-                    <div className='btn-group'>
-                        <label className='label_lg'> Pinky Finger Angle
-                            <input autoComplete='off' className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[0]} onChange={(e) => handleSimultaneousHandModeChange(e)} />
-                        </label>
-                        <input className='slider' type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[0]} onChange={(e) => handleSimultaneousHandModeChange(e)} />
-                    </div>
+    //                 <div className='btn-group'>
+    //                     <label className='label_lg'> Thumb Finger Angle
+    //                         <input autoComplete='off' className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[4]} onChange={(e) => handleHandAngleChange(e, 4)} />
+    //                     </label>
+    //                     <input className='slider' type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[4]} onChange={(e) => handleHandAngleChange(e, 4)} />
+    //                 </div>
+    //             </>
+    //         }
+    //         {armCommands.hand_mode === "S" &&
+    //             <>
+    //                 <div className='btn-group'>
+    //                     <label className='label_lg'> Pinky Finger Angle
+    //                         <input autoComplete='off' className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[0]} onChange={(e) => handleSimultaneousHandModeChange(e)} />
+    //                     </label>
+    //                     <input className='slider' type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[0]} onChange={(e) => handleSimultaneousHandModeChange(e)} />
+    //                 </div>
 
-                    <div className='btn-group'>
-                        <label className='label_lg'> Ring Finger Angle
-                            <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[1]} onChange={(e) => handleHandAngleChange(e, 1)} />
-                        </label>
-                        <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[1]} onChange={(e) => handleHandAngleChange(e, 1)} />
-                    </div>
+    //                 <div className='btn-group'>
+    //                     <label className='label_lg'> Ring Finger Angle
+    //                         <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[1]} onChange={(e) => handleHandAngleChange(e, 1)} />
+    //                     </label>
+    //                     <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[1]} onChange={(e) => handleHandAngleChange(e, 1)} />
+    //                 </div>
 
-                    <div className='btn-group'>
-                        <label className='label_lg'> Middle Finger Angle
-                            <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[2]} onChange={(e) => handleHandAngleChange(e, 2)} />
-                        </label>
-                        <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[2]} onChange={(e) => handleHandAngleChange(e, 2)} />
-                    </div>
+    //                 <div className='btn-group'>
+    //                     <label className='label_lg'> Middle Finger Angle
+    //                         <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[2]} onChange={(e) => handleHandAngleChange(e, 2)} />
+    //                     </label>
+    //                     <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[2]} onChange={(e) => handleHandAngleChange(e, 2)} />
+    //                 </div>
 
-                    <div className='btn-group'>
-                        <label className='label_lg'> Index Finger Angle
-                            <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[3]} onChange={(e) => handleHandAngleChange(e, 3)} />
-                        </label>
-                        <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[3]} onChange={(e) => handleHandAngleChange(e, 3)} />
-                    </div>
+    //                 <div className='btn-group'>
+    //                     <label className='label_lg'> Index Finger Angle
+    //                         <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[3]} onChange={(e) => handleHandAngleChange(e, 3)} />
+    //                     </label>
+    //                     <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[3]} onChange={(e) => handleHandAngleChange(e, 3)} />
+    //                 </div>
 
-                    <div className='btn-group'>
-                        <label className='label_lg'> Thumb Finger Angle
-                            <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[4]} onChange={(e) => handleHandAngleChange(e, 4)} />
-                        </label>
-                        <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[4]} onChange={(e) => handleHandAngleChange(e, 4)} />
-                    </div>
-                </>
-            }
-        </>
-    )
+    //                 <div className='btn-group'>
+    //                     <label className='label_lg'> Thumb Finger Angle
+    //                         <input autoComplete='off' disabled className='input-text' type='number' name="hand_angles" value={armCommands.hand_angles[4]} onChange={(e) => handleHandAngleChange(e, 4)} />
+    //                     </label>
+    //                     <input className='slider' disabled type="range" min="88" max="175" name="hand_angles" value={armCommands.hand_angles[4]} onChange={(e) => handleHandAngleChange(e, 4)} />
+    //                 </div>
+    //             </>
+    //         }
+    //     </>
+    // )
 
     return (
         <div className='serial'>
             <h2>Arm Control</h2>
             <form className='serial-form' onSubmit={handleSubmit}>
                 {jointControl}
-                {handControl}
+                {/* {handControl} */}
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
         </div>

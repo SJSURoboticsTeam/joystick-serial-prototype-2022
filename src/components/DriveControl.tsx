@@ -31,7 +31,7 @@ export default function DriveControl({ commands }) {
             const newDriveMode: string = gamepad?.buttons[3]?.value ? "D" : gamepad?.buttons[2]?.value ? "T" : gamepad?.buttons[1]?.value ? "S" : driveCommands.drive_mode;
             const forwardSpeed: number = (gamepad?.buttons[7]?.value) ? parseInt((-(gamepad?.buttons[7]?.value) * -100).toFixed(0)) : 0;
             const reverseSpeed: number = (gamepad?.buttons[6]?.value) ? parseInt((-(gamepad?.buttons[6]?.value) * 100).toFixed(0)) : 0;
-            const newSpeed: number = (gamepad?.buttons[0]?.pressed) ? driveCommands.speed : forwardSpeed + reverseSpeed;
+            const newSpeed: number = (!gamepad?.buttons[7]?.pressed && !gamepad?.buttons[6]?.pressed) ? 0 : forwardSpeed + reverseSpeed;
             const newAngle: number = gamepad?.axes[0] ? parseInt((gamepad?.axes[0] * 12).toFixed(0)) : driveCommands.angle;
             setDriveCommands({ ...driveCommands, wheel_orientation: newWheelOrientation, drive_mode: newDriveMode, angle: newAngle, speed: newSpeed });
             handleSubmit(new Event('submit'));

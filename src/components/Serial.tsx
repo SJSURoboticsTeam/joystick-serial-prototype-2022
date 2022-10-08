@@ -117,15 +117,7 @@ export default function Serial({ commands, setStatus, isDriveControl }) {
     }
 
     useEffect(() => {
-        if (isConnected && isDriveControl) {
-            handleDriveSerialRead();
-        }
-        if (isConnected && !isDriveControl) {
-            setInterval(() => {
-                writeSerial();
-                handleArmSerialRead();
-            }, 100);
-        }
+        handleDriveSerialRead();
     }, [isConnected]);
 
     return (
