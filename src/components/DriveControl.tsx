@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
 import { DriveFormat } from '../dto/commands';
+import { XboxController } from '../dto/gamepad';
+import { Extreme3DPro } from '../dto/gamepad';
 
 export default function DriveControl({ commands }) {
     useGamepads(gamepads => { setGamepads(gamepads[0]) }); // will use the first gamepad connected
@@ -18,22 +20,51 @@ export default function DriveControl({ commands }) {
     }
 
     useEffect(() => {
-        if (gamepad?.id.toLowerCase().includes("extreme 3d pro")) {
-            const newWheelOrientation: number = gamepad?.buttons[6]?.value ? 0 : gamepad?.buttons[8]?.value ? 1 : gamepad?.buttons[10]?.value ? 2 : driveCommands.wheel_orientation;
-            const newDriveMode: string = gamepad?.buttons[7]?.value ? "D" : gamepad?.buttons[9]?.value ? "T" : gamepad?.buttons[11]?.value ? "S" : driveCommands.drive_mode;
-            const newSpeed: number = gamepad?.buttons[1].pressed ? driveCommands.speed : (gamepad?.axes[1] && gamepad?.buttons[0].pressed) ? parseInt((-(gamepad?.axes[1]) * 100).toFixed(0)) : 0;
-            const newAngle: number = gamepad?.axes[0] ? parseInt((gamepad?.axes[0] * 12).toFixed(0)) : driveCommands.angle;
-            setDriveCommands({ ...driveCommands, wheel_orientation: newWheelOrientation, drive_mode: newDriveMode, angle: newAngle, speed: newSpeed });
+        function getLogitechSpeed(): number {
+            if (gamepad?.buttons[Extreme3DPro.trigger].pressed) {
+                return parseInt((-(gamepad?.axes[Extreme3DPro.joystick_y]) * 100).toFixed(0));
+            }
+            const throttleSpeed = parseInt((((parseInt((-(gamepad?.axes[Extreme3DPro.throttle]) * 100).toFixed(0)) + 100) - 0) * (100 - 0) / (200 - 0) + 0).toFixed(0));
+            return gamepad?.buttons[Extreme3DPro.thumb_btn].pressed ? -throttleSpeed : throttleSpeed;
+        }
+
+        function getLogitechAngle(): number {
+            if (driveCommands.drive_mode === "S") return 0;
+            return gamepad?.axes[Extreme3DPro.joystick_x] ? parseInt((gamepad?.axes[Extreme3DPro.joystick_x] * 12).toFixed(0)) : driveCommands.angle;
+        }
+
+        function getLogitechDriveMode(): string {
+            return gamepad?.buttons[Extreme3DPro.btn_8]?.value ? "S" : gamepad?.buttons[Extreme3DPro.btn_10]?.value ? "T" : gamepad?.buttons[Extreme3DPro.btn_12]?.value ? "D" : driveCommands.drive_mode;
+        }
+
+        function getLogitechWheelOrientation(): number {
+            return gamepad?.buttons[Extreme3DPro.btn_7]?.value ? 0 : gamepad?.buttons[Extreme3DPro.btn_9]?.value ? 1 : gamepad?.buttons[Extreme3DPro.btn_11]?.value ? 2 : driveCommands.wheel_orientation;
+        }
+
+        function getXboxSpeed(): number {
+            return parseInt((-gamepad?.axes[XboxController.left_analog_y] * 100).toFixed(0));
+        }
+
+        function getXboxAngle(): number {
+            if (driveCommands.drive_mode === "S") return 0;
+            return parseInt((gamepad?.axes[XboxController.right_analog_x] * 12).toFixed(0));
+        }
+
+        function getXboxDriveMode(): string {
+            return gamepad?.buttons[XboxController.x]?.value ? "S" : gamepad?.buttons[XboxController.y]?.value ? "T" : gamepad?.buttons[XboxController.b]?.value ? "D" : driveCommands.drive_mode;
+        }
+
+        function getXboxWheelOrientation(): number {
+            return gamepad?.buttons[XboxController.dpad_left]?.value ? 0 : gamepad?.buttons[XboxController.dpad_up]?.value ? 1 : gamepad?.buttons[XboxController.dpad_right]?.value ? 2 : driveCommands.wheel_orientation;
+        }
+
+        const gamepadId: string = gamepad?.id.toLowerCase() || "";
+        if (gamepadId.includes("extreme 3d") || gamepadId.includes("logitech")) {
+            setDriveCommands({ ...driveCommands, wheel_orientation: getLogitechWheelOrientation(), drive_mode: getLogitechDriveMode(), angle: getLogitechAngle(), speed: getLogitechSpeed() });
             handleSubmit(new Event('submit'));
         }
-        if (gamepad?.id.toLowerCase().includes("microsoft")) {
-            const newWheelOrientation: number = gamepad?.buttons[14]?.value ? 0 : gamepad?.buttons[12]?.value ? 1 : gamepad?.buttons[15]?.value ? 2 : driveCommands.wheel_orientation;
-            const newDriveMode: string = gamepad?.buttons[3]?.value ? "D" : gamepad?.buttons[2]?.value ? "T" : gamepad?.buttons[1]?.value ? "S" : driveCommands.drive_mode;
-            const forwardSpeed: number = (gamepad?.buttons[7]?.value) ? parseInt((-(gamepad?.buttons[7]?.value) * -100).toFixed(0)) : 0;
-            const reverseSpeed: number = (gamepad?.buttons[6]?.value) ? parseInt((-(gamepad?.buttons[6]?.value) * 100).toFixed(0)) : 0;
-            const newSpeed: number = (gamepad?.buttons[0]?.pressed) ? driveCommands.speed : forwardSpeed + reverseSpeed;
-            const newAngle: number = gamepad?.axes[0] ? parseInt((gamepad?.axes[0] * 12).toFixed(0)) : driveCommands.angle;
-            setDriveCommands({ ...driveCommands, wheel_orientation: newWheelOrientation, drive_mode: newDriveMode, angle: newAngle, speed: newSpeed });
+        if (gamepadId.includes("microsoft") || gamepadId.includes("xbox")) {
+            setDriveCommands({ ...driveCommands, wheel_orientation: getXboxWheelOrientation(), drive_mode: getXboxDriveMode(), angle: getXboxAngle(), speed: getXboxSpeed() });
             handleSubmit(new Event('submit'));
         }
     }, [gamepad]);
@@ -42,12 +73,32 @@ export default function DriveControl({ commands }) {
         handleSubmit(new Event('submit'));
     }, []);
 
+    const SpinModeView = (
+        <div className='btn-group'>
+            <label className='label_lg'> Angle
+                <input autoComplete='off' disabled className='input-text' type='number' name='angle' value={driveCommands.angle} onChange={handleChange} />
+            </label>
+            <input className='slider' disabled type='range' name='angle' max={12} min={-12} value={driveCommands.angle} onChange={handleChange} />
+        </div>
+    )
+
+    const DriveTranslateModeView = (
+        <>
+            <div className='btn-group'>
+                <label className='label_lg'> Angle
+                    <input autoComplete='off' className='input-text' type='number' name='angle' value={driveCommands.angle} onChange={handleChange} />
+                </label>
+                <input className='slider' type='range' name='angle' max={12} min={-12} value={driveCommands.angle} onChange={handleChange} />
+            </div>
+        </>
+    )
+
     return (
         <div className='serial'>
             <h2>Drive Control</h2>
             <form className='serial-form' onSubmit={handleSubmit}>
 
-                <label className='label_lg'> Drive Mode</label>
+                <label className='label_lg'>Drive Mode</label>
                 <div className='btn-group'>
                     <select className='input-text' name='drive_mode' value={driveCommands.drive_mode} onChange={handleChange}>
                         <option value="D">Drive</option>
@@ -77,27 +128,8 @@ export default function DriveControl({ commands }) {
                     </label>
                     <input className='slider' type='range' name='speed' max={100} min={-100} value={driveCommands.speed} onChange={handleChange} />
                 </div>
-                {driveCommands.drive_mode === "S" ?
-                    <>
-                        <div className='btn-group'>
-                            <label className='label_lg'> Angle
-                                <input autoComplete='off' disabled className='input-text' type='number' name='angle' value={driveCommands.angle} onChange={handleChange} />
-                            </label>
-                            <input className='slider' disabled type='range' name='angle' max={12} min={-12} value={driveCommands.angle} onChange={handleChange} />
-                        </div>
-                    </>
-                    :
-                    <>
-                        <div className='btn-group'>
-                            <label className='label_lg'> Angle
-                                <input autoComplete='off' className='input-text' type='number' name='angle' value={driveCommands.angle} onChange={handleChange} />
-                            </label>
-                            <input className='slider' type='range' name='angle' max={12} min={-12} value={driveCommands.angle} onChange={handleChange} />
-                        </div>
-                    </>
-                }
-
-
+                {driveCommands.drive_mode === "S" && SpinModeView}
+                {(driveCommands.drive_mode === "D" || driveCommands.drive_mode === "T") && DriveTranslateModeView}
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
         </div >

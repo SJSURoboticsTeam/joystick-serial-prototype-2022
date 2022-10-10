@@ -10,9 +10,6 @@ export interface DriveFormat {
 export interface ArmFormat {
     heartbeat_count: number;
     is_operational: number;
-    speed: number;
-    joint_mode: string;
-    joint_angles: number[];
-    hand_mode: string;
-    hand_angles: number[];
+    mode: string;
+    angles: number[];
 }
