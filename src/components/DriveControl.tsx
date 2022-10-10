@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
 import { DriveFormat } from '../dto/commands';
+import { XboxController } from '../dto/gamepad';
 
 export default function DriveControl({ commands }) {
     useGamepads(gamepads => { setGamepads(gamepads[0]) }); // will use the first gamepad connected
@@ -18,7 +19,8 @@ export default function DriveControl({ commands }) {
     }
 
     useEffect(() => {
-        if (gamepad?.id.toLowerCase().includes("extreme 3d")) {
+        let gamepadId = gamepad?.id.toLowerCase();
+        if (gamepadId.includes("extreme 3d") || gamepadId.includes("logitech")) {
             const newWheelOrientation: number = gamepad?.buttons[6]?.value ? 0 : gamepad?.buttons[8]?.value ? 1 : gamepad?.buttons[10]?.value ? 2 : driveCommands.wheel_orientation;
             const newDriveMode: string = gamepad?.buttons[7]?.value ? "D" : gamepad?.buttons[9]?.value ? "T" : gamepad?.buttons[11]?.value ? "S" : driveCommands.drive_mode;
             const newSpeed: number = gamepad?.buttons[1].pressed ? driveCommands.speed : (gamepad?.axes[1] && gamepad?.buttons[0].pressed) ? parseInt((-(gamepad?.axes[1]) * 100).toFixed(0)) : 0;
@@ -26,14 +28,26 @@ export default function DriveControl({ commands }) {
             setDriveCommands({ ...driveCommands, wheel_orientation: newWheelOrientation, drive_mode: newDriveMode, angle: newAngle, speed: newSpeed });
             handleSubmit(new Event('submit'));
         }
-        if (gamepad?.id.toLowerCase().includes("microsoft")) {
-            const newWheelOrientation: number = gamepad?.buttons[14]?.value ? 0 : gamepad?.buttons[12]?.value ? 1 : gamepad?.buttons[15]?.value ? 2 : driveCommands.wheel_orientation;
-            const newDriveMode: string = gamepad?.buttons[3]?.value ? "D" : gamepad?.buttons[2]?.value ? "T" : gamepad?.buttons[1]?.value ? "S" : driveCommands.drive_mode;
-            const forwardSpeed: number = (gamepad?.buttons[7]?.value) ? parseInt((-(gamepad?.buttons[7]?.value) * -100).toFixed(0)) : 0;
-            const reverseSpeed: number = (gamepad?.buttons[6]?.value) ? parseInt((-(gamepad?.buttons[6]?.value) * 100).toFixed(0)) : 0;
-            const newSpeed: number = (!gamepad?.buttons[7]?.pressed && !gamepad?.buttons[6]?.pressed) ? 0 : forwardSpeed + reverseSpeed;
-            const newAngle: number = gamepad?.axes[0] ? parseInt((gamepad?.axes[0] * 12).toFixed(0)) : driveCommands.angle;
-            setDriveCommands({ ...driveCommands, wheel_orientation: newWheelOrientation, drive_mode: newDriveMode, angle: newAngle, speed: newSpeed });
+        if (gamepadId.includes("microsoft") || gamepadId.includes("xbox")) {
+            const newWheelOrientation: number =
+                gamepad?.buttons[XboxController.left_dpad]?.value ? 0
+                    : gamepad?.buttons[XboxController.up_dpad]?.value ? 1
+                        : gamepad?.buttons[XboxController.right_dpad]?.value ? 2
+                            : driveCommands.wheel_orientation;
+
+            const newDriveMode: string =
+                gamepad?.buttons[XboxController.y]?.value ? "D"
+                    : gamepad?.buttons[XboxController.x]?.value ? "T"
+                        : gamepad?.buttons[XboxController.b]?.value ? "S"
+                            : driveCommands.drive_mode;
+
+            const forwardSpeed: number = (gamepad?.buttons[XboxController.right_trigger]?.value) ? parseInt((-(gamepad?.buttons[XboxController.right_trigger]?.value) * -100).toFixed(0)) : 0;
+
+            const reverseSpeed: number = (gamepad?.buttons[XboxController.left_trigger]?.value) ? parseInt((-(gamepad?.buttons[XboxController.left_trigger]?.value) * 100).toFixed(0)) : 0;
+
+            const newAngle: number = gamepad?.axes[XboxController.left_analog_x] ? parseInt((gamepad?.axes[XboxController.left_analog_x] * 12).toFixed(0)) : driveCommands.angle;
+
+            setDriveCommands({ ...driveCommands, wheel_orientation: newWheelOrientation, drive_mode: newDriveMode, angle: newAngle, speed: (forwardSpeed + reverseSpeed) });
             handleSubmit(new Event('submit'));
         }
     }, [gamepad]);
