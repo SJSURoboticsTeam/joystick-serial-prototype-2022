@@ -15,11 +15,28 @@ export enum XboxController {
     left_trigger = 6,
     right_trigger = 7,
 
-    up_dpad = 12,
-    down_dpad = 13,
-    left_dpad = 14,
-    right_dpad = 15,
+    dpad_up = 12,
+    dpad_down = 13,
+    dpad_left = 14,
+    dpad_right = 15,
 
     start = 9,
     back = 8
+}
+
+export enum Extreme3DPro {
+    joystick_x = 0,
+    joystick_y = 1,
+    joystick_z = 5, // twist motion
+    throttle = 6,
+    thumb_joystick = 9,
+
+    trigger = 0,
+    thumb_btn = 1,
+    btn_7 = 6, // wheel orientation 0
+    btn_8 = 7, // drive 
+    btn_9 = 8, // wheel orientation 1
+    btn_10 = 9, // translate 
+    btn_11 = 10, // wheel orientation 2
+    btn_12 = 11 // spin 
 }
