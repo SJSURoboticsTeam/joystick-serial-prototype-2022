@@ -21,12 +21,11 @@ export default function DriveControl({ commands }) {
 
     useEffect(() => {
         function getLogitechSpeed(): number {
-            const joystickSpeed: number = gamepad?.buttons[1].pressed ? driveCommands.speed : (gamepad?.axes[1] && gamepad?.buttons[0].pressed) ? parseInt((-(gamepad?.axes[1]) * 100).toFixed(0)) : 0;
-            let throttleSpeed: number = gamepad?.axes[Extreme3DPro.throttle] ? parseInt((-(gamepad?.axes[Extreme3DPro.throttle]) * 100).toFixed(0)) + 100 : driveCommands.speed;
-            throttleSpeed = parseInt(((throttleSpeed - 0) * (100 - 0) / (200 - 0) + 0).toFixed(0));
-            throttleSpeed = gamepad?.buttons[Extreme3DPro.thumb_btn].pressed ? -throttleSpeed : throttleSpeed;
-            const newSpeed: number = throttleSpeed ? throttleSpeed : joystickSpeed;
-            return newSpeed;
+            if (gamepad?.buttons[Extreme3DPro.trigger].pressed) {
+                return parseInt((-(gamepad?.axes[Extreme3DPro.joystick_y]) * 100).toFixed(0));
+            }
+            const throttleSpeed = parseInt((((parseInt((-(gamepad?.axes[Extreme3DPro.throttle]) * 100).toFixed(0)) + 100) - 0) * (100 - 0) / (200 - 0) + 0).toFixed(0));
+            return gamepad?.buttons[Extreme3DPro.thumb_btn].pressed ? -throttleSpeed : throttleSpeed;
         }
 
         function getLogitechAngle(): number {
@@ -43,14 +42,12 @@ export default function DriveControl({ commands }) {
         }
 
         function getXboxSpeed(): number {
-            const forwardSpeed: number = (gamepad?.buttons[XboxController.right_trigger]?.value) ? parseInt((-(gamepad?.buttons[XboxController.right_trigger]?.value) * -100).toFixed(0)) : 0;
-            const reverseSpeed: number = (gamepad?.buttons[XboxController.left_trigger]?.value) ? parseInt((-(gamepad?.buttons[XboxController.left_trigger]?.value) * 100).toFixed(0)) : 0;
-            return forwardSpeed + reverseSpeed;
+            return parseInt((-gamepad?.axes[XboxController.left_analog_y] * 100).toFixed(0));
         }
 
         function getXboxAngle(): number {
             if (driveCommands.drive_mode === "S") return 0;
-            return gamepad?.axes[XboxController.left_analog_x] ? parseInt((gamepad?.axes[XboxController.left_analog_x] * 12).toFixed(0)) : driveCommands.angle;
+            return parseInt((gamepad?.axes[XboxController.right_analog_x] * 12).toFixed(0));
         }
 
         function getXboxDriveMode(): string {
