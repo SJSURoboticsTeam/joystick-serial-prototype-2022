@@ -30,6 +30,7 @@ function App() {
         <Camera name="1" src="http://raspberrypi:8001/stream.mjpg" />
         <Camera name="2" src="http://raspberrypi:8002/stream.mjpg" />
         <Camera name="3" src="http://raspberrypi:8003/stream.mjpg" />
+        <MapContainer commands={commands} />
         {/* <MapContainer /> */}
       </div>
     </div>
