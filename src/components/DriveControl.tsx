@@ -20,12 +20,18 @@ export default function DriveControl({ commands }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    commands.current = `{"HB":${driveCommands.HB},"IO":${driveCommands.IO},"WO":${driveCommands.WO},"DM":"${driveCommands.DM}","CMD":${driveCommands.CMD}}`;
+    commands.current = `{"HB":${driveCommands.HB},"IO":${driveCommands.IO},"WO":${driveCommands.WO},"DM":"${driveCommands.DM}","CMD":[${driveCommands.CMD}]}`;
   }
 
   function handleChange(e) {
     setDriveCommands({ ...driveCommands, [e.target.name]: e.target.value });
   }
+
+  function handleCMDChange(e, index) {
+    const newArray = [...driveCommands.CMD];
+    newArray[index] = e.target.value;
+    setDriveCommands({ ...driveCommands, CMD: newArray });
+}
 
   useEffect(() => {
     function getLogitechSpeed(): number {
@@ -154,7 +160,7 @@ export default function DriveControl({ commands }) {
           type='number'
           name='angle'
           value={driveCommands.CMD[1]}
-          onChange={handleChange}
+          onChange={(e) => handleCMDChange(e, 1)}
         />
       </label>
       <input
@@ -165,7 +171,7 @@ export default function DriveControl({ commands }) {
         max={12}
         min={-12}
         value={driveCommands.CMD[1]}
-        onChange={handleChange}
+        onChange={(e) => handleCMDChange(e, 1)}
       />
     </div>
   );
@@ -182,7 +188,7 @@ export default function DriveControl({ commands }) {
             type='number'
             name='angle'
             value={driveCommands.CMD[1]}
-            onChange={handleChange}
+            onChange={(e) => handleCMDChange(e, 1)}
           />
         </label>
         <input
@@ -192,7 +198,7 @@ export default function DriveControl({ commands }) {
           max={driveCommands.DM === 'T' ? 45 : 12}
           min={driveCommands.DM === 'T' ? -45 : -12}
           value={driveCommands.CMD[1]}
-          onChange={handleChange}
+          onChange={(e) => handleCMDChange(e, 1)}
         />
       </div>
     </>
@@ -290,7 +296,7 @@ export default function DriveControl({ commands }) {
               max={100}
               min={-100}
               value={driveCommands.CMD[0]}
-              onChange={handleChange}
+              onChange={(e) => handleCMDChange(e, 0)}
             />
           </label>
           <input
@@ -300,7 +306,7 @@ export default function DriveControl({ commands }) {
             max={100}
             min={-100}
             value={driveCommands.CMD[0]}
-            onChange={handleChange}
+            onChange={(e) => handleCMDChange(e, 0)}
           />
         </div>
         {driveCommands.DM === 'S' && SpinModeView}
