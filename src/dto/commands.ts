@@ -1,10 +1,9 @@
 export interface DriveFormat {
-    heartbeat_count: number;
-    is_operational: number;
-    wheel_orientation: number;
-    drive_mode: string;
-    speed: number;
-    angle: number;
+    HB: number;
+    IO: number;
+    WO: number;
+    DM: string;
+    CMD: number[];
 }
 
 export interface ArmFormat {
