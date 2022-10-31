@@ -37,7 +37,7 @@ export default function DriveControl({ commands }) {
     function getLogitechSpeed(): number {
       if (gamepad?.buttons[Extreme3DPro.trigger].pressed) {
         return parseInt(
-          (-gamepad?.axes[Extreme3DPro.joystick_y] * 100).toFixed(0)
+          (-gamepad?.axes[Extreme3DPro.pitch] * 100).toFixed(0)
         );
       }
       const throttleSpeed = parseInt(
@@ -58,11 +58,11 @@ export default function DriveControl({ commands }) {
     function getLogitechAngle(): number {
       if (driveCommands.DM === 'S') return 0;
       if (driveCommands.DM === 'T')
-        return gamepad?.axes[Extreme3DPro.joystick_x]
-          ? parseInt((gamepad?.axes[Extreme3DPro.joystick_x] * 45).toFixed(0))
+        return gamepad?.axes[Extreme3DPro.yaw]
+          ? parseInt((gamepad?.axes[Extreme3DPro.yaw] * 45).toFixed(0))
           : driveCommands.CMD[1];
-      return gamepad?.axes[Extreme3DPro.joystick_x]
-        ? parseInt((gamepad?.axes[Extreme3DPro.joystick_x] * 12).toFixed(0))
+      return gamepad?.axes[Extreme3DPro.yaw]
+        ? parseInt((gamepad?.axes[Extreme3DPro.yaw] * 12).toFixed(0))
         : driveCommands.CMD[1];
     }
 
@@ -129,7 +129,7 @@ export default function DriveControl({ commands }) {
         ...driveCommands,
         WO: getLogitechWheelOrientation(),
         DM: getLogitechDriveMode(),
-        CMD: [getLogitechAngle(),getLogitechSpeed()]
+        CMD: [getLogitechSpeed(),getLogitechAngle()]
       });
       handleSubmit(new Event('submit'));
     }
@@ -138,7 +138,7 @@ export default function DriveControl({ commands }) {
         ...driveCommands,
         WO: getXboxWheelOrientation(),
         DM: getXboxDriveMode(),
-        CMD: [getXboxAngle(),getXboxSpeed()]
+        CMD: [getXboxSpeed(),getXboxAngle()]
       });
       handleSubmit(new Event('submit'));
     }
