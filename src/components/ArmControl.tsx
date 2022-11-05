@@ -106,36 +106,36 @@ export default function ArmControl({ commands }) {
         <>
             <div className='btn-group'>
                 <label className='label_lg'> Thumb Finger Angle
-                    <input autoComplete='off' disabled className='input-text' type='number' name="angles" value={armCommands.angles[0]} onChange={(e) => handleAngleChange(e, 0)} />
+                    <input autoComplete='off' className='input-text' type='number' name="angles" value={armCommands.angles[0]} onChange={(e) => handleAngleChange(e, 0)} />
                 </label>
-                <input autoComplete='off' disabled className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[0]} onChange={(e) => handleAngleChange(e, 0)} />
+                <input autoComplete='off' className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[0]} onChange={(e) => handleAngleChange(e, 0)} />
             </div>
 
             <div className='btn-group'>
                 <label className='label_lg'> Index Finger Angle
-                    <input autoComplete='off' disabled className='input-text' type='number' name="angles" value={armCommands.angles[1]} onChange={(e) => handleAngleChange(e, 1)} />
+                    <input autoComplete='off' className='input-text' type='number' name="angles" value={armCommands.angles[1]} onChange={(e) => handleAngleChange(e, 1)} />
                 </label>
-                <input autoComplete='off' disabled className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[1]} onChange={(e) => handleAngleChange(e, 1)} />
+                <input autoComplete='off' className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[1]} onChange={(e) => handleAngleChange(e, 1)} />
             </div>
 
             <div className='btn-group'>
                 <label className='label_lg'> Middle Finger Angle
-                    <input autoComplete='off' disabled className='input-text' type='number' name="angles" value={armCommands.angles[2]} onChange={(e) => handleAngleChange(e, 2)} />
+                    <input autoComplete='off' className='input-text' type='number' name="angles" value={armCommands.angles[2]} onChange={(e) => handleAngleChange(e, 2)} />
                 </label>
-                <input autoComplete='off' disabled className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[2]} onChange={(e) => handleAngleChange(e, 2)} />
+                <input autoComplete='off' className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[2]} onChange={(e) => handleAngleChange(e, 2)} />
             </div>
 
             <div className='btn-group'>
                 <label className='label_lg'> Ring Finger Angle
-                    <input autoComplete='off' disabled className='input-text' type='number' name="angles" value={armCommands.angles[3]} onChange={(e) => handleAngleChange(e, 3)} />
-                </label> <input autoComplete='off' disabled className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[3]} onChange={(e) => handleAngleChange(e, 3)} />
+                    <input autoComplete='off' className='input-text' type='number' name="angles" value={armCommands.angles[3]} onChange={(e) => handleAngleChange(e, 3)} />
+                </label> <input autoComplete='off' className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[3]} onChange={(e) => handleAngleChange(e, 3)} />
             </div>
 
             <div className='btn-group'>
                 <label className='label_lg'> Pinky Finger Angle
-                    <input autoComplete='off' disabled className='input-text' type='number' name="angles" value={armCommands.angles[4]} onChange={(e) => handleAngleChange(e, 4)} />
+                    <input autoComplete='off' className='input-text' type='number' name="angles" value={armCommands.angles[4]} onChange={(e) => handleAngleChange(e, 4)} />
                 </label>
-                <input autoComplete='off' disabled className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[4]} onChange={(e) => handleAngleChange(e, 4)} />
+                <input autoComplete='off' className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[4]} onChange={(e) => handleAngleChange(e, 4)} />
             </div>
         </>
     )
