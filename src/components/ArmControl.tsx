@@ -7,7 +7,7 @@ export default function ArmControl({ commands }) {
     useGamepads(gamepads => { setGamepads(gamepads[0]) }); // will use the first gamepad connected
 
     const [gamepad, setGamepads] = useState<Gamepad>();
-    const [armCommands, setArmCommands] = useState<ArmFormat>({ heartbeat_count: 0, is_operational: 1, mode: "S", angles: [0, 0, 0, 0, 0] });
+    const [armCommands, setArmCommands] = useState<ArmFormat>({ heartbeat_count: 0, is_operational: 1, mode: "J", angles: [0, 0, 0, 0, 0] });
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -147,14 +147,14 @@ export default function ArmControl({ commands }) {
                 <label className='label_lg'> Joint Mode</label>
                 <div className='btn-group'>
                     <select className='input-text' name='mode' value={armCommands.mode} onChange={handleChange}>
-                        <option value="S">Joint</option>
+                        <option value="J">Joint</option>
                         <option value="H">Hand</option>
                     </select>
-                    <button className='btn btn__primary' onClick={() => setArmCommands({ ...armCommands, mode: "S" })}>Joint</button>
-                    <button className='btn btn__primary' onClick={() => setArmCommands({ ...armCommands, mode: "C", angles: [0, 0, 0, 0, 0] })}>Hand</button>
+                    <button className='btn btn__primary' onClick={() => setArmCommands({ ...armCommands, mode: "J" })}>Joint</button>
+                    <button className='btn btn__primary' onClick={() => setArmCommands({ ...armCommands, mode: "H", angles: [0, 0, 0, 0, 0] })}>Hand</button>
                 </div>
-                {armCommands.mode === "S" && JointModeView}
-                {armCommands.mode === "C" && HandModeView}
+                {armCommands.mode === "J" && JointModeView}
+                {armCommands.mode === "H" && HandModeView}
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
         </div>
