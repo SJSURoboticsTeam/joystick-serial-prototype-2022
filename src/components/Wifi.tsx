@@ -48,7 +48,7 @@ export default function Wifi({ commands, setStatus }) {
                 readStatus();
                 writeCommands();
             }
-        }, 500);
+        }, 200);
         return () => clearInterval(writeInterval);
     }, [isConnected]);
 
