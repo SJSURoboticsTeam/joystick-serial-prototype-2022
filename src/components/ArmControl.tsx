@@ -12,6 +12,7 @@ export default function ArmControl({ commands }) {
     async function handleSubmit(e) {
         e.preventDefault();
         commands.current = `{"heartbeat_count":${armCommands.heartbeat_count},"is_operational":${armCommands.is_operational},"mode":"${armCommands.mode}","angles":[${armCommands.angles}]}`;
+        console.log("submitted");
     }
 
     function handleChange(e) {
@@ -19,6 +20,8 @@ export default function ArmControl({ commands }) {
     }
 
     function handleAngleChange(e, index) {
+        console.log("changing");
+
         const newArray = [...armCommands.angles];
         newArray[index] = e.target.value;
         setArmCommands({ ...armCommands, angles: newArray });
@@ -56,9 +59,10 @@ export default function ArmControl({ commands }) {
     }, [gamepad]);
 
 
-    useEffect(() => {
-        handleSubmit(new Event('submit'));
-    }, [armCommands]);
+    // useEffect(() => {
+    //     console.log("")
+    //     handleSubmit(new Event('submit'));
+    // }, [armCommands]);
 
     useEffect(() => {
         handleSubmit(new Event('submit'));
@@ -140,21 +144,35 @@ export default function ArmControl({ commands }) {
         </>
     )
 
+    const RR9ModeView = (
+        <>
+            <div className='btn-group'>
+                <label className='label_lg'> Angle
+                    <input autoComplete='off' className='input-text' type='number' name="angles" value={armCommands.angles[0]} onChange={(e) => handleAngleChange(e, 0)} onBlur={handleSubmit} />
+                </label>
+                <input autoComplete='off' className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[0]} onChange={(e) => handleAngleChange(e, 0)} />
+            </div>
+        </>
+    )
+
     return (
         <div className='serial'>
             <h2>Arm Control</h2>
             <form className='serial-form' onSubmit={handleSubmit}>
-                <label className='label_lg'> Joint Mode</label>
+                <label className='label_lg'>Mode</label>
                 <div className='btn-group'>
                     <select className='input-text' name='mode' value={armCommands.mode} onChange={handleChange}>
                         <option value="J">Joint</option>
                         <option value="H">Hand</option>
+                        <option value="R">RR9</option>
                     </select>
                     <button className='btn btn__primary' onClick={() => setArmCommands({ ...armCommands, mode: "J" })}>Joint</button>
                     <button className='btn btn__primary' onClick={() => setArmCommands({ ...armCommands, mode: "H", angles: [0, 0, 0, 0, 0] })}>Hand</button>
+                    <button className='btn btn__primary' onClick={() => setArmCommands({ ...armCommands, mode: "R", angles: [0, 0, 0, 0, 0] })}>RR9</button>
                 </div>
                 {armCommands.mode === "J" && JointModeView}
                 {armCommands.mode === "H" && HandModeView}
+                {armCommands.mode === "R" && RR9ModeView}
                 <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
             </form>
         </div>
