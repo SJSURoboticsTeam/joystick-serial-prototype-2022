@@ -25,10 +25,10 @@ export enum XboxController {
 }
 
 export enum Extreme3DPro {
-    joystick_x = 0,
-    joystick_y = 1,
-    joystick_z = 5, // twist motion - sometimes 2/5
-    throttle = 3, // sometimes 3/6
+    roll = 0,
+    pitch = 1,
+    yaw = 5, // twist motion - sometimes 2/5
+    throttle = 6, // sometimes 3/6
     thumb_joystick = 9,
 
     trigger = 0,
