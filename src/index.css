@@ -114,6 +114,35 @@ select {
   background-color: #000;
 }
 
+.btn__clear {
+  position: relative;
+  top: 0;
+  border-radius: 5px;
+  right: 0px;
+  z-index: 2;
+  border: none;
+  top: 2px;
+  height: 30px;
+  cursor: pointer;
+  color: white;
+  background-color: #1e90ff;
+  transform: translateX(2px);
+}
+
+.input-group {
+  display: flex;
+  justify-content: space-between;
+  max-height: 80px;
+}
+
+.input-group>* {
+  flex: 1 1 49%;
+}
+
+.input-group>*+* {
+  margin-left: 0.8rem;
+}
+
 .btn-group {
   display: flex;
   justify-content: space-between;
@@ -185,10 +214,10 @@ select {
 }
 
 .slider {
-  -webkit-appearance: media-slider-horizontal;
+  -webkit-appearance: none;
   margin-top: 40px;
   margin-bottom: 33.5px;
-  border-radius: 25px;
+  border-radius: 10px;
   background: #d4d4d4;
   border: 1px solid #000000;
   outline: none;
@@ -210,18 +239,20 @@ select {
 
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  appearance: none;
   width: 44px;
   height: 44px;
-  border: 0;
+  border: none;
+  border-radius: 50%;
   background: url('./lets-go.png');
   cursor: pointer;
 }
 
 .slider::-moz-range-thumb {
+  -webkit-appearance: none;
   width: 44px;
   height: 44px;
-  border: 0;
+  border: none;
+  border-radius: 50%;
   background: url('./lets-go.png');
   cursor: pointer;
 }

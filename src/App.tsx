@@ -20,7 +20,7 @@ function App() {
       <header className='btn-group'>
         <button className='btn btn__primary' onClick={() => setIsDriveControl(!isDriveControl)}>Toggle Mode</button>
         <button className='btn btn__primary' onClick={() => setIsSerial(!isSerial)}>Toggle Connection Type</button>
-        {isSerial ? <Serial commands={commands} setStatus={setStatus} isDriveControl={isDriveControl} /> : <Wifi commands={commands} setStatus={setStatus} />}
+        {isSerial ? <Serial commands={commands} setStatus={setStatus} /> : <Wifi commands={commands} setStatus={setStatus} />}
       </header>
 
       <div className="grid-container">

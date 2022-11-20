@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useGamepads } from 'react-gamepads';
 import { DriveFormat } from '../dto/commands';
-import { XboxController } from '../dto/gamepad';
-import { Extreme3DPro } from '../dto/gamepad';
+import { XboxController, Extreme3DPro } from '../dto/gamepad';
+import Input from './Input';
 
 export default function DriveControl({ commands }) {
   useGamepads((gamepads) => {
     setGamepads(gamepads[0]);
-  }); // will use the first gamepad connected
+  });
 
   const [gamepad, setGamepads] = useState<Gamepad>();
   const [driveCommands, setDriveCommands] = useState<DriveFormat>({
@@ -15,7 +15,7 @@ export default function DriveControl({ commands }) {
     IO: 1,
     WO: 0,
     DM: 'D',
-    CMD: [0,0]
+    CMD: [0, 0]
   });
 
   async function handleSubmit(e) {
@@ -31,7 +31,7 @@ export default function DriveControl({ commands }) {
     const newArray = [...driveCommands.CMD];
     newArray[index] = e.target.value;
     setDriveCommands({ ...driveCommands, CMD: newArray });
-}
+  }
 
   useEffect(() => {
     function getLogitechSpeed(): number {
@@ -46,7 +46,7 @@ export default function DriveControl({ commands }) {
             100 -
             0) *
             (100 - 0)) /
-            (200 - 0) +
+          (200 - 0) +
           0
         ).toFixed(0)
       );
@@ -70,20 +70,20 @@ export default function DriveControl({ commands }) {
       return gamepad?.buttons[Extreme3DPro.btn_8]?.value
         ? 'S'
         : gamepad?.buttons[Extreme3DPro.btn_10]?.value
-        ? 'T'
-        : gamepad?.buttons[Extreme3DPro.btn_12]?.value
-        ? 'D'
-        : driveCommands.DM;
+          ? 'T'
+          : gamepad?.buttons[Extreme3DPro.btn_12]?.value
+            ? 'D'
+            : driveCommands.DM;
     }
 
     function getLogitechWheelOrientation(): number {
       return gamepad?.buttons[Extreme3DPro.btn_7]?.value
         ? 0
         : gamepad?.buttons[Extreme3DPro.btn_9]?.value
-        ? 1
-        : gamepad?.buttons[Extreme3DPro.btn_11]?.value
-        ? 2
-        : driveCommands.WO;
+          ? 1
+          : gamepad?.buttons[Extreme3DPro.btn_11]?.value
+            ? 2
+            : driveCommands.WO;
     }
 
     function getXboxSpeed(): number {
@@ -107,20 +107,20 @@ export default function DriveControl({ commands }) {
       return gamepad?.buttons[XboxController.x]?.value
         ? 'S'
         : gamepad?.buttons[XboxController.y]?.value
-        ? 'T'
-        : gamepad?.buttons[XboxController.b]?.value
-        ? 'D'
-        : driveCommands.DM;
+          ? 'T'
+          : gamepad?.buttons[XboxController.b]?.value
+            ? 'D'
+            : driveCommands.DM;
     }
 
     function getXboxWheelOrientation(): number {
-      return gamepad?.buttons[XboxController.dpad_left]?.value
+      return gamepad?.buttons[XboxController.d_pad_left]?.value
         ? 0
-        : gamepad?.buttons[XboxController.dpad_up]?.value
-        ? 1
-        : gamepad?.buttons[XboxController.dpad_right]?.value
-        ? 2
-        : driveCommands.WO;
+        : gamepad?.buttons[XboxController.d_pad_up]?.value
+          ? 1
+          : gamepad?.buttons[XboxController.d_pad_right]?.value
+            ? 2
+            : driveCommands.WO;
     }
 
     const gamepadId: string = gamepad?.id.toLowerCase() || '';
@@ -129,7 +129,7 @@ export default function DriveControl({ commands }) {
         ...driveCommands,
         WO: getLogitechWheelOrientation(),
         DM: getLogitechDriveMode(),
-        CMD: [getLogitechSpeed(),getLogitechAngle()]
+        CMD: [getLogitechSpeed(), getLogitechAngle()]
       });
       handleSubmit(new Event('submit'));
     }
@@ -138,7 +138,7 @@ export default function DriveControl({ commands }) {
         ...driveCommands,
         WO: getXboxWheelOrientation(),
         DM: getXboxDriveMode(),
-        CMD: [getXboxSpeed(),getXboxAngle()]
+        CMD: [getXboxSpeed(), getXboxAngle()]
       });
       handleSubmit(new Event('submit'));
     }
@@ -283,6 +283,8 @@ export default function DriveControl({ commands }) {
             2
           </button>
         </div>
+
+        <Input label="Test" min={0} max={100} isDisabled={false} />
 
         <div className='btn-group'>
           <label className='label_lg'>

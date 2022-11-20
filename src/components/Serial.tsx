@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { DriveFormat, ArmFormat } from '../dto/commands'
 
-export default function Serial({ commands, setStatus, isDriveControl }) {
+export default function Serial({ commands, setStatus }) {
     let rawSerial: string = "";
     const port = useRef<SerialPort>(undefined);
     const reader = useRef<ReadableStreamDefaultReader>();
