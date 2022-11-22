@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react';
 import { useGamepads } from 'react-gamepads';
 import { DriveInterface, DriveFormat } from '../dto/commands';
 import { XboxController, Extreme3DPro } from '../dto/gamepad';
-import Input from './Input';
+import { DropdownButtonSelector, TextSliderInput, FooterButtons } from './Forms/ControlForm';
+
+const DEFAULT_DRIVE_COMMANDS: DriveInterface = { HB: 0, IO: 1, DM: 'D', WO: 0, CMD: [0, 0] };
+const WHEEL_ORIENTATIONS = [{ label: "0", value: 0 }, { label: "1", value: 1 }, { label: "2", value: 2 }];
+const MODES = [{ label: "Spin", value: "S" }, { label: "Translate", value: "T" }, { label: "Drive", value: "D" }];
 
 export default function DriveControl({ commands }) {
   useGamepads((gamepads) => {
@@ -10,29 +14,27 @@ export default function DriveControl({ commands }) {
   });
 
   const [gamepad, setGamepads] = useState<Gamepad>();
-  const [driveCommands, setDriveCommands] = useState<DriveInterface>({
-    HB: 0,
-    IO: 1,
-    WO: 0,
-    DM: 'D',
-    CMD: [0, 0]
-  });
+  const [driveCommands, setDriveCommands] = useState<DriveInterface>(DEFAULT_DRIVE_COMMANDS);
 
   async function handleSubmit(e) {
     e.preventDefault();
     commands.current = DriveFormat(driveCommands);
-    console.log("submitting", commands.current);
+    // console.log("submitting", commands.current);
   }
 
   function handleChange(e) {
     setDriveCommands({ ...driveCommands, [e.target.name]: e.target.value });
   }
 
-  function handleCMDChange(e, index) {
+  function handleCommandChange(e, index) {
     const newArray = [...driveCommands.CMD];
     newArray[index] = e.target.value;
     setDriveCommands({ ...driveCommands, CMD: newArray });
   }
+
+  useEffect(() => {
+    handleSubmit(new Event('submit'));
+  }, [driveCommands.WO, driveCommands.DM, driveCommands.CMD]);
 
   useEffect(() => {
     function getLogitechSpeed(): number {
@@ -88,9 +90,8 @@ export default function DriveControl({ commands }) {
     }
 
     function getXboxSpeed(): number {
-      return parseInt(
-        (-gamepad?.axes[XboxController.left_analog_y] * 100).toFixed(0)
-      );
+      const newSpeed = -parseInt((gamepad?.axes[XboxController.left_analog_y] * 10).toFixed(0));
+      return newSpeed * 10;
     }
 
     function getXboxAngle(): number {
@@ -145,181 +146,17 @@ export default function DriveControl({ commands }) {
     }
   }, [gamepad]);
 
-  useEffect(() => {
-    handleSubmit(new Event('submit'));
-  }, []);
-
-  const SpinModeView = (
-    <div className='btn-group'>
-      <label className='label_lg'>
-        {' '}
-        Angle
-        <input
-          autoComplete='off'
-          disabled
-          className='input-text'
-          type='number'
-          name='angle'
-          value={driveCommands.CMD[1]}
-          onChange={(e) => handleCMDChange(e, 1)}
-        />
-      </label>
-      <input
-        className='slider'
-        disabled
-        type='range'
-        name='angle'
-        max={12}
-        min={-12}
-        value={driveCommands.CMD[1]}
-        onChange={(e) => handleCMDChange(e, 1)}
-      />
-    </div>
-  );
-
-  const DriveTranslateModeView = (
-    <>
-      <div className='btn-group'>
-        <label className='label_lg'>
-          {' '}
-          Angle
-          <input
-            autoComplete='off'
-            className='input-text'
-            type='number'
-            name='angle'
-            value={driveCommands.CMD[1]}
-            onChange={(e) => handleCMDChange(e, 1)}
-          />
-        </label>
-        <input
-          className='slider'
-          type='range'
-          name='angle'
-          max={driveCommands.DM === 'T' ? 45 : 12}
-          min={driveCommands.DM === 'T' ? -45 : -12}
-          value={driveCommands.CMD[1]}
-          onChange={(e) => handleCMDChange(e, 1)}
-        />
-      </div>
-    </>
-  );
-
   return (
-    <div className='serial'>
+    <div>
       <h2>Drive Control</h2>
-      <form className='serial-form' onSubmit={handleSubmit}>
-        <label className='label_lg'>Drive Mode</label>
-        <div className='btn-group'>
-          <select
-            className='input-text'
-            name='drive_mode'
-            value={driveCommands.DM}
-            onChange={handleChange}
-          >
-            <option value='D'>Drive</option>
-            <option value='S'>Spin</option>
-            <option value='T'>Translate</option>
-          </select>
-          <button
-            className='btn btn__primary'
-            onClick={() =>
-              setDriveCommands({ ...driveCommands, DM: 'D' })
-            }
-          >
-            Drive
-          </button>
-          <button
-            className='btn btn__primary'
-            onClick={() =>
-              setDriveCommands({ ...driveCommands, DM: 'S' })
-            }
-          >
-            Spin
-          </button>
-          <button
-            className='btn btn__primary'
-            onClick={() =>
-              setDriveCommands({ ...driveCommands, DM: 'T' })
-            }
-          >
-            Translate
-          </button>
-        </div>
-
-        <label className='label_lg'> Wheel Orientation</label>
-        <div className='btn-group'>
-          <select
-            className='input-text'
-            name='wheel_orientation'
-            value={driveCommands.WO}
-            onChange={handleChange}
-          >
-            <option value='0'>0</option>
-            <option value='1'>1</option>
-            <option value='2'>2</option>
-          </select>
-          <button
-            className='btn btn__primary'
-            onClick={() =>
-              setDriveCommands({ ...driveCommands, WO: 0 })
-            }
-          >
-            0
-          </button>
-          <button
-            className='btn btn__primary'
-            onClick={() =>
-              setDriveCommands({ ...driveCommands, WO: 1 })
-            }
-          >
-            1
-          </button>
-          <button
-            className='btn btn__primary'
-            onClick={() =>
-              setDriveCommands({ ...driveCommands, WO: 2 })
-            }
-          >
-            2
-          </button>
-        </div>
-
-        <Input label="Test" min={0} max={100} isDisabled={false} />
-
-        <div className='btn-group'>
-          <label className='label_lg'>
-            {' '}
-            Speed
-            <input
-              autoComplete='off'
-              className='input-text'
-              type='number'
-              name='speed'
-              max={100}
-              min={-100}
-              value={driveCommands.CMD[0]}
-              onChange={(e) => handleCMDChange(e, 0)}
-            />
-          </label>
-          <input
-            className='slider'
-            type='range'
-            name='speed'
-            max={100}
-            min={-100}
-            value={driveCommands.CMD[0]}
-            onChange={(e) => handleCMDChange(e, 0)}
-          />
-        </div>
-        {driveCommands.DM === 'S' && SpinModeView}
-        {(driveCommands.DM === 'D' ||
-          driveCommands.DM === 'T') &&
-          DriveTranslateModeView}
-        <button className='btn btn__primary btn__lg btn-send' type='submit'>
-          Send
-        </button>
+      <form onSubmit={handleSubmit}>
+        <DropdownButtonSelector name='DM' value={driveCommands.DM} onChange={handleChange} options={MODES} />
+        <DropdownButtonSelector name='WO' value={driveCommands.WO} onChange={handleChange} options={WHEEL_ORIENTATIONS} />
+        <TextSliderInput label='Speed' min={-100} max={100} value={driveCommands.CMD[0]} onChange={(e) => handleCommandChange(e, 0)} handleSubmit={handleSubmit} />
+        <TextSliderInput label='Angle' min={-12} max={12} value={driveCommands.CMD[1]} onChange={(e) => handleCommandChange(e, 1)} handleSubmit={handleSubmit} disabled={driveCommands.DM === 'S'} />
+        <FooterButtons onResetClick={() => setDriveCommands(DEFAULT_DRIVE_COMMANDS)} />
       </form>
     </div>
   );
 }
+
