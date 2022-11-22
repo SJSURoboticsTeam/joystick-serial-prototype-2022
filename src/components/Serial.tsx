@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { DriveFormat, ArmFormat } from '../dto/commands'
+import { DriveInterface, ArmInterface } from '../dto/commands'
 
 export default function Serial({ commands, setStatus }) {
     let rawSerial: string = "";

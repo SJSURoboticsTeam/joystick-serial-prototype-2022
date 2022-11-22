@@ -6,14 +6,14 @@ import Status from './components/Status';
 import Serial from './components/Serial'
 import ArmControl from './components/ArmControl';
 import DriveControl from './components/DriveControl';
-import { ArmFormat, DriveFormat } from './dto/commands';
+import { ArmInterface, DriveInterface } from './dto/commands';
 import MapContainer from './components/GpsMap';
 
 function App() {
   const commands = useRef<string>("");
   const [isDriveControl, setIsDriveControl] = useState(true)
   const [isSerial, setIsSerial] = useState(true);
-  const [status, setStatus] = useState<ArmFormat | DriveFormat>();
+  const [status, setStatus] = useState<ArmInterface | DriveInterface>();
 
   return (
     <div>

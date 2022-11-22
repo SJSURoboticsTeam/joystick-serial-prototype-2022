@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useGamepads } from 'react-gamepads';
-import { DriveFormat } from '../dto/commands';
+import { DriveInterface, DriveFormat } from '../dto/commands';
 import { XboxController, Extreme3DPro } from '../dto/gamepad';
 import Input from './Input';
 
@@ -10,7 +10,7 @@ export default function DriveControl({ commands }) {
   });
 
   const [gamepad, setGamepads] = useState<Gamepad>();
-  const [driveCommands, setDriveCommands] = useState<DriveFormat>({
+  const [driveCommands, setDriveCommands] = useState<DriveInterface>({
     HB: 0,
     IO: 1,
     WO: 0,
@@ -20,7 +20,8 @@ export default function DriveControl({ commands }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    commands.current = `{"HB":${driveCommands.HB},"IO":${driveCommands.IO},"WO":${driveCommands.WO},"DM":"${driveCommands.DM}","CMD":[${driveCommands.CMD}]}`;
+    commands.current = DriveFormat(driveCommands);
+    console.log("submitting", commands.current);
   }
 
   function handleChange(e) {
