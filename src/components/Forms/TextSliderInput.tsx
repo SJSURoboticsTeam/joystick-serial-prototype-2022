@@ -1,20 +1,19 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 export default function TextSliderInput({ value, onChange, handleSubmit, min = 0, max = 100, label = "", disabled = false, autocomplete = 'off' }) {
-    const [textInput, setTextInput] = useState(value);
-    const handleChange = (e) => {
+    const [inputText, setInputText] = useState(value);
+    const handleTextInputChange = (e) => {
         if (e.target.value > max) {
             e.target.value = max
         } else if (e.target.value < min) {
             e.target.value = min
         }
-        onChange(e)
+        setInputText(e.target.value)
     }
 
-    const handleSliderChange = (e) => {
-        onChange(e)
-        handleSubmit(e)
-    }
+    useEffect(() => {
+        setInputText(value)
+    }, [value])
 
     return (
         <div className='input-group'>
@@ -26,10 +25,10 @@ export default function TextSliderInput({ value, onChange, handleSubmit, min = 0
                     name="CMD"
                     max={max}
                     min={min}
-                    value={value}
+                    value={inputText}
                     disabled={disabled}
-                    onBlur={handleSubmit}
-                    onChange={handleChange}
+                    onBlur={onChange}
+                    onChange={handleTextInputChange}
                     autoComplete={autocomplete}
                 />
             </label>
@@ -41,7 +40,7 @@ export default function TextSliderInput({ value, onChange, handleSubmit, min = 0
                 min={min}
                 value={value}
                 disabled={disabled}
-                onChange={handleChange}
+                onChange={onChange}
             />
         </div >
     )

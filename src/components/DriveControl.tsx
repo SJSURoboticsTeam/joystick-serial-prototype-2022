@@ -19,7 +19,7 @@ export default function DriveControl({ commands }) {
   async function handleSubmit(e) {
     e.preventDefault();
     commands.current = DriveFormat(driveCommands);
-    // console.log("submitting", commands.current);
+    console.log("submitting", commands.current);
   }
 
   function handleChange(e) {
