@@ -4,16 +4,16 @@ import Wifi from './components/Wifi';
 import Camera from './components/Camera'
 import Status from './components/Status';
 import Serial from './components/Serial'
-import ArmControl from './components/ArmControl';
-import DriveControl from './components/DriveControl';
-import { ArmInterface, DriveInterface } from './dto/commands';
+import ArmSystem from './components/ArmSystem';
+import DriveSystem from './components/DriveSystem';
+import { ArmCommand, DriveCommand } from './dto/commands';
 import MapContainer from './components/GpsMap';
 
 function App() {
   const commands = useRef<string>("");
   const [isDriveControl, setIsDriveControl] = useState(true)
   const [isSerial, setIsSerial] = useState(true);
-  const [status, setStatus] = useState<ArmInterface | DriveInterface>();
+  const [status, setStatus] = useState<ArmCommand | DriveCommand>();
 
   return (
     <div>
@@ -24,7 +24,7 @@ function App() {
       </header>
 
       <div className="grid-container">
-        {isDriveControl ? <DriveControl commands={commands} /> : <ArmControl commands={commands} />}
+        {isDriveControl ? <DriveSystem commands={commands} /> : <ArmSystem commands={commands} />}
         <Status status={status} />
         <Camera name="0" src="http://raspberrypi:8000/stream.mjpg" />
         <Camera name="1" src="http://raspberrypi:8001/stream.mjpg" />

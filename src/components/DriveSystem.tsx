@@ -1,25 +1,27 @@
 import { useEffect, useState } from 'react';
 import { useGamepads } from 'react-gamepads';
-import { DriveInterface, DriveFormat } from '../dto/commands';
+import { DriveCommand, DriveCommandStringFormat } from '../dto/commands';
 import { XboxController, Extreme3DPro } from '../dto/gamepad';
 import { DropdownButtonSelector, TextSliderInput, FooterButtons } from './Forms/ControlForm';
 
-const DEFAULT_DRIVE_COMMANDS: DriveInterface = { HB: 0, IO: 1, DM: 'D', WO: 0, CMD: [0, 0] };
+import XboxDriveControl from '../util/xbox-controller/drive';
+
+const DEFAULT_DRIVE_COMMANDS: DriveCommand = { HB: 0, IO: 1, DM: 'D', WO: 0, CMD: [0, 0] };
 const WHEEL_ORIENTATIONS = [{ label: "0", value: 0 }, { label: "1", value: 1 }, { label: "2", value: 2 }];
 const MODES = [{ label: "Spin", value: "S" }, { label: "Translate", value: "T" }, { label: "Drive", value: "D" }];
 
-export default function DriveControl({ commands }) {
+export default function DriveSystem({ commands }) {
   useGamepads((gamepads) => {
     setGamepads(gamepads[0]);
   });
 
   const [gamepad, setGamepads] = useState<Gamepad>();
-  const [driveCommands, setDriveCommands] = useState<DriveInterface>(DEFAULT_DRIVE_COMMANDS);
+  const [driveCommands, setDriveCommands] = useState<DriveCommand>(DEFAULT_DRIVE_COMMANDS);
 
   async function handleSubmit(e) {
     e.preventDefault();
-    commands.current = DriveFormat(driveCommands);
-    console.log("submitting", commands.current);
+    commands.current = DriveCommandStringFormat(driveCommands);
+    // console.log("submitting", commands.current);
   }
 
   function handleChange(e) {
@@ -34,7 +36,7 @@ export default function DriveControl({ commands }) {
 
   useEffect(() => {
     handleSubmit(new Event('submit'));
-  }, [driveCommands.WO, driveCommands.DM, driveCommands.CMD]);
+  }, [driveCommands]);
 
   useEffect(() => {
     function getLogitechSpeed(): number {
@@ -148,7 +150,7 @@ export default function DriveControl({ commands }) {
 
   return (
     <div>
-      <h2>Drive Control</h2>
+      <h2>Drive System</h2>
       <form onSubmit={handleSubmit}>
         <DropdownButtonSelector name='DM' value={driveCommands.DM} onChange={handleChange} options={MODES} />
         <DropdownButtonSelector name='WO' value={driveCommands.WO} onChange={handleChange} options={WHEEL_ORIENTATIONS} />

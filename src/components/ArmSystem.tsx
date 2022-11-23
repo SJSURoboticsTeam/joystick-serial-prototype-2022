@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
-import { ArmInterface, ArmFormat } from '../dto/commands';
+import { ArmCommand, ArmCommandStringFormat } from '../dto/commands';
 import { XboxController } from '../dto/gamepad';
 
-export default function ArmControl({ commands }) {
+export default function ArmSystem({ commands }) {
     useGamepads(gamepads => { setGamepads(gamepads[0]) }); // will use the first gamepad connected
 
     const [gamepad, setGamepads] = useState<Gamepad>();
-    const [armCommands, setArmCommands] = useState<ArmInterface>({ heartbeat_count: 0, is_operational: 1, mode: "J", angles: [0, 0, 0, 0, 0] });
+    const [armCommands, setArmCommands] = useState<ArmCommand>({ heartbeat_count: 0, is_operational: 1, mode: "J", angles: [0, 0, 0, 0, 0] });
 
     async function handleSubmit(e) {
         e.preventDefault();
-        commands.current = ArmFormat(armCommands);
+        commands.current = ArmCommandStringFormat(armCommands);
         console.log("submitting", commands.current);
     }
 
