@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 
-export default function TextSliderInput({ value, onChange, handleSubmit, min = 0, max = 100, label = "", disabled = false, autocomplete = 'off' }) {
+export default function TextSliderInput({ value, onChange, min = 0, max = 100, label = "", disabled = false, autocomplete = 'off' }) {
     const [inputText, setInputText] = useState(value);
     const handleTextInputChange = (e) => {
         if (e.target.value > max) {

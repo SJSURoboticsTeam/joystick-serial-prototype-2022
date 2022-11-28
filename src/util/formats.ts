@@ -1,4 +1,4 @@
-export interface DriveCommand {
+export interface DriveCommandDTO {
     HB: number; // heartbeat count
     IO: number; // is operational
     WO: number; // wheel orientation
@@ -6,20 +6,17 @@ export interface DriveCommand {
     CMD: number[]; // [speed, angle]
 }
 
-export interface ArmCommand {
+export interface ArmCommandDTO {
     heartbeat_count: number;
     is_operational: number;
     mode: string;
     angles: number[];
 }
 
-export function DriveCommandStringFormat(commands: DriveCommand): string {
+export function DriveCommandStringFormat(commands: DriveCommandDTO): string {
     return `{"HB":${commands.HB},"IO":${commands.IO},"WO":${commands.WO},"DM":"${commands.DM}","CMD":[${commands.CMD}]}`;
 };
 
-export function ArmCommandStringFormat(commands: ArmCommand): string {
+export function ArmCommandStringFormat(commands: ArmCommandDTO): string {
     return `{"heartbeat_count":${commands.heartbeat_count},"is_operational":${commands.is_operational},"mode":"${commands.mode}","angles":[${commands.angles}]}`;
 }
-
-export const DEFAULT_DRIVE_COMMANDS: DriveCommand = { HB: 0, IO: 1, DM: 'D', WO: 0, CMD: [0, 0] };
-export const DEFAULT_ARM_COMMANDS: ArmCommand = { heartbeat_count: 0, is_operational: 1, mode: 'D', angles: [0, 0, 0, 0, 0, 0] };
