@@ -1,6 +1,3 @@
-
-import { XboxController } from "../xbox-360/mapping";
-
 export enum Extreme3DPro {
     throttle_speed = 1,
     angle = 5,

@@ -1,6 +1,6 @@
 import { MAX_DRIVE_ANGLE, MAX_TRANSLATE_ANGLE, DEFAULT_DRIVE_COMMANDS } from "../../util/constants";
 import { DriveCommandDTO } from "../../util/formats";
-import { XboxController } from "./mapping";
+import { Xbox360ControllerDriveMapping } from "./mapping";
 
 export default class Drive {
     constructor(gamepad: Gamepad) {
@@ -16,19 +16,19 @@ export default class Drive {
     }
 
     private getMode() {
-        if (this.gamepad?.buttons[XboxController.drive_mode]?.pressed) {
+        if (this.gamepad?.buttons[Xbox360ControllerDriveMapping.drive_mode]?.pressed) {
             this.command.DM = 'D';
         }
-        if (this.gamepad?.buttons[XboxController.translate_mode]?.pressed) {
+        if (this.gamepad?.buttons[Xbox360ControllerDriveMapping.translate_mode]?.pressed) {
             this.command.DM = 'T';
         }
-        if (this.gamepad?.buttons[XboxController.spin_mode]?.pressed) {
+        if (this.gamepad?.buttons[Xbox360ControllerDriveMapping.spin_mode]?.pressed) {
             this.command.DM = 'S';
         }
     }
 
     private getSpeed() {
-        let speed = parseInt((this.gamepad?.axes[XboxController.speed] * 10).toFixed(0)) * -10;
+        let speed = parseInt((this.gamepad?.axes[Xbox360ControllerDriveMapping.speed] * 10).toFixed(0)) * -10;
         this.command.CMD[0] = speed;
     }
 
@@ -38,10 +38,10 @@ export default class Drive {
                 this.command.CMD[1] = 0;
                 break;
             case 'T':
-                this.command.CMD[1] = parseInt((this.gamepad?.axes[XboxController.angle] * MAX_TRANSLATE_ANGLE).toFixed(0));
+                this.command.CMD[1] = parseInt((this.gamepad?.axes[Xbox360ControllerDriveMapping.angle] * MAX_TRANSLATE_ANGLE).toFixed(0));
                 break;
             case 'D':
-                this.command.CMD[1] = parseInt((this.gamepad?.axes[XboxController.angle] * MAX_DRIVE_ANGLE).toFixed(0));
+                this.command.CMD[1] = parseInt((this.gamepad?.axes[Xbox360ControllerDriveMapping.angle] * MAX_DRIVE_ANGLE).toFixed(0));
                 break;
             default:
                 this.command.CMD[1] = 0;
@@ -50,13 +50,13 @@ export default class Drive {
     }
 
     private getWheelOrientation() {
-        if (this.gamepad?.buttons[XboxController.wheel_orientation_0]?.pressed) {
+        if (this.gamepad?.buttons[Xbox360ControllerDriveMapping.wheel_orientation_0]?.pressed) {
             this.command.WO = 0;
         }
-        if (this.gamepad?.buttons[XboxController.wheel_orientation_1]?.pressed) {
+        if (this.gamepad?.buttons[Xbox360ControllerDriveMapping.wheel_orientation_1]?.pressed) {
             this.command.WO = 1;
         }
-        if (this.gamepad?.buttons[XboxController.wheel_orientation_2]?.pressed) {
+        if (this.gamepad?.buttons[Xbox360ControllerDriveMapping.wheel_orientation_2]?.pressed) {
             this.command.WO = 2;
         }
     }

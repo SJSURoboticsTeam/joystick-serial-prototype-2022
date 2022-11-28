@@ -6,7 +6,7 @@ export default function DropdownButtonSelector({ name, value, onChange, options 
             <label className='label_lg'> Wheel Orientation</label>
             <div className='btn-group'>
                 <select
-                    className='input-text'
+                    className='input-text btn'
                     name={name}
                     value={value}
                     onChange={onChange}

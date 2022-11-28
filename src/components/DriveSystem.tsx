@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useGamepads } from 'react-gamepads';
 
 import { DriveCommandDTO, DriveCommandStringFormat } from '../util/formats';
-import { WHEEL_ORIENTATIONS, MODES, DEFAULT_DRIVE_COMMANDS } from '../util/constants';
+import { WHEEL_ORIENTATIONS, DRIVE_MODES, DEFAULT_DRIVE_COMMANDS, MAX_TRANSLATE_ANGLE, MAX_DRIVE_ANGLE } from '../util/constants';
 import { DropdownButtonSelector, TextSliderInput, FooterButtons } from './Forms/ControlForm';
 
 import Logitech3dProDriveControl from '../controllers/logitech-3d-pro/drive';
@@ -42,7 +42,6 @@ export default function DriveSystem({ commands }) {
       let xbox: Xbox360DriveControl = new Xbox360DriveControl(gamepad);
       setDriveCommands(xbox.getCommands());
     }
-    commands.current = DriveCommandStringFormat(driveCommands);
   }, [gamepad]);
 
   useEffect(() => {
@@ -53,10 +52,10 @@ export default function DriveSystem({ commands }) {
     <div>
       <h2>Drive System</h2>
       <form onSubmit={handleSubmit}>
-        <DropdownButtonSelector name='DM' value={driveCommands.DM} onChange={handleChange} options={MODES} />
+        <DropdownButtonSelector name='DM' value={driveCommands.DM} onChange={handleChange} options={DRIVE_MODES} />
         <DropdownButtonSelector name='WO' value={driveCommands.WO} onChange={handleChange} options={WHEEL_ORIENTATIONS} />
         <TextSliderInput label='Speed' min={-100} max={100} value={driveCommands.CMD[0]} onChange={(e) => handleCommandChange(e, 0)} />
-        <TextSliderInput label='Angle' min={driveCommands.DM === "T" ? -45 : -12} max={driveCommands.DM === "T" ? 45 : 12} value={driveCommands.CMD[1]} onChange={(e) => handleCommandChange(e, 1)} disabled={driveCommands.DM === 'S'} />
+        <TextSliderInput label='Angle' min={driveCommands.DM === "T" ? -MAX_TRANSLATE_ANGLE : -MAX_DRIVE_ANGLE} max={driveCommands.DM === "T" ? MAX_TRANSLATE_ANGLE : MAX_DRIVE_ANGLE} value={driveCommands.CMD[1]} onChange={(e) => handleCommandChange(e, 1)} disabled={driveCommands.DM === 'S'} />
         <FooterButtons onResetClick={() => setDriveCommands(DEFAULT_DRIVE_COMMANDS)} />
       </form>
     </div>

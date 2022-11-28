@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
 import { ArmCommandDTO, ArmCommandStringFormat } from '../util/formats';
-import { XboxController } from '../dto/gamepad';
+import { ARM_MODES, DEFAULT_ARM_COMMANDS, MAX_ELBOW_ANGLE, MAX_FINGER_ANGLE, MAX_ROTUNDA_ANGLE, MAX_RR9_ANGLE, MAX_SHOULDER_ANGLE, MAX_WRIST_PITCH_ANGLE, MAX_WRIST_ROLL_ANGLE } from '../util/constants';
+import { DropdownButtonSelector, TextSliderInput, FooterButtons } from './Forms/ControlForm';
+
+import Xbox360ArmControl from '../controllers/xbox-360/arm';
 
 export default function ArmSystem({ commands }) {
     useGamepads(gamepads => { setGamepads(gamepads[0]) }); // will use the first gamepad connected
@@ -26,40 +29,17 @@ export default function ArmSystem({ commands }) {
     }
 
     useEffect(() => {
-        function getXboxRotundaAngle(): number {
-            return Math.round(gamepad.axes[XboxController.left_analog_x] * 45);
-        }
-
-        function getXboxShoulderAngle(): number {
-            return Math.round(gamepad.axes[XboxController.left_analog_y] * -90);
-        }
-
-        function getXboxElbowAngle(): number {
-            return Math.round(gamepad.axes[XboxController.right_analog_y] * -90);
-        }
-
-        function getXboxWristRollAngle(): number {
-            return (gamepad?.axes[XboxController.right_analog_x]) ? parseInt((-(gamepad?.axes[XboxController.right_analog_x]) * -180).toFixed(0)) : 0;
-        }
-
-        function getXboxWristPitchAngle(): number {
-            const negativeWristPitchAngle: number = (gamepad?.buttons[XboxController.left_trigger]?.value) ? parseInt((-(gamepad?.buttons[XboxController.left_trigger]?.value) * 180).toFixed(0)) : 0;
-            const positiveWristPitchAngle: number = (gamepad?.buttons[XboxController.right_trigger]?.value) ? parseInt((-(gamepad?.buttons[XboxController.right_trigger]?.value) * -180).toFixed(0)) : 0;
-            return negativeWristPitchAngle + positiveWristPitchAngle;
-        }
-
         const gamepadId: string = gamepad?.id.toLowerCase() || "";
         if (gamepadId.includes("microsoft") || gamepadId.includes("xbox")) {
-            const jointMode = armCommands.mode;
-            setArmCommands({ ...armCommands, mode: jointMode, angles: [getXboxRotundaAngle(), getXboxShoulderAngle(), getXboxElbowAngle(), getXboxWristPitchAngle(), getXboxWristRollAngle()] });
-            handleSubmit(new Event('submit'));
+            let xbox: Xbox360ArmControl = new Xbox360ArmControl(gamepad);
+            setArmCommands(xbox.getCommands());
         }
     }, [gamepad]);
 
 
     useEffect(() => {
         handleSubmit(new Event('submit'));
-    }, [armCommands]);
+    }, [armCommands, handleSubmit]);
 
     useEffect(() => {
         handleSubmit(new Event('submit'));
@@ -67,77 +47,27 @@ export default function ArmSystem({ commands }) {
 
     const JointModeView = (
         <>
-            <div className='btn-group'>
-                <label className='label_lg'> Rotunda Angle
-                    <input autoComplete='off' className='input-text' type='number' name="angles" value={armCommands.angles[0]} onChange={(e) => handleAngleChange(e, 0)} />
-                </label>
-                <input autoComplete='off' className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[0]} onChange={(e) => handleAngleChange(e, 0)} />
-            </div>
-
-            <div className='btn-group'>
-                <label className='label_lg'> Shoulder Angle
-                    <input autoComplete='off' className='input-text' type='number' name="angles" value={armCommands.angles[1]} onChange={(e) => handleAngleChange(e, 1)} />
-                </label>
-                <input autoComplete='off' className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[1]} onChange={(e) => handleAngleChange(e, 1)} />
-            </div>
-
-            <div className='btn-group'>
-                <label className='label_lg'> Elbow Angle
-                    <input autoComplete='off' className='input-text' type='number' name="angles" value={armCommands.angles[2]} onChange={(e) => handleAngleChange(e, 2)} />
-                </label>
-                <input autoComplete='off' className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[2]} onChange={(e) => handleAngleChange(e, 2)} />
-            </div>
-
-            <div className='btn-group'>
-                <label className='label_lg'>Wrist Pitch Angle
-                    <input autoComplete='off' className='input-text' type='number' name="angles" value={armCommands.angles[3]} onChange={(e) => handleAngleChange(e, 3)} />
-                </label> <input autoComplete='off' className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[3]} onChange={(e) => handleAngleChange(e, 3)} />
-            </div>
-
-            <div className='btn-group'>
-                <label className='label_lg'>Wrist Roll Angle
-                    <input autoComplete='off' className='input-text' type='number' name="angles" value={armCommands.angles[4]} onChange={(e) => handleAngleChange(e, 4)} />
-                </label>
-                <input autoComplete='off' className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[4]} onChange={(e) => handleAngleChange(e, 4)} />
-            </div>
+            <TextSliderInput label="Rotunda Angle" min={-MAX_ROTUNDA_ANGLE} max={MAX_ROTUNDA_ANGLE} value={armCommands.angles[0]} onChange={(e) => handleAngleChange(e, 0)} />
+            <TextSliderInput label="Shoulder Angle" min={-MAX_SHOULDER_ANGLE} max={MAX_SHOULDER_ANGLE} value={armCommands.angles[1]} onChange={(e) => handleAngleChange(e, 1)} />
+            <TextSliderInput label="Elbow Angle" min={-MAX_ELBOW_ANGLE} max={MAX_ELBOW_ANGLE} value={armCommands.angles[2]} onChange={(e) => handleAngleChange(e, 2)} />
+            <TextSliderInput label="Wrist Pitch Angle" min={-MAX_WRIST_PITCH_ANGLE} max={MAX_WRIST_PITCH_ANGLE} value={armCommands.angles[3]} onChange={(e) => handleAngleChange(e, 3)} />
+            <TextSliderInput label="Wrist Roll Angle" min={-MAX_WRIST_ROLL_ANGLE} max={MAX_WRIST_ROLL_ANGLE} value={armCommands.angles[4]} onChange={(e) => handleAngleChange(e, 4)} />
         </>
     )
 
     const HandModeView = (
         <>
-            <div className='btn-group'>
-                <label className='label_lg'> Thumb Finger Angle
-                    <input autoComplete='off' className='input-text' type='number' name="angles" value={armCommands.angles[0]} onChange={(e) => handleAngleChange(e, 0)} />
-                </label>
-                <input autoComplete='off' className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[0]} onChange={(e) => handleAngleChange(e, 0)} />
-            </div>
+            <TextSliderInput label="Thumb Finger Angle" min={-MAX_FINGER_ANGLE} max={MAX_FINGER_ANGLE} value={armCommands.angles[0]} onChange={(e) => handleAngleChange(e, 0)} />
+            <TextSliderInput label="Index Finger Angle" min={-MAX_FINGER_ANGLE} max={MAX_FINGER_ANGLE} value={armCommands.angles[1]} onChange={(e) => handleAngleChange(e, 1)} />
+            <TextSliderInput label="Middle Finger Angle" min={-MAX_FINGER_ANGLE} max={MAX_FINGER_ANGLE} value={armCommands.angles[2]} onChange={(e) => handleAngleChange(e, 2)} />
+            <TextSliderInput label="Ring Finger Angle" min={-MAX_FINGER_ANGLE} max={MAX_FINGER_ANGLE} value={armCommands.angles[3]} onChange={(e) => handleAngleChange(e, 3)} />
+            <TextSliderInput label="Pinky Finger Angle" min={-MAX_FINGER_ANGLE} max={MAX_FINGER_ANGLE} value={armCommands.angles[4]} onChange={(e) => handleAngleChange(e, 4)} />
+        </>
+    )
 
-            <div className='btn-group'>
-                <label className='label_lg'> Index Finger Angle
-                    <input autoComplete='off' className='input-text' type='number' name="angles" value={armCommands.angles[1]} onChange={(e) => handleAngleChange(e, 1)} />
-                </label>
-                <input autoComplete='off' className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[1]} onChange={(e) => handleAngleChange(e, 1)} />
-            </div>
-
-            <div className='btn-group'>
-                <label className='label_lg'> Middle Finger Angle
-                    <input autoComplete='off' className='input-text' type='number' name="angles" value={armCommands.angles[2]} onChange={(e) => handleAngleChange(e, 2)} />
-                </label>
-                <input autoComplete='off' className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[2]} onChange={(e) => handleAngleChange(e, 2)} />
-            </div>
-
-            <div className='btn-group'>
-                <label className='label_lg'> Ring Finger Angle
-                    <input autoComplete='off' className='input-text' type='number' name="angles" value={armCommands.angles[3]} onChange={(e) => handleAngleChange(e, 3)} />
-                </label> <input autoComplete='off' className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[3]} onChange={(e) => handleAngleChange(e, 3)} />
-            </div>
-
-            <div className='btn-group'>
-                <label className='label_lg'> Pinky Finger Angle
-                    <input autoComplete='off' className='input-text' type='number' name="angles" value={armCommands.angles[4]} onChange={(e) => handleAngleChange(e, 4)} />
-                </label>
-                <input autoComplete='off' className='slider' type='range' name="angles" min={-180} max={180} value={armCommands.angles[4]} onChange={(e) => handleAngleChange(e, 4)} />
-            </div>
+    const RR9ModeView = (
+        <>
+            <TextSliderInput label="RR9 Angle" min={0} max={MAX_RR9_ANGLE} value={armCommands.angles[0]} onChange={(e) => handleAngleChange(e, 0)} />
         </>
     )
 
@@ -145,18 +75,11 @@ export default function ArmSystem({ commands }) {
         <div className='serial'>
             <h2>Arm Control</h2>
             <form className='serial-form' onSubmit={handleSubmit}>
-                <label className='label_lg'> Joint Mode</label>
-                <div className='btn-group'>
-                    <select className='input-text' name='mode' value={armCommands.mode} onChange={handleChange}>
-                        <option value="J">Joint</option>
-                        <option value="H">Hand</option>
-                    </select>
-                    <button className='btn btn__primary' onClick={() => setArmCommands({ ...armCommands, mode: "J" })}>Joint</button>
-                    <button className='btn btn__primary' onClick={() => setArmCommands({ ...armCommands, mode: "H", angles: [0, 0, 0, 0, 0] })}>Hand</button>
-                </div>
+                <DropdownButtonSelector name='mode' value={armCommands.mode} onChange={handleChange} options={ARM_MODES} />
                 {armCommands.mode === "J" && JointModeView}
                 {armCommands.mode === "H" && HandModeView}
-                <button className='btn btn__primary btn__lg btn-send' type="submit">Send</button>
+                {armCommands.mode === "R" && RR9ModeView}
+                <FooterButtons onResetClick={() => setArmCommands(DEFAULT_ARM_COMMANDS)} />
             </form>
         </div>
     )
