@@ -15,6 +15,18 @@ export default class Drive {
         return this.command;
     }
 
+    private getMode() {
+        if (this.gamepad?.buttons[XboxController.drive_mode]?.pressed) {
+            this.command.DM = 'D';
+        }
+        if (this.gamepad?.buttons[XboxController.translate_mode]?.pressed) {
+            this.command.DM = 'T';
+        }
+        if (this.gamepad?.buttons[XboxController.spin_mode]?.pressed) {
+            this.command.DM = 'S';
+        }
+    }
+
     private getSpeed() {
         let speed = parseInt((this.gamepad?.axes[XboxController.speed] * 10).toFixed(0)) * -10;
         this.command.CMD[0] = speed;
@@ -34,18 +46,6 @@ export default class Drive {
             default:
                 this.command.CMD[1] = 0;
                 break;
-        }
-    }
-
-    private getMode() {
-        if (this.gamepad?.buttons[XboxController.drive_mode]?.pressed) {
-            this.command.DM = 'D';
-        }
-        if (this.gamepad?.buttons[XboxController.translate_mode]?.pressed) {
-            this.command.DM = 'T';
-        }
-        if (this.gamepad?.buttons[XboxController.spin_mode]?.pressed) {
-            this.command.DM = 'S';
         }
     }
 
