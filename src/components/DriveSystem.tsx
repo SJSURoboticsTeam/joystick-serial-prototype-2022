@@ -9,9 +9,7 @@ import Logitech3dProDriveControl from '../controllers/logitech-3d-pro/drive';
 import Xbox360DriveControl from '../controllers/xbox-360/drive';
 
 export default function DriveSystem({ commands }) {
-  useGamepads((gamepads) => {
-    setGamepads(gamepads[0]);
-  });
+  useGamepads((gamepads) => { setGamepads(gamepads[0]) });
 
   const [gamepad, setGamepads] = useState<Gamepad>();
   const [driveCommands, setDriveCommands] = useState<DriveCommandDTO>(DEFAULT_DRIVE_COMMANDS);
@@ -19,7 +17,7 @@ export default function DriveSystem({ commands }) {
   async function handleSubmit(e) {
     e.preventDefault();
     commands.current = DriveCommandStringFormat(driveCommands);
-    console.log("submitting", commands.current);
+    // console.log("submitting", commands.current);
   }
 
   function handleChange(e) {
@@ -47,6 +45,11 @@ export default function DriveSystem({ commands }) {
   useEffect(() => {
     handleSubmit(new Event('submit'));
   }, [driveCommands, handleSubmit]);
+
+
+  useEffect(() => {
+    handleSubmit(new Event('submit'));
+  }, []);
 
   return (
     <div>

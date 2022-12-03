@@ -10,12 +10,12 @@ export default function ArmSystem({ commands }) {
     useGamepads(gamepads => { setGamepads(gamepads[0]) }); // will use the first gamepad connected
 
     const [gamepad, setGamepads] = useState<Gamepad>();
-    const [armCommands, setArmCommands] = useState<ArmCommandDTO>({ heartbeat_count: 0, is_operational: 1, mode: "J", angles: [0, 0, 0, 0, 0] });
+    const [armCommands, setArmCommands] = useState<ArmCommandDTO>(DEFAULT_ARM_COMMANDS);
 
     async function handleSubmit(e) {
         e.preventDefault();
         commands.current = ArmCommandStringFormat(armCommands);
-        console.log("submitting", commands.current);
+        // console.log("submitting", commands.current);
     }
 
     function handleChange(e) {
@@ -79,7 +79,7 @@ export default function ArmSystem({ commands }) {
                 {armCommands.mode === "J" && JointModeView}
                 {armCommands.mode === "H" && HandModeView}
                 {armCommands.mode === "R" && RR9ModeView}
-                <FooterButtons onResetClick={() => setArmCommands(DEFAULT_ARM_COMMANDS)} />
+                <FooterButtons onResetClick={() => setArmCommands({ ...DEFAULT_ARM_COMMANDS, mode: armCommands.mode })} />
             </form>
         </div>
     )
