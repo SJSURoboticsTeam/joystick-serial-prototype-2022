@@ -79,7 +79,7 @@ export default function Serial({ commands, setStatus }) {
 
             let newStatus: string | undefined;
             newStatus = responseArray.pop() as string;
-            if (newStatus != undefined) {
+            if (newStatus !== undefined) {
                 newStatus = JSON.parse(newStatus);
                 setStatus(newStatus);
                 return true;

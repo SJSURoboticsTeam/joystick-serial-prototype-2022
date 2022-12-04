@@ -11,7 +11,7 @@ export const MAX_WRIST_ROLL_ANGLE = 360;
 
 export const MAX_FINGER_ANGLE = 90;
 
-export const MAX_RR9_ANGLE = 90;
+export const MAX_RR9_ANGLE = 150;
 
 export const DEFAULT_DRIVE_COMMANDS: DriveCommandDTO = { HB: 0, IO: 1, DM: 'D', WO: 0, CMD: [0, 0] };
 export const WHEEL_ORIENTATIONS = [{ label: "0", value: 0 }, { label: "1", value: 1 }, { label: "2", value: 2 }];

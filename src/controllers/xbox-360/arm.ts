@@ -1,4 +1,13 @@
-import { DEFAULT_ARM_COMMANDS, MAX_ELBOW_ANGLE, MAX_FINGER_ANGLE, MAX_ROTUNDA_ANGLE, MAX_RR9_ANGLE, MAX_SHOULDER_ANGLE, MAX_TRANSLATE_ANGLE, MAX_WRIST_PITCH_ANGLE, MAX_WRIST_ROLL_ANGLE } from "../../util/constants";
+import {
+    DEFAULT_ARM_COMMANDS,
+    MAX_ELBOW_ANGLE,
+    MAX_FINGER_ANGLE,
+    MAX_ROTUNDA_ANGLE,
+    MAX_RR9_ANGLE,
+    MAX_SHOULDER_ANGLE,
+    MAX_WRIST_PITCH_ANGLE,
+    MAX_WRIST_ROLL_ANGLE
+} from "../../util/constants";
 import { ArmCommandDTO } from "../../util/formats";
 import { Xbox360ControllerArmMapping } from "./mapping";
 
@@ -54,7 +63,6 @@ export default class Arm {
     }
 
     private getWristRollAngle() {
-        const maxAngle = this.command.mode === "J" ? MAX_WRIST_ROLL_ANGLE : MAX_FINGER_ANGLE;
         this.command.angles[4] = parseInt((this.gamepad.axes[Xbox360ControllerArmMapping.wrist_roll_angle] * MAX_WRIST_ROLL_ANGLE).toFixed(0));
     }
 
