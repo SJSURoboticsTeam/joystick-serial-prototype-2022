@@ -30,16 +30,18 @@ export default function DriveSystem({ commands }) {
   }
 
   useEffect(() => {
-    const gamepadId: string = gamepad?.id.toLowerCase() || '';
-    let newCommands = { ...driveCommands };
-    if (gamepadId.includes('extreme 3d') || gamepadId.includes('logitech')) {
-      newCommands = new Logitech3dProDriveControl(gamepad).getCommands();
+    if (gamepad) {
+      const gamepadId: string = gamepad?.id.toLowerCase() || '';
+      let newCommands = { ...driveCommands };
+      if (gamepadId.includes('extreme 3d') || gamepadId.includes('logitech')) {
+        newCommands = new Logitech3dProDriveControl(gamepad).getCommands();
+      }
+      if (gamepadId.includes('microsoft') || gamepadId.includes('xbox')) {
+        newCommands = new Xbox360DriveControl(gamepad).getCommands();
+      }
+      updateCommands(newCommands);
+      console.log(DriveCommandStringFormat(newCommands));
     }
-    if (gamepadId.includes('microsoft') || gamepadId.includes('xbox')) {
-      newCommands = new Xbox360DriveControl(gamepad).getCommands();
-    }
-    updateCommands(newCommands);
-    console.log(DriveCommandStringFormat(newCommands));
   }, [gamepad]);
 
   return (

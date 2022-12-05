@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Wifi from './components/Wifi';
 import Camera from './components/Camera'
@@ -6,14 +6,20 @@ import Status from './components/Status';
 import Serial from './components/Serial'
 import ArmSystem from './components/ArmSystem';
 import DriveSystem from './components/DriveSystem';
-import { ArmCommandDTO, DriveCommandDTO } from './util/formats';
+import { ArmCommandDTO, ArmCommandStringFormat, DriveCommandDTO, DriveCommandStringFormat } from './util/formats';
 import MapContainer from './components/GpsMap';
+import { DEFAULT_ARM_COMMANDS, DEFAULT_DRIVE_COMMANDS } from './util/constants';
 
 function App() {
   const commands = useRef<string>("");
   const [isDriveControl, setIsDriveControl] = useState(true)
   const [isSerial, setIsSerial] = useState(true);
   const [status, setStatus] = useState<ArmCommandDTO | DriveCommandDTO>();
+
+  useEffect(() => {
+    commands.current = isDriveControl ? DriveCommandStringFormat(DEFAULT_DRIVE_COMMANDS) : ArmCommandStringFormat(DEFAULT_ARM_COMMANDS);
+  }, [isDriveControl]);
+
 
   return (
     <div>
