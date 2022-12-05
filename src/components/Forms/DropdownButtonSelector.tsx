@@ -1,15 +1,16 @@
 import React from 'react'
 
-export default function DropdownButtonSelector({ name, value, onChange, options }) {
+export default function DropdownButtonSelector({ name, value, onChange, options, label = "", disabled = false }) {
     return (
         <>
-            <label className='label_lg'> Wheel Orientation</label>
+            <label className='label_lg'> {label}</label>
             <div className='btn-group'>
                 <select
                     className='input-text btn'
                     name={name}
                     value={value}
                     onChange={onChange}
+                    disabled={disabled}
                 >
                     {options.map((option, index) => {
                         return (
@@ -23,6 +24,7 @@ export default function DropdownButtonSelector({ name, value, onChange, options 
                             key={index}
                             className='btn btn__primary'
                             onClick={() => onChange({ target: { name: name, value: option.value } })}
+                            disabled={disabled}
                         >
                             {option.label}
                         </button>

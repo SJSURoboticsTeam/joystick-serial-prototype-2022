@@ -17,47 +17,47 @@ export default class Drive {
 
     private getMode() {
         if (this.gamepad?.buttons[Xbox360ControllerDriveMapping.drive_mode]?.pressed) {
-            this.command.DM = 'D';
+            this.command.drive_mode = 'D';
         }
         if (this.gamepad?.buttons[Xbox360ControllerDriveMapping.translate_mode]?.pressed) {
-            this.command.DM = 'T';
+            this.command.drive_mode = 'T';
         }
         if (this.gamepad?.buttons[Xbox360ControllerDriveMapping.spin_mode]?.pressed) {
-            this.command.DM = 'S';
+            this.command.drive_mode = 'S';
         }
     }
 
     private getSpeed() {
         let speed = parseInt((this.gamepad?.axes[Xbox360ControllerDriveMapping.speed] * 10).toFixed(0)) * -10;
-        this.command.CMD[0] = speed;
+        this.command.speed = speed;
     }
 
     private getAngle() {
-        switch (this.command.DM) {
+        switch (this.command.drive_mode) {
             case 'S':
-                this.command.CMD[1] = 0;
+                this.command.angle = 0;
                 break;
             case 'T':
-                this.command.CMD[1] = parseInt((this.gamepad?.axes[Xbox360ControllerDriveMapping.angle] * MAX_TRANSLATE_ANGLE).toFixed(0));
+                this.command.angle = parseInt((this.gamepad?.axes[Xbox360ControllerDriveMapping.angle] * MAX_TRANSLATE_ANGLE).toFixed(0));
                 break;
             case 'D':
-                this.command.CMD[1] = parseInt((this.gamepad?.axes[Xbox360ControllerDriveMapping.angle] * MAX_DRIVE_ANGLE).toFixed(0));
+                this.command.angle = parseInt((this.gamepad?.axes[Xbox360ControllerDriveMapping.angle] * MAX_DRIVE_ANGLE).toFixed(0));
                 break;
             default:
-                this.command.CMD[1] = 0;
+                this.command.angle = 0;
                 break;
         }
     }
 
     private getWheelOrientation() {
         if (this.gamepad?.buttons[Xbox360ControllerDriveMapping.wheel_orientation_0]?.pressed) {
-            this.command.WO = 0;
+            this.command.wheel_orientation = 0;
         }
         if (this.gamepad?.buttons[Xbox360ControllerDriveMapping.wheel_orientation_1]?.pressed) {
-            this.command.WO = 1;
+            this.command.wheel_orientation = 1;
         }
         if (this.gamepad?.buttons[Xbox360ControllerDriveMapping.wheel_orientation_2]?.pressed) {
-            this.command.WO = 2;
+            this.command.wheel_orientation = 2;
         }
     }
 

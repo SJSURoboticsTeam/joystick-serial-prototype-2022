@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 
-export default function TextSliderInput({ value, onChange, min = 0, max = 100, label = "", disabled = false, autocomplete = 'off' }) {
+export default function TextSliderInput({ name, value, onChange, min = 0, max = 100, label = "", disabled = false, autocomplete = 'off' }) {
     const [inputText, setInputText] = useState(value);
     const handleTextInputChange = (e) => {
         if (e.target.value > max) {
@@ -22,7 +22,7 @@ export default function TextSliderInput({ value, onChange, min = 0, max = 100, l
                 <input
                     className='input-text'
                     type='number'
-                    name="CMD"
+                    name={name}
                     max={max}
                     min={min}
                     value={inputText}
@@ -35,7 +35,7 @@ export default function TextSliderInput({ value, onChange, min = 0, max = 100, l
             <input
                 className='slider'
                 type='range'
-                name="CMD"
+                name={name}
                 max={max}
                 min={min}
                 value={value}

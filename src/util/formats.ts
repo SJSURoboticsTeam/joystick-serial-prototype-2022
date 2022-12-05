@@ -1,9 +1,10 @@
 export interface DriveCommandDTO {
-    HB: number; // heartbeat count
-    IO: number; // is operational
-    WO: number; // wheel orientation
-    DM: string; // drive mode
-    CMD: number[]; // [speed, angle]
+    heartbeat_count: number;
+    is_operational: number;
+    wheel_orientation: number;
+    drive_mode: string;
+    speed: number;
+    angle: number;
 }
 
 export interface ArmCommandDTO {
@@ -14,7 +15,7 @@ export interface ArmCommandDTO {
 }
 
 export function DriveCommandStringFormat(commands: DriveCommandDTO): string {
-    return `{"HB":${commands.HB},"IO":${commands.IO},"WO":${commands.WO},"DM":"${commands.DM}","CMD":[${commands.CMD}]}`;
+    return `{"HB":${commands.heartbeat_count},"IO":${commands.is_operational},"WO":${commands.wheel_orientation},"DM":"${commands.drive_mode}","CMD":[${commands.speed},${commands.angle}]}`;
 };
 
 export function ArmCommandStringFormat(commands: ArmCommandDTO): string {
