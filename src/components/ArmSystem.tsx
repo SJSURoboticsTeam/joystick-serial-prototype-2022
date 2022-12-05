@@ -8,18 +8,19 @@ import { DropdownButtonSelector, TextSliderInput, FooterButtons } from './Forms/
 import Xbox360ArmControl from '../controllers/xbox-360/arm';
 
 export default function ArmSystem({ commands }) {
-    useGamepads(gamepads => { setGamepads(gamepads[0]) }); // will use the first gamepad connected
+    useGamepads(gamepads => { setGamepads(gamepads[0]) });
 
     const [gamepad, setGamepads] = useState<Gamepad>();
     const [armCommands, setArmCommands] = useState<ArmCommandDTO>(DEFAULT_ARM_COMMANDS);
 
-    async function handleSubmit(e) {
-        e.preventDefault();
-        commands.current = ArmCommandStringFormat(armCommands);
+    function updateCommands(newCommands) {
+        commands.current = ArmCommandStringFormat(newCommands);
+        setArmCommands(newCommands);
     }
 
     function handleChange(e) {
-        setArmCommands({ ...armCommands, [e.target.name]: e.target.value });
+        const newCommands = { ...armCommands, [e.target.name]: e.target.value };
+        updateCommands(newCommands);
     }
 
     function handleAngleChange(e, index) {
@@ -29,21 +30,15 @@ export default function ArmSystem({ commands }) {
     }
 
     useEffect(() => {
-        const gamepadId: string = gamepad?.id.toLowerCase() || "";
-        if (gamepadId.includes("microsoft") || gamepadId.includes("xbox")) {
-            let xbox: Xbox360ArmControl = new Xbox360ArmControl(gamepad);
-            setArmCommands(xbox.getCommands());
+        if (gamepad) {
+            const gamepadId: string = gamepad?.id.toLowerCase() || "";
+            let newCommands = { ...armCommands };
+            if (gamepadId.includes("microsoft") || gamepadId.includes("xbox")) {
+                newCommands = new Xbox360ArmControl(gamepad).getCommands();
+            }
+            updateCommands(newCommands);
         }
     }, [gamepad]);
-
-
-    useEffect(() => {
-        handleSubmit(new Event('submit'));
-    }, [armCommands, handleSubmit]);
-
-    useEffect(() => {
-        handleSubmit(new Event('submit'));
-    }, []);
 
     const JointModeView = (
         <>
@@ -74,7 +69,7 @@ export default function ArmSystem({ commands }) {
     return (
         <div className='serial'>
             <h2>Arm System</h2>
-            <form className='serial-form' onSubmit={handleSubmit}>
+            <form className='serial-form' onSubmit={(e) => e.preventDefault()}>
                 <DropdownButtonSelector name='mode' label='Mode' value={armCommands.mode} onChange={handleChange} options={ARM_MODES} />
                 {armCommands.mode === "J" && JointModeView}
                 {armCommands.mode === "H" && HandModeView}

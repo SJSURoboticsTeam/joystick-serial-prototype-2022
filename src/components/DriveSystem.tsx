@@ -40,7 +40,6 @@ export default function DriveSystem({ commands }) {
         newCommands = new Xbox360DriveControl(gamepad).getCommands();
       }
       updateCommands(newCommands);
-      console.log(DriveCommandStringFormat(newCommands));
     }
   }, [gamepad]);
 
