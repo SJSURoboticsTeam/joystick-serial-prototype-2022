@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Wifi from './components/Wifi';
 import Camera from './components/Camera'
@@ -11,10 +11,16 @@ import MapContainer from './components/GpsMap';
 
 function App() {
   const commands = useRef<string>("");
+  const [queue,setQueue]=useState([]);
   const [isDriveControl, setIsDriveControl] = useState(true)
   const [isSerial, setIsSerial] = useState(true);
   const [status, setStatus] = useState<ArmFormat | DriveFormat>();
+ console.log('command->',commands)
+ useEffect(()=>
+ {
+  console.log(queue)
 
+ },[queue])
   return (
     <div>
       <header className='btn-group'>
@@ -30,7 +36,25 @@ function App() {
         <Camera name="1" src="http://raspberrypi:8001/stream.mjpg" />
         <Camera name="2" src="http://raspberrypi:8002/stream.mjpg" />
         <Camera name="3" src="http://raspberrypi:8003/stream.mjpg" />
-        <MapContainer commands={commands} />
+        <MapContainer setQueue={setQueue} commands={commands} />
+        <div>
+           <table style={{width:'100%',border:'1px solid grey'}}>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Latitude</th>
+                  <th>Longitude</th>
+                </tr>
+              </thead>
+              <tbody>
+                {queue.map((element,index)=><tr>
+                  <td>{index+1}</td>
+                  <td>{element.lat}</td>
+                  <td>{element.lng}</td>
+                </tr>)}
+              </tbody>
+           </table>
+        </div>
         {/* <MapContainer /> */}
       </div>
     </div>

@@ -4,6 +4,7 @@ import { Map, InfoWindow, Marker, GoogleApiWrapper } from "google-maps-react";
 var queue = [];
 var timerQue={};
 var timer=null;
+
 class MapContainer extends Component {
   //constructor for your marker
   const 
@@ -33,6 +34,7 @@ class MapContainer extends Component {
     // console.log(queue)
     
     queue.push({lat,lng})
+    this.props.setQueue([...queue]);
     if(timer==null){
       timer=setTimeout(()=>{
         //if we click the market, it should remove from queu
@@ -63,8 +65,6 @@ class MapContainer extends Component {
         ]
       };
     });
-    
-    
   }
   //function to show infoWindow
   onMarkerClick = (props, marker, e) => {
@@ -83,6 +83,7 @@ class MapContainer extends Component {
            this.state.markers.splice(i,1) ;
            this.setState({markers:this.state.markers})
            queue.splice(i,1)
+           this.props.setQueue([...queue])
            return
         }
       }
@@ -93,6 +94,7 @@ class MapContainer extends Component {
         showingInfoWindow: true,
         coordinate: coordinates
     });
+    this.display()
     }
   
   //renderer
@@ -102,7 +104,7 @@ class MapContainer extends Component {
       <Map
         google={this.props.google}
         onClick={this.mapClicked}
-        style={{ width: "100%", height: "100%" }}
+        style={{ width: "32%", height: "63%", left: "-5px"}}
         zoom={10}
         initialCenter={{
           lat: 37.334061,
@@ -138,3 +140,5 @@ class MapContainer extends Component {
 export default GoogleApiWrapper({
   apiKey: 'AIzaSyBu3arSboQ85q29cs3L7B1GLPjVsN4VO5o'
 })(MapContainer);
+
+export {queue};
