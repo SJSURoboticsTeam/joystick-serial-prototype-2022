@@ -1,4 +1,4 @@
-export enum Extreme3DPro {
+export enum Extreme3DProDriveMapping {
     throttle_speed = 1,
     angle = 5,
     enable_speed = 0,
