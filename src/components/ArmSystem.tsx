@@ -1,21 +1,41 @@
 import { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
 
-import { ArmCommandDTO, ArmCommandStringFormat } from '../util/formats';
-import { ARM_MODES, DEFAULT_ARM_COMMANDS, MAX_ELBOW_ANGLE, MAX_FINGER_ANGLE, MAX_ROTUNDA_ANGLE, MAX_RR9_ANGLE, MAX_SHOULDER_ANGLE, MAX_WRIST_PITCH_ANGLE, MAX_WRIST_ROLL_ANGLE } from '../util/constants';
-import { DropdownButtonSelector, TextSliderInput, FooterButtons } from './Forms/ControlForm';
-
-import Xbox360ArmControl from '../controllers/xbox-360/arm';
+import {
+    DEFAULT_ARM_COMMANDS,
+    MIN_ROTUNDA_ANGLE,
+    MAX_ROTUNDA_ANGLE,
+    MIN_ELBOW_ANGLE,
+    MAX_ELBOW_ANGLE,
+    MIN_SHOULDER_ANGLE,
+    MAX_SHOULDER_ANGLE,
+    MIN_WRIST_PITCH_ANGLE,
+    MAX_WRIST_PITCH_ANGLE,
+    MIN_WRIST_ROLL_ANGLE,
+    MAX_WRIST_ROLL_ANGLE,
+    MIN_END_EFFECTOR_ANGLE,
+    MAX_END_EFFECTOR_ANGLE,
+    MIN_ARM_SPEED,
+    MAX_ARM_SPEED
+} from '../util/constants';
+import ArmController from '../controllers/arm/controller';
+import { ArmCommandDTO, ArmStringFormat } from '../util/formats';
+import { TextSliderInput, FooterButtons } from './Forms/ControlForm';
 
 export default function ArmSystem({ commands }) {
-    useGamepads(gamepads => { setGamepads(gamepads[0]) });
-
     const [gamepad, setGamepads] = useState<Gamepad>();
     const [armCommands, setArmCommands] = useState<ArmCommandDTO>(DEFAULT_ARM_COMMANDS);
 
+    useGamepads(gamepads => {
+        if (gamepads[0]) {
+            setGamepads(gamepads[0]);
+        }
+    });
+
     function updateCommands(newCommands) {
-        commands.current = ArmCommandStringFormat(newCommands);
+        commands.current = ArmStringFormat(newCommands);
         setArmCommands(newCommands);
+        console.log(commands.current);
     }
 
     function handleChange(e) {
@@ -23,58 +43,71 @@ export default function ArmSystem({ commands }) {
         updateCommands(newCommands);
     }
 
-    function handleAngleChange(e, index) {
-        const newArray = [...armCommands.angles];
-        newArray[index] = e.target.value;
-        setArmCommands({ ...armCommands, angles: newArray });
+    function resetCommands() {
+        updateCommands(DEFAULT_ARM_COMMANDS);
     }
 
     useEffect(() => {
         if (gamepad) {
-            const gamepadId: string = gamepad?.id.toLowerCase() || "";
-            let newCommands = { ...armCommands };
-            if (gamepadId.includes("microsoft") || gamepadId.includes("xbox")) {
-                newCommands = new Xbox360ArmControl(gamepad).getCommands();
-            }
-            updateCommands(newCommands);
+            updateCommands({ ...new ArmController(gamepad).getCommands(), speed: armCommands.speed });
         }
     }, [gamepad]);
-
-    const JointModeView = (
-        <>
-            <TextSliderInput name='rotunda' label="Rotunda Angle" min={-MAX_ROTUNDA_ANGLE} max={MAX_ROTUNDA_ANGLE} value={armCommands.angles[0]} onChange={(e) => handleAngleChange(e, 0)} />
-            <TextSliderInput name='shoulder' label="Shoulder Angle" min={-MAX_SHOULDER_ANGLE} max={MAX_SHOULDER_ANGLE} value={armCommands.angles[1]} onChange={(e) => handleAngleChange(e, 1)} />
-            <TextSliderInput name='elbow' label="Elbow Angle" min={-MAX_ELBOW_ANGLE} max={MAX_ELBOW_ANGLE} value={armCommands.angles[2]} onChange={(e) => handleAngleChange(e, 2)} />
-            <TextSliderInput name='wrist_pitch' label="Wrist Pitch Angle" min={-MAX_WRIST_PITCH_ANGLE} max={MAX_WRIST_PITCH_ANGLE} value={armCommands.angles[3]} onChange={(e) => handleAngleChange(e, 3)} />
-            <TextSliderInput name='wrist_roll' label="Wrist Roll Angle" min={-MAX_WRIST_ROLL_ANGLE} max={MAX_WRIST_ROLL_ANGLE} value={armCommands.angles[4]} onChange={(e) => handleAngleChange(e, 4)} />
-        </>
-    )
-
-    const HandModeView = (
-        <>
-            <TextSliderInput name='thumb' label="Thumb Finger Angle" min={-MAX_FINGER_ANGLE} max={MAX_FINGER_ANGLE} value={armCommands.angles[0]} onChange={(e) => handleAngleChange(e, 0)} />
-            <TextSliderInput name='index' label="Index Finger Angle" min={-MAX_FINGER_ANGLE} max={MAX_FINGER_ANGLE} value={armCommands.angles[1]} onChange={(e) => handleAngleChange(e, 1)} />
-            <TextSliderInput name='middle' label="Middle Finger Angle" min={-MAX_FINGER_ANGLE} max={MAX_FINGER_ANGLE} value={armCommands.angles[2]} onChange={(e) => handleAngleChange(e, 2)} />
-            <TextSliderInput name='ring' label="Ring Finger Angle" min={-MAX_FINGER_ANGLE} max={MAX_FINGER_ANGLE} value={armCommands.angles[3]} onChange={(e) => handleAngleChange(e, 3)} />
-            <TextSliderInput name='pinky' label="Pinky Finger Angle" min={-MAX_FINGER_ANGLE} max={MAX_FINGER_ANGLE} value={armCommands.angles[4]} onChange={(e) => handleAngleChange(e, 4)} />
-        </>
-    )
-
-    const RR9ModeView = (
-        <>
-            <TextSliderInput name='rr9' label="RR9 Angle" min={0} max={MAX_RR9_ANGLE} value={armCommands.angles[0]} onChange={(e) => handleAngleChange(e, 0)} />
-        </>
-    )
 
     return (
         <div className='serial'>
             <h2>Arm System</h2>
             <form className='serial-form' onSubmit={(e) => e.preventDefault()}>
-                <DropdownButtonSelector name='mode' label='Mode' value={armCommands.mode} onChange={handleChange} options={ARM_MODES} />
-                {armCommands.mode === "J" && JointModeView}
-                {armCommands.mode === "H" && HandModeView}
-                {armCommands.mode === "R" && RR9ModeView}
-                <FooterButtons onResetClick={() => setArmCommands({ ...DEFAULT_ARM_COMMANDS, mode: armCommands.mode })} />
+                <TextSliderInput
+                    name='speed'
+                    label='Speed'
+                    min={MIN_ARM_SPEED}
+                    max={MAX_ARM_SPEED}
+                    value={armCommands.speed}
+                    onChange={handleChange}
+                />
+                <TextSliderInput
+                    name='rotunda_angle'
+                    label="Rotunda Angle"
+                    min={MIN_ROTUNDA_ANGLE}
+                    max={MAX_ROTUNDA_ANGLE}
+                    value={armCommands.rotunda_angle}
+                    onChange={handleChange} />
+                <TextSliderInput
+                    name='shoulder_angle'
+                    label="Shoulder Angle"
+                    min={MIN_SHOULDER_ANGLE}
+                    max={MAX_SHOULDER_ANGLE}
+                    value={armCommands.shoulder_angle}
+                    onChange={handleChange} />
+                <TextSliderInput
+                    name='elbow_angle'
+                    label="Elbow Angle"
+                    min={MIN_ELBOW_ANGLE}
+                    max={MAX_ELBOW_ANGLE}
+                    value={armCommands.elbow_angle}
+                    onChange={handleChange} />
+                <TextSliderInput
+                    name='wrist_pitch_angle'
+                    label="Wrist Pitch Angle"
+                    min={MIN_WRIST_PITCH_ANGLE}
+                    max={MAX_WRIST_PITCH_ANGLE}
+                    value={armCommands.wrist_pitch_angle}
+                    onChange={handleChange} />
+                <TextSliderInput
+                    name='wrist_roll_angle'
+                    label="Wrist Roll Angle"
+                    min={MIN_WRIST_ROLL_ANGLE}
+                    max={MAX_WRIST_ROLL_ANGLE}
+                    value={armCommands.wrist_roll_angle}
+                    onChange={handleChange} />
+                <TextSliderInput
+                    name='end_effector_angle'
+                    label="End Effector Angle"
+                    min={MIN_END_EFFECTOR_ANGLE}
+                    max={MAX_END_EFFECTOR_ANGLE}
+                    value={armCommands.end_effector_angle}
+                    onChange={handleChange} />
+                <FooterButtons onResetClick={resetCommands} />
             </form>
         </div>
     )

@@ -8,16 +8,16 @@ import MapContainer from './components/GpsMap';
 import ArmSystem from './components/ArmSystem';
 import DriveSystem from './components/DriveSystem';
 import { DEFAULT_ARM_COMMANDS, DEFAULT_DRIVE_COMMANDS } from './util/constants';
-import { ArmCommandDTO, ArmCommandStringFormat, DriveCommandDTO, DriveCommandStringFormat } from './util/formats';
+import { ArmCommandDTO, ArmStringFormat, DriveCommandDTO, DriveStringFormat } from './util/formats';
 
 function App() {
-  const commands = useRef<string>(DriveCommandStringFormat(DEFAULT_DRIVE_COMMANDS));
+  const commands = useRef<string>(DriveStringFormat(DEFAULT_DRIVE_COMMANDS));
   const [isDriveControl, setIsDriveControl] = useState(true)
   const [isSerial, setIsSerial] = useState(true);
   const [status, setStatus] = useState<ArmCommandDTO | DriveCommandDTO>();
 
   useEffect(() => {
-    commands.current = isDriveControl ? DriveCommandStringFormat(DEFAULT_DRIVE_COMMANDS) : ArmCommandStringFormat(DEFAULT_ARM_COMMANDS);
+    commands.current = isDriveControl ? DriveStringFormat(DEFAULT_DRIVE_COMMANDS) : ArmStringFormat(DEFAULT_ARM_COMMANDS);
   }, [isDriveControl]);
 
   return (

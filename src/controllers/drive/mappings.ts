@@ -13,7 +13,7 @@ export interface DriveMapping {
 export class Xbox360 implements DriveMapping {
     speed = 1;                  // left stick up/down
     angle = 2;                  // right stick left/right
-    enable_speed = 0;           // right bumper
+    enable_speed = 7;           // right bumper
     spin_mode = 2;              // X
     translate_mode = 3;         // Y
     drive_mode = 1;             // B

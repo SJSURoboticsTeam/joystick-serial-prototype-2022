@@ -10,14 +10,19 @@ export interface DriveCommandDTO {
 export interface ArmCommandDTO {
     heartbeat_count: number;
     is_operational: number;
-    mode: string;
-    angles: number[];
+    speed: number;
+    rotunda_angle: number;
+    shoulder_angle: number;
+    elbow_angle: number;
+    wrist_pitch_angle: number;
+    wrist_roll_angle: number;
+    end_effector_angle: number;
 }
 
-export function DriveCommandStringFormat(commands: DriveCommandDTO): string {
+export function DriveStringFormat(commands: DriveCommandDTO): string {
     return `{"HB":${commands.heartbeat_count},"IO":${commands.is_operational},"WO":${commands.wheel_orientation},"DM":"${commands.drive_mode}","CMD":[${commands.speed},${commands.angle}]}`;
 };
 
-export function ArmCommandStringFormat(commands: ArmCommandDTO): string {
-    return `{"heartbeat_count":${commands.heartbeat_count},"is_operational":${commands.is_operational},"mode":"${commands.mode}","angles":[${commands.angles}]}`;
+export function ArmStringFormat(commands: ArmCommandDTO): string {
+    return `{"heartbeat_count":${commands.heartbeat_count},"is_operational":${commands.is_operational},"speed":"${commands.speed}","angles":[${commands.rotunda_angle},${commands.shoulder_angle},${commands.elbow_angle},${commands.wrist_pitch_angle},${commands.wrist_roll_angle},${commands.end_effector_angle}]}`;
 }

@@ -1,6 +1,6 @@
-import { MAX_DRIVE_ANGLE, MAX_TRANSLATE_ANGLE, DEFAULT_DRIVE_COMMANDS } from "../util/constants";
-import { DriveCommandDTO } from "../util/formats";
-import { DriveMapping, Xbox360, Logitech3DPro } from "./drive-mappings";
+import { MAX_DRIVE_ANGLE, MAX_TRANSLATE_ANGLE, DEFAULT_DRIVE_COMMANDS } from "../../util/constants";
+import { DriveCommandDTO } from "../../util/formats";
+import { DriveMapping, Xbox360, Logitech3DPro } from "./mappings";
 
 export default class DriveController {
     constructor(gamepad: Gamepad) {
@@ -23,19 +23,19 @@ export default class DriveController {
     }
 
     private getMode() {
-        if (this.gamepad?.buttons[this.mappings.drive_mode]?.pressed) {
-            this.command.drive_mode = 'D';
+        if (this.gamepad?.buttons[this.mappings.spin_mode]?.pressed) {
+            this.command.drive_mode = 'S';
         }
         if (this.gamepad?.buttons[this.mappings.translate_mode]?.pressed) {
             this.command.drive_mode = 'T';
         }
-        if (this.gamepad?.buttons[this.mappings.spin_mode]?.pressed) {
-            this.command.drive_mode = 'S';
+        if (this.gamepad?.buttons[this.mappings.drive_mode]?.pressed) {
+            this.command.drive_mode = 'D';
         }
     }
 
     private getSpeed() {
-        let throttleSpeed = parseInt((this.gamepad?.axes[this.mappings.speed] * -20).toFixed(0)) * 5;
+        const throttleSpeed = parseInt((this.gamepad?.axes[this.mappings.speed] * -20).toFixed(0)) * 5;
         this.command.speed = this.gamepad?.buttons[this.mappings.enable_speed].pressed ? throttleSpeed : 0;
     }
 

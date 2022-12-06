@@ -1,11 +1,18 @@
 import { useRef, useState, useEffect } from 'react';
 import { useGamepads } from 'react-gamepads';
 
-import { DriveCommandDTO, DriveCommandStringFormat } from '../util/formats';
-import { WHEEL_ORIENTATIONS, DRIVE_MODES, DEFAULT_DRIVE_COMMANDS, MAX_TRANSLATE_ANGLE, MAX_DRIVE_ANGLE, MAX_DRIVE_SPEED } from '../util/constants';
+import {
+  WHEEL_ORIENTATIONS,
+  DRIVE_MODES,
+  DEFAULT_DRIVE_COMMANDS,
+  MIN_DRIVE_SPEED,
+  MAX_DRIVE_SPEED,
+  MAX_DRIVE_ANGLE,
+  MAX_TRANSLATE_ANGLE,
+} from '../util/constants';
+import DriveController from '../controllers/drive/controller';
+import { DriveCommandDTO, DriveStringFormat } from '../util/formats';
 import { DropdownButtonSelector, TextSliderInput, FooterButtons } from './Forms/ControlForm';
-
-import DriveController from '../controllers/drive-controller';
 
 export default function DriveSystem({ commands }) {
   const [gamepad, setGamepad] = useState<Gamepad>();
@@ -13,13 +20,13 @@ export default function DriveSystem({ commands }) {
   const MAX_ANGLE = driveCommands.drive_mode === "D" ? MAX_DRIVE_ANGLE : MAX_TRANSLATE_ANGLE;
 
   useGamepads((gamepads) => {
-    if (gamepads[1]) {
-      setGamepad(gamepads[1]);
+    if (gamepads[0]) {
+      setGamepad(gamepads[0]);
     }
   });
 
   function updateCommands(newCommands) {
-    commands.current = DriveCommandStringFormat(newCommands);
+    commands.current = DriveStringFormat(newCommands);
     setDriveCommands(newCommands);
   }
 
@@ -42,7 +49,7 @@ export default function DriveSystem({ commands }) {
 
   useEffect(() => {
     if (gamepad) {
-      setDriveCommands(new DriveController(gamepad).getCommands());
+      updateCommands(new DriveController(gamepad).getCommands());
     }
   }, [gamepad]);
 
@@ -67,7 +74,7 @@ export default function DriveSystem({ commands }) {
         <TextSliderInput
           name='speed'
           label='Speed'
-          min={-MAX_DRIVE_SPEED}
+          min={MIN_DRIVE_SPEED}
           max={MAX_DRIVE_SPEED}
           value={driveCommands.speed}
           onChange={handleChange}
