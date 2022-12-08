@@ -19,8 +19,9 @@ import {
     MAX_ARM_SPEED
 } from '../util/constants';
 import ArmController from '../controllers/arm/controller';
-import { ArmCommandDTO, ArmStringFormat } from '../util/formats';
 import { TextSliderInput, FooterButtons } from './Forms/ControlForm';
+import { ArmCommandDTO } from '../util/command-dto';
+import { armStringFormat } from '../util/command-formats';
 
 export default function ArmSystem({ commands }) {
     const [gamepad, setGamepads] = useState<Gamepad>();
@@ -33,7 +34,7 @@ export default function ArmSystem({ commands }) {
     });
 
     function updateCommands(newCommands) {
-        commands.current = ArmStringFormat(newCommands);
+        commands.current = armStringFormat(newCommands);
         setArmCommands(newCommands);
         console.log(commands.current);
     }

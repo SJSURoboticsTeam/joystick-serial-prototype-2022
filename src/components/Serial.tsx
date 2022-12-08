@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
+import { NUMBER_OF_ARM_KEYS, NUMBER_OF_DRIVE_KEYS } from '../util/constants';
+import serialParser from '../util/serial-parser';
 
-export default function Serial({ commands, setStatus }) {
+export default function Serial({ commands, setStatus, isDriveControl }) {
     let rawSerial: string = "";
     const port = useRef<SerialPort>(undefined);
     const reader = useRef<ReadableStreamDefaultReader>();
@@ -69,6 +71,14 @@ export default function Serial({ commands, setStatus }) {
 
     async function hasRoverStatus() {
         try {
+            // TODO: Test this parser compared to the old one
+            // const numberOfKeys = isDriveControl ? NUMBER_OF_DRIVE_KEYS : NUMBER_OF_ARM_KEYS;
+            // const command = serialParser(rawSerial, numberOfKeys);
+            // if (command !== null) {
+            //     setStatus(command);
+            //     return true;
+            // }
+            // return false;
             let responseArray: string[] = [];
             rawSerial.split("\n").forEach(line => {
                 if (line.indexOf("{") < line.indexOf("}")) {

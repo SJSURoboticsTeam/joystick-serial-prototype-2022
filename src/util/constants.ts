@@ -1,4 +1,4 @@
-import { DriveCommandDTO, ArmCommandDTO } from "./formats";
+import { ArmCommandDTO, DriveCommandDTO } from "./command-dto";
 
 export const DEFAULT_DRIVE_COMMANDS: DriveCommandDTO = {
     heartbeat_count: 0,
@@ -32,6 +32,9 @@ export const WHEEL_ORIENTATIONS = [
     { label: "1", value: 1 },
     { label: "2", value: 2 }
 ];
+
+export const NUMBER_OF_DRIVE_KEYS = 5;
+export const NUMBER_OF_ARM_KEYS = 4;
 
 export const MIN_DRIVE_SPEED = -100;
 export const MAX_DRIVE_SPEED = 100;

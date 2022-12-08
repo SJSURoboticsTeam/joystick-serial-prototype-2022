@@ -1,6 +1,6 @@
 import { MAX_DRIVE_ANGLE, MAX_TRANSLATE_ANGLE, DEFAULT_DRIVE_COMMANDS } from "../../util/constants";
-import { DriveCommandDTO } from "../../util/formats";
 import { DriveMapping, Xbox360, Logitech3DPro } from "./mappings";
+import { DriveCommandDTO } from "../../util/command-dto";
 
 export default class DriveController {
     constructor(gamepad: Gamepad) {

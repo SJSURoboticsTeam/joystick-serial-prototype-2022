@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useGamepads } from 'react-gamepads';
 
 import {
@@ -11,7 +11,8 @@ import {
   MAX_TRANSLATE_ANGLE,
 } from '../util/constants';
 import DriveController from '../controllers/drive/controller';
-import { DriveCommandDTO, DriveStringFormat } from '../util/formats';
+import { DriveCommandDTO } from '../util/command-dto';
+import { driveStringFormat } from '../util/command-formats';
 import { DropdownButtonSelector, TextSliderInput, FooterButtons } from './Forms/ControlForm';
 
 export default function DriveSystem({ commands }) {
@@ -26,7 +27,7 @@ export default function DriveSystem({ commands }) {
   });
 
   function updateCommands(newCommands) {
-    commands.current = DriveStringFormat(newCommands);
+    commands.current = driveStringFormat(newCommands);
     setDriveCommands(newCommands);
   }
 

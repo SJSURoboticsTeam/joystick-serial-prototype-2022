@@ -7,17 +7,18 @@ import Status from './components/Status';
 import MapContainer from './components/GpsMap';
 import ArmSystem from './components/ArmSystem';
 import DriveSystem from './components/DriveSystem';
+import { ArmCommandDTO, DriveCommandDTO } from './util/command-dto';
+import { armStringFormat, driveStringFormat } from './util/command-formats';
 import { DEFAULT_ARM_COMMANDS, DEFAULT_DRIVE_COMMANDS } from './util/constants';
-import { ArmCommandDTO, ArmStringFormat, DriveCommandDTO, DriveStringFormat } from './util/formats';
 
 function App() {
-  const commands = useRef<string>(DriveStringFormat(DEFAULT_DRIVE_COMMANDS));
+  const commands = useRef<string>(driveStringFormat(DEFAULT_DRIVE_COMMANDS));
   const [isDriveControl, setIsDriveControl] = useState(true)
   const [isSerial, setIsSerial] = useState(true);
   const [status, setStatus] = useState<ArmCommandDTO | DriveCommandDTO>();
 
   useEffect(() => {
-    commands.current = isDriveControl ? DriveStringFormat(DEFAULT_DRIVE_COMMANDS) : ArmStringFormat(DEFAULT_ARM_COMMANDS);
+    commands.current = isDriveControl ? driveStringFormat(DEFAULT_DRIVE_COMMANDS) : armStringFormat(DEFAULT_ARM_COMMANDS);
   }, [isDriveControl]);
 
   return (
@@ -25,7 +26,7 @@ function App() {
       <header className='btn-group'>
         <button className='btn btn__primary' onClick={() => setIsDriveControl(!isDriveControl)}>Toggle Mode</button>
         <button className='btn btn__primary' onClick={() => setIsSerial(!isSerial)}>Toggle Connection Type</button>
-        {isSerial ? <Serial commands={commands} setStatus={setStatus} /> : <Wifi commands={commands} setStatus={setStatus} />}
+        {isSerial ? <Serial commands={commands} setStatus={setStatus} isDriveControl={isDriveControl} /> : <Wifi commands={commands} setStatus={setStatus} />}
       </header>
 
       <div className="grid-container">

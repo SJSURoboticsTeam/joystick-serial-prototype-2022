@@ -7,8 +7,8 @@ import {
     MAX_WRIST_ROLL_ANGLE,
     MAX_END_EFFECTOR_ANGLE
 } from "../../util/constants";
-import { ArmCommandDTO } from "../../util/formats";
 import { ArmMapping, Xbox360 } from "./mappings";
+import { ArmCommandDTO } from "../../util/command-dto";
 
 export default class ArmController {
     constructor(gamepad: Gamepad) {
