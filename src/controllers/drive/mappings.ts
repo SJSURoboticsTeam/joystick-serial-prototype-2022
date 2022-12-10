@@ -26,9 +26,9 @@ export class Logitech3DPro implements DriveMapping {
     speed = 1;                  // stick up/down
     angle = 5;                  // stick twist left/right
     enable_speed = 0;           // trigger
-    spin_mode = 7;             // button labeled 8
+    spin_mode = 7;              // button labeled 8
     translate_mode = 9;         // button label 10
-    drive_mode = 11;             // button labeled 12
+    drive_mode = 11;            // button labeled 12
     wheel_orientation_0 = 6;    // button labeled 7
     wheel_orientation_1 = 8;    // button labeled 9
     wheel_orientation_2 = 10;   // button labeled 11

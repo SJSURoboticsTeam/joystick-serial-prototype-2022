@@ -16,11 +16,11 @@ export default function TextSliderInput({ name, value, onChange, min = 0, max = 
     }, [value])
 
     return (
-        <div>
+        <>
             <label className='label_lg'> {label}</label>
             <div className='slider-group'>
                 <input
-                    className='slider-input-text'
+                    className='input-text btn slider-input'
                     type='number'
                     name={name}
                     max={max}
@@ -42,6 +42,6 @@ export default function TextSliderInput({ name, value, onChange, min = 0, max = 
                     onChange={onChange}
                 />
             </div >
-        </div>
+        </>
     )
 }
