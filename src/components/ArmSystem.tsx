@@ -36,7 +36,6 @@ export default function ArmSystem({ commands }) {
     function updateCommands(newCommands) {
         commands.current = armStringFormat(newCommands);
         setArmCommands(newCommands);
-        console.log(commands.current);
     }
 
     function handleChange(e) {
@@ -57,7 +56,7 @@ export default function ArmSystem({ commands }) {
     return (
         <div className='serial'>
             <h2>Arm System</h2>
-            <form className='serial-form' onSubmit={(e) => e.preventDefault()}>
+            <form className='serial-form' onSubmit={(e) => { e.preventDefault(); console.log(commands.current) }}>
                 <TextSliderInput
                     name='speed'
                     label='Speed'

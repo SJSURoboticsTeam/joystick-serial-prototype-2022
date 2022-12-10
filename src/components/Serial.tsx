@@ -71,27 +71,10 @@ export default function Serial({ commands, setStatus, isDriveControl }) {
 
     async function hasRoverStatus() {
         try {
-            // TODO: Test this parser compared to the old one
-            // const numberOfKeys = isDriveControl ? NUMBER_OF_DRIVE_KEYS : NUMBER_OF_ARM_KEYS;
-            // const command = serialParser(rawSerial, numberOfKeys);
-            // if (command !== null) {
-            //     setStatus(command);
-            //     return true;
-            // }
-            // return false;
-            let responseArray: string[] = [];
-            rawSerial.split("\n").forEach(line => {
-                if (line.indexOf("{") < line.indexOf("}")) {
-                    line = line.substring(line.indexOf("{"), line.indexOf("}") + 1);
-                    responseArray.push(line);
-                }
-            })
-
-            let newStatus: string | undefined;
-            newStatus = responseArray.pop() as string;
-            if (newStatus !== undefined) {
-                newStatus = JSON.parse(newStatus);
-                setStatus(newStatus);
+            const numberOfKeys = isDriveControl ? NUMBER_OF_DRIVE_KEYS : NUMBER_OF_ARM_KEYS;
+            const command = serialParser(rawSerial, numberOfKeys);
+            if (command !== null) {
+                setStatus(command);
                 return true;
             }
             return false;
