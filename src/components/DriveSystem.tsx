@@ -50,7 +50,7 @@ export default function DriveSystem({ commands }) {
 
   useEffect(() => {
     if (gamepad) {
-      updateCommands(new DriveController(gamepad).getCommands());
+      updateCommands(new DriveController(gamepad)?.getCommands());
     }
   }, [gamepad]);
 

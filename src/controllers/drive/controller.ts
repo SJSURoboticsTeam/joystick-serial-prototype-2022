@@ -1,10 +1,9 @@
 import { MAX_DRIVE_ANGLE, MAX_TRANSLATE_ANGLE, DEFAULT_DRIVE_COMMANDS } from "../../util/constants";
-import { DriveMapping, Xbox360, Logitech3DPro } from "./mappings";
+import { DriveMapping, Xbox360, Logitech3DPro, Default, ThrustMasterHotasX } from "./mappings";
 import { DriveCommandDTO } from "../../util/command-dto";
 
 export default class DriveController {
     constructor(gamepad: Gamepad) {
-        this.gamepad = gamepad;
         const gamepadId = gamepad.id.toLocaleLowerCase();
         if (gamepadId.includes('extreme 3d') || gamepadId.includes('3d pro')) {
             this.mappings = new Logitech3DPro();
@@ -12,6 +11,10 @@ export default class DriveController {
         if (gamepadId.includes('xbox') || gamepadId.includes('microsoft')) {
             this.mappings = new Xbox360();
         }
+        if (gamepadId.includes('thrustmaster') || gamepadId.includes('hotas')) {
+            this.mappings = new ThrustMasterHotasX();
+        }
+        this.gamepad = gamepad;
     }
 
     public getCommands(): DriveCommandDTO {
@@ -69,6 +72,6 @@ export default class DriveController {
     }
 
     private gamepad: Gamepad;
-    private mappings: DriveMapping;
+    private mappings: DriveMapping = new Default();
     private command: DriveCommandDTO = DEFAULT_DRIVE_COMMANDS;
 }
