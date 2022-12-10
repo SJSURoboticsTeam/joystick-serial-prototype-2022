@@ -2,8 +2,8 @@ import React from 'react'
 
 export default function DropdownButtonSelector({ name, value, onChange, options, label = "", disabled = false }) {
     return (
-        <>
-            <label className='label_lg'> {label}</label>
+        <div>
+            <label className='label_lg'>{label}</label>
             <div className='btn-group'>
                 <select
                     className='input-text btn'
@@ -31,6 +31,6 @@ export default function DropdownButtonSelector({ name, value, onChange, options,
                     )
                 })}
             </div>
-        </>
+        </div>
     )
 }

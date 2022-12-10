@@ -16,11 +16,11 @@ export default function TextSliderInput({ name, value, onChange, min = 0, max = 
     }, [value])
 
     return (
-        <div className='input-group'>
-            <label className='label_lg'>
-                {label}
+        <div>
+            <label className='label_lg'> {label}</label>
+            <div className='slider-group'>
                 <input
-                    className='input-text'
+                    className='slider-input-text'
                     type='number'
                     name={name}
                     max={max}
@@ -31,17 +31,17 @@ export default function TextSliderInput({ name, value, onChange, min = 0, max = 
                     onChange={handleTextInputChange}
                     autoComplete={autocomplete}
                 />
-            </label>
-            <input
-                className='slider'
-                type='range'
-                name={name}
-                max={max}
-                min={min}
-                value={value}
-                disabled={disabled}
-                onChange={onChange}
-            />
-        </div >
+                <input
+                    className='slider'
+                    type='range'
+                    name={name}
+                    max={max}
+                    min={min}
+                    value={value}
+                    disabled={disabled}
+                    onChange={onChange}
+                />
+            </div >
+        </div>
     )
 }

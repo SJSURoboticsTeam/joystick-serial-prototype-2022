@@ -5,7 +5,7 @@ body {
 }
 
 .grid-container {
-  background: #eee;
+  background: transparent;
   max-width: 100;
   /* max-height: 734px; */
   margin: 0 auto;
@@ -23,6 +23,7 @@ body {
   margin: 3px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 2.5rem 5rem 0 rgba(0, 0, 0, 0.1);
   min-height: 500px;
+  border-radius: 8px;
 }
 
 .grid-container>div:nth-child(2) {
@@ -69,6 +70,7 @@ textarea {
   font-size: 100%;
   line-height: 1.15;
   margin: 0;
+  border-radius: 8px;
 }
 
 button,
@@ -89,6 +91,7 @@ input[type="text"] {
 
 select {
   background: white;
+  border-radius: 8px;
 }
 
 .form-group>input[type="text"] {
@@ -117,7 +120,7 @@ select {
 .btn__clear {
   position: relative;
   top: 0;
-  border-radius: 5px;
+  border-radius: 8px;
   right: 0px;
   z-index: 2;
   border: none;
@@ -257,6 +260,36 @@ select {
   cursor: pointer;
 }
 
+.slider-group {
+  display: flex;
+  justify-content: space-between;
+  max-height: 80px;
+}
+
+.slider-group>*:first-child {
+  flex: 1 1 0%;
+}
+
+.slider-group>* {
+  flex: 1 1 78%;
+}
+
+.slider-group>*+* {
+  margin-left: 0.8rem;
+}
+
+.slider-input-text {
+  width: 100%;
+  margin-top: 20px;
+  max-height: 4.4rem;
+  padding: 0.4rem 0.8rem;
+  border: 2px solid #565656;
+}
+
+.slider-input-text:focus {
+  box-shadow: inset 0 0 0 2px;
+}
+
 [class*="__lg"] {
   display: inline-block;
   width: 100%;
@@ -298,6 +331,7 @@ select {
   position: relative;
   text-align: center;
   color: white;
+  border-radius: 8px;
 }
 
 .img-label {
