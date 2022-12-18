@@ -22,7 +22,7 @@ function App() {
   }, [isDriveControl]);
 
   return (
-    <div>
+    <div id="app">
       <header className='btn-group'>
         <button className='btn btn__primary' onClick={() => setIsDriveControl(!isDriveControl)}>Toggle Mode</button>
         <button className='btn btn__primary' onClick={() => setIsSerial(!isSerial)}>Toggle Connection Type</button>
