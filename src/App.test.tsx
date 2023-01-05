@@ -2,8 +2,11 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+describe("testing arm and drive string formats", () => {
+  test('renders without crashing', () => {
+    render(<App />);
+    const linkElement = screen.getByText(/Drive System/i);
+    expect(linkElement).toBeInTheDocument();
+  });
 });
+

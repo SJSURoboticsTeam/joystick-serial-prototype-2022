@@ -3,7 +3,7 @@ import axios from 'axios'
 
 export default function Wifi({ commands, setStatus }) {
     const [isConnected, setIsConnected] = useState(false);
-    const [webServerAddress, setWebServerAddress] = useState("http://localhost:5000/drive");
+    const [serverAddress, setServerAddress] = useState("http://localhost:5000/drive");
 
     function connect() {
         setIsConnected(true);
@@ -16,7 +16,7 @@ export default function Wifi({ commands, setStatus }) {
     async function readStatus() {
         if (isConnected) {
             try {
-                let response = await axios.get(webServerAddress + "/status");
+                let response = await axios.get(serverAddress + "/status");
                 setStatus(response.data);
             }
             catch (error) {
@@ -32,7 +32,7 @@ export default function Wifi({ commands, setStatus }) {
     async function writeCommands() {
         if (isConnected) {
             try {
-                await axios.post(webServerAddress, JSON.parse(commands.current))
+                await axios.post(serverAddress, JSON.parse(commands.current))
             }
             catch (error) {
                 disconnect();
@@ -42,20 +42,21 @@ export default function Wifi({ commands, setStatus }) {
     }
 
     useEffect(() => {
-        const interval = setInterval(() => {
+        const writeInterval = setInterval(() => {
             if (isConnected) {
                 console.log("Reading and writing commands...");
                 readStatus();
                 writeCommands();
             }
-        }, 500);
-        return () => clearInterval(interval);
+        }, 200);
+        return () => clearInterval(writeInterval);
     }, [isConnected]);
 
     return (
         <>
-            <input autoComplete='off' className='input-text' type='text' value={webServerAddress} onChange={e => setWebServerAddress(e.target.value)} />
-            {isConnected ? <button className='btn btn__danger' onClick={disconnect}>Disconnect</button> : <button className='btn btn__primary' onClick={connect}>Connect</button>}
+            <input autoComplete='off' className='input-text' type='text' value={serverAddress} onChange={e => setServerAddress(e.target.value)} />
+            {isConnected ? <button className='btn btn__danger' onClick={disconnect}>Disconnect</button>
+                : <button className='btn btn__primary' onClick={connect}>Connect</button>}
         </>
     )
 }

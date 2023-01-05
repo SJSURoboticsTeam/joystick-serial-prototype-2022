@@ -5,7 +5,7 @@ body {
 }
 
 .grid-container {
-  background: #eee;
+  background: transparent;
   max-width: 100;
   /* max-height: 734px; */
   margin: 0 auto;
@@ -23,6 +23,7 @@ body {
   margin: 3px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 2.5rem 5rem 0 rgba(0, 0, 0, 0.1);
   min-height: 500px;
+  border-radius: 8px;
 }
 
 .grid-container>div:nth-child(2) {
@@ -69,6 +70,7 @@ textarea {
   font-size: 100%;
   line-height: 1.15;
   margin: 0;
+  border-radius: 8px;
 }
 
 button,
@@ -89,6 +91,7 @@ input[type="text"] {
 
 select {
   background: white;
+  border-radius: 8px;
 }
 
 .form-group>input[type="text"] {
@@ -114,6 +117,35 @@ select {
   background-color: #000;
 }
 
+.btn__clear {
+  position: relative;
+  top: 0;
+  border-radius: 8px;
+  right: 0px;
+  z-index: 2;
+  border: none;
+  top: 2px;
+  height: 30px;
+  cursor: pointer;
+  color: white;
+  background-color: #1e90ff;
+  transform: translateX(2px);
+}
+
+.input-group {
+  display: flex;
+  justify-content: space-between;
+  max-height: 80px;
+}
+
+.input-group>* {
+  flex: 1 1 49%;
+}
+
+.input-group>*+* {
+  margin-left: 0.8rem;
+}
+
 .btn-group {
   display: flex;
   justify-content: space-between;
@@ -130,6 +162,20 @@ select {
 
 .btn-send {
   margin: 5px 0 0 0;
+}
+
+.dropdown-selector-group {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  max-height: 80px;
+  margin-bottom: 5px;
+
+}
+
+.dropdown-selector-group>*+* {
+  width: 100%;
+  margin-left: 0.8rem;
 }
 
 .serial {
@@ -184,18 +230,37 @@ select {
   background: #eeeeee;
 }
 
+
+.slider-group {
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  max-height: 80px;
+}
+
+.slider-group>*+* {
+  width: 100%;
+  margin-left: 0.8rem;
+}
+
+.slider-input {
+  flex: 1 1 27%;
+  height: 40px;
+}
+
 .slider {
-  -webkit-appearance: media-slider-horizontal;
-  margin-top: 40px;
-  margin-bottom: 33.5px;
-  border-radius: 25px;
-  background: #d4d4d4;
+  -webkit-appearance: none;
+  border-radius: 10px;
+  background: #bdbdbd;
   border: 1px solid #000000;
   outline: none;
-  opacity: 1.0;
   -webkit-transition: .2s;
-  transition: opacity .2s;
+  flex: 2 2 auto;
+  height: 5px;
+  margin-top: 19px;
 }
+
 
 .slider:hover {
   opacity: .7;
@@ -210,20 +275,26 @@ select {
 
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  appearance: none;
   width: 44px;
   height: 44px;
-  border: 0;
+  border: .5px solid #7e7e7e;
+  border-radius: 50%;
   background: url('./lets-go.png');
   cursor: pointer;
 }
 
 .slider::-moz-range-thumb {
+  -webkit-appearance: none;
   width: 44px;
   height: 44px;
-  border: 0;
+  border: none;
+  border-radius: 50%;
   background: url('./lets-go.png');
   cursor: pointer;
+}
+
+.slider-input-text:focus {
+  box-shadow: inset 0 0 0 2px;
 }
 
 [class*="__lg"] {
@@ -267,6 +338,7 @@ select {
   position: relative;
   text-align: center;
   color: white;
+  border-radius: 8px;
 }
 
 .img-label {
@@ -278,4 +350,8 @@ select {
 
 header {
   margin: 0 0 5px 0;
+}
+
+.footer {
+  margin-top: 10px;
 }

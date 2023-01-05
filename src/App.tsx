@@ -1,28 +1,28 @@
 import { useEffect, useRef, useState } from 'react';
 
 import Wifi from './components/Wifi';
-import Camera from './components/Camera'
+import Serial from './components/Serial';
+import Camera from './components/Camera';
 import Status from './components/Status';
-import Serial from './components/Serial'
-import ArmControl from './components/ArmControl';
-import DriveControl from './components/DriveControl';
-import { ArmFormat, DriveFormat } from './dto/commands';
 import MapContainer from './components/GpsMap';
+import ArmSystem from './components/ArmSystem';
+import DriveSystem from './components/DriveSystem';
+import { ArmCommandDTO, DriveCommandDTO } from './util/command-dto';
+import { armStringFormat, driveStringFormat } from './util/command-formats';
+import { DEFAULT_ARM_COMMANDS, DEFAULT_DRIVE_COMMANDS } from './util/constants';
 
 function App() {
-  const commands = useRef<string>("");
-  const [queue,setQueue]=useState([]);
+  const commands = useRef<string>(driveStringFormat(DEFAULT_DRIVE_COMMANDS));
   const [isDriveControl, setIsDriveControl] = useState(true)
+  const [queue, setQueue] = useState<{ lat: number, lng: number }[]>([]);
   const [isSerial, setIsSerial] = useState(true);
-  const [status, setStatus] = useState<ArmFormat | DriveFormat>();
- console.log('command->',commands)
- useEffect(()=>
- {
-  console.log(queue)
+  const [status, setStatus] = useState<ArmCommandDTO | DriveCommandDTO>();
 
- },[queue])
+  useEffect(() => {
+    commands.current = isDriveControl ? driveStringFormat(DEFAULT_DRIVE_COMMANDS) : armStringFormat(DEFAULT_ARM_COMMANDS);
+  }, [isDriveControl]);
   return (
-    <div>
+    <div id="app">
       <header className='btn-group'>
         <button className='btn btn__primary' onClick={() => setIsDriveControl(!isDriveControl)}>Toggle Mode</button>
         <button className='btn btn__primary' onClick={() => setIsSerial(!isSerial)}>Toggle Connection Type</button>
@@ -30,7 +30,7 @@ function App() {
       </header>
 
       <div className="grid-container">
-        {isDriveControl ? <DriveControl commands={commands} /> : <ArmControl commands={commands} />}
+        {isDriveControl ? <DriveSystem commands={commands} /> : <ArmSystem commands={commands} />}
         <Status status={status} />
         <Camera name="0" src="http://raspberrypi:8000/stream.mjpg" />
         <Camera name="1" src="http://raspberrypi:8001/stream.mjpg" />
@@ -38,22 +38,22 @@ function App() {
         <Camera name="3" src="http://raspberrypi:8003/stream.mjpg" />
         <MapContainer setQueue={setQueue} commands={commands} />
         <div>
-           <table style={{width:'100%',border:'1px solid grey'}}>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Latitude</th>
-                  <th>Longitude</th>
-                </tr>
-              </thead>
-              <tbody>
-                {queue.map((element,index)=><tr>
-                  <td>{index+1}</td>
-                  <td>{element.lat}</td>
-                  <td>{element.lng}</td>
-                </tr>)}
-              </tbody>
-           </table>
+          <table style={{ width: '100%', border: '1px solid grey' }}>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+              </tr>
+            </thead>
+            <tbody>
+              {queue.map((element, index) => <tr>
+                <td>{index + 1}</td>
+                <td>{element.lat}</td>
+                <td>{element.lng}</td>
+              </tr>)}
+            </tbody>
+          </table>
         </div>
         {/* <MapContainer /> */}
       </div>
