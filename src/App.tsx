@@ -21,6 +21,7 @@ function App() {
   useEffect(() => {
     commands.current = isDriveControl ? driveStringFormat(DEFAULT_DRIVE_COMMANDS) : armStringFormat(DEFAULT_ARM_COMMANDS);
   }, [isDriveControl]);
+
   return (
     <div id="app">
       <header className='btn-group'>
@@ -38,7 +39,7 @@ function App() {
         <Camera name="3" src="http://raspberrypi:8003/stream.mjpg" />
         <MapContainer setQueue={setQueue} commands={commands} />
         <div>
-          <table style={{ width: '100%', border: '1px solid grey' }}>
+          <table style={{ width: '100%' }}>
             <thead>
               <tr>
                 <th>#</th>
