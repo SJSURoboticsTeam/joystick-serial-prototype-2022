@@ -4,7 +4,7 @@ import Wifi from './components/Wifi';
 import Serial from './components/Serial';
 import Camera from './components/Camera';
 import Status from './components/Status';
-import MapContainer from './components/GpsMap';
+// import MapContainer from './components/GpsMap';
 import ArmSystem from './components/ArmSystem';
 import DriveSystem from './components/DriveSystem';
 import { ArmCommandDTO, DriveCommandDTO } from './util/command-dto';
@@ -14,7 +14,7 @@ import { DEFAULT_ARM_COMMANDS, DEFAULT_DRIVE_COMMANDS } from './util/constants';
 function App() {
   const commands = useRef<string>(driveStringFormat(DEFAULT_DRIVE_COMMANDS));
   const [isDriveControl, setIsDriveControl] = useState(true)
-  const [queue, setQueue] = useState<{ lat: number, lng: number }[]>([]);
+  // const [queue, setQueue] = useState<{ lat: number, lng: number }[]>([]);
   const [isSerial, setIsSerial] = useState(true);
   const [status, setStatus] = useState<ArmCommandDTO | DriveCommandDTO>();
 
@@ -37,26 +37,6 @@ function App() {
         <Camera name="1" src="http://raspberrypi:8001/stream.mjpg" />
         <Camera name="2" src="http://raspberrypi:8002/stream.mjpg" />
         <Camera name="3" src="http://raspberrypi:8003/stream.mjpg" />
-        <MapContainer setQueue={setQueue} commands={commands} />
-        <div>
-          <table style={{ width: '100%' }}>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Latitude</th>
-                <th>Longitude</th>
-              </tr>
-            </thead>
-            <tbody>
-              {queue.map((element, index) => <tr>
-                <td>{index + 1}</td>
-                <td>{element.lat}</td>
-                <td>{element.lng}</td>
-              </tr>)}
-            </tbody>
-          </table>
-        </div>
-        {/* <MapContainer /> */}
       </div>
     </div>
   );

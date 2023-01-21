@@ -36,7 +36,7 @@ export class Xbox360 implements DriveMapping {
 
 export class Logitech3DPro implements DriveMapping {
     speed = 1;                  // stick up/down
-    angle = 5;                  // stick twist left/right
+    angle = 2;                  // stick twist left/right
     enable_speed = 0;           // trigger
     spin_mode = 7;              // button labeled 8
     translate_mode = 9;         // button label 10
