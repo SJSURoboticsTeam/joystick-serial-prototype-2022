@@ -12,7 +12,7 @@ export const DEFAULT_DRIVE_COMMANDS: DriveCommandDTO = {
 export const DEFAULT_ARM_COMMANDS: ArmCommandDTO = {
     heartbeat_count: 0,
     is_operational: 1,
-    speed: 0,
+    speed: 1,
     rotunda_angle: 0,
     shoulder_angle: 0,
     elbow_angle: 0,
@@ -42,7 +42,7 @@ export const MAX_DRIVE_SPEED = 100;
 export const MAX_DRIVE_ANGLE = 12;
 export const MAX_TRANSLATE_ANGLE = 45;
 
-export const MIN_ARM_SPEED = 0;
+export const MIN_ARM_SPEED = 1;
 export const MAX_ARM_SPEED = 5;
 
 export const MIN_ROTUNDA_ANGLE = -90;
