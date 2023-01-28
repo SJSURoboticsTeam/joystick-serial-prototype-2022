@@ -18,3 +18,9 @@ export interface ArmCommandDTO {
     wrist_roll_angle: number;
     end_effector_angle: number;
 }
+
+export interface MMTCommandDTO {
+    heartbeat_count: number;
+    is_operational: number;
+    angle: number;  
+}
