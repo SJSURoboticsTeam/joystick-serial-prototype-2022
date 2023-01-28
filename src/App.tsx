@@ -17,7 +17,9 @@ function App() {
   // const [queue, setQueue] = useState<{ lat: number, lng: number }[]>([]);
   const [isSerial, setIsSerial] = useState(true);
   const [status, setStatus] = useState<ArmCommandDTO | DriveCommandDTO>();
+  const [command, setMimic] = useState<ArmCommandDTO>();
 
+  console.log(commands.current)
   useEffect(() => {
     commands.current = isDriveControl ? driveStringFormat(DEFAULT_DRIVE_COMMANDS) : armStringFormat(DEFAULT_ARM_COMMANDS);
   }, [isDriveControl]);
@@ -26,8 +28,9 @@ function App() {
     <div id="app">
       <header className='btn-group'>
         <button className='btn btn__primary' onClick={() => setIsDriveControl(!isDriveControl)}>Toggle Mode</button>
-        <button className='btn btn__primary' onClick={() => setIsSerial(!isSerial)}>Toggle Connection Type</button>
-        {isSerial ? <Serial commands={commands} setStatus={setStatus} isDriveControl={isDriveControl} /> : <Wifi commands={commands} setStatus={setStatus} />}
+        
+        <Serial commands={commands} isDriveControl={isDriveControl} />
+        <Wifi commands={commands} setStatus={setStatus} />
       </header>
 
       <div className="grid-container">

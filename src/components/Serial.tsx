@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { NUMBER_OF_ARM_KEYS, NUMBER_OF_DRIVE_KEYS } from '../util/constants';
 import serialParser from '../util/serial-parser';
 
-export default function Serial({ commands, setStatus, isDriveControl }) {
+export default function Serial({ commands, isDriveControl }) {
     let rawSerial: string = "";
     const port = useRef<SerialPort>(undefined);
     const reader = useRef<ReadableStreamDefaultReader>();
@@ -74,7 +74,8 @@ export default function Serial({ commands, setStatus, isDriveControl }) {
             const numberOfKeys = isDriveControl ? NUMBER_OF_DRIVE_KEYS : NUMBER_OF_ARM_KEYS;
             const command = serialParser(rawSerial, numberOfKeys);
             if (command !== null) {
-                setStatus(command);
+                // setStatus(command);
+                commands.current = command;
                 return true;
             }
             return false;
@@ -104,7 +105,7 @@ export default function Serial({ commands, setStatus, isDriveControl }) {
             {isDtrModeEnabled ? <button className='btn btn__danger' onClick={() => toggleDataTerminalMode()}>Toggle DTR OFF</button>
                 : <button className='btn btn__primary' onClick={() => toggleDataTerminalMode()}>Toggle DTR ON</button>}
             {isConnected ? <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button>
-                : <button className='btn btn__primary' onClick={() => connect()}>Connect</button>}
+                : <button className='btn btn__primary' onClick={() => connect()}>Connect Serial</button>}
         </>
     )
 }
