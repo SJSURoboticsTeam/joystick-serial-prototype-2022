@@ -60,7 +60,6 @@ export default function Serial({ commands, setStatus, isDriveControl }) {
     async function writeSerial() {
         try {
             if (isConnected && writer.current) {
-                // console.log("writing", commands.current);
                 await writer.current.write(new TextEncoder().encode(commands.current + "\n"));
             }
         } catch (error) {

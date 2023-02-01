@@ -21,12 +21,12 @@ describe('testing arm and drive serial parsing', () => {
     it('should return the last valid arm command (default)', () => {
         const expected = JSON.parse(armStringFormat(DEFAULT_ARM_COMMANDS));
         const actual = serialParser(
-            `{"heartbeat_count":0,"is_operational":0,"speed":0,"angles":[0,0,0,0,0,0]}\n` +
-            `{"heartbeat_count":0,"is_operational":1,"speed":0,"angles":[0,0,0,0,0,0]}\n` +
-            `{"heartbeat_count":0,"is_operational":1,"speed":0,"angles":[` +
-            `{"heartbeat_count":0,"speed":0,"angles":[0,0,0,0,0]}\n` +
+            `{"heartbeat_count":0,"is_operational":0,"speed":1,"angles":[0,0,0,0,0,0]}\n` +
+            `{"heartbeat_count":0,"is_operational":1,"speed":1,"angles":[0,0,0,0,0,0]}\n` +
+            `{"heartbeat_count":0,"is_operational":1,"speed":1,"angles":[` +
+            `{"heartbeat_count":0,"speed":1,"angles":[0,0,0,0,0]}\n` +
             `{"heartbeat_count":0,","angles":[0,0,0,0,0]}\n` +
-            `al":1,"speed":0,"angles":[0,0,0,0,0]}\n`,
+            `al":1,"speed":1,"angles":[0,0,0,0,0]}\n`,
             NUMBER_OF_ARM_KEYS
         );
         expect(actual).toEqual(expected);
