@@ -35,10 +35,10 @@ function App() {
         <div className="dropdown-selector-group">
           <select className='btn btn__primary ' onChange={(e) => {setControlType(e.target.value)}}>  
 
-              <option className='btn btn__primary' value={"drive"} >Drive System</option>
-              <option className='btn btn__primary' value={"mmt"} >MMT System</option> 
+              <option className='btn btn__primary' value={"drive"}>Drive System</option>
+              <option className='btn btn__primary' value={"mmt"}>MMT System</option> 
               
-              <option className='btn btn__primary' value={"arm"} >Arm System</option>
+              <option className='btn btn__primary' value={"arm"}>Arm System</option>
                         
           </select>
           </div>
