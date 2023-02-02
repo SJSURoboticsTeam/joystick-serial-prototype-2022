@@ -22,6 +22,8 @@ function App() {
   const [status, setStatus] = useState<ArmCommandDTO | DriveCommandDTO>();
   const [command, setMimic] = useState<ArmCommandDTO>();
 
+  const [controlType, setControlType] = useState('drive');
+
   console.log(commands.current)
   useEffect(() => {
     commands.current = isDriveControl ? driveStringFormat(DEFAULT_DRIVE_COMMANDS) : armStringFormat(DEFAULT_ARM_COMMANDS);
@@ -30,15 +32,16 @@ function App() {
   return (
     <div id="app">
       <header className='btn-group'>
-        
-          <select className='btn btn__primary' >  
+        <div className="dropdown-selector-group">
+          <select className='btn btn__primary ' onChange={(e) => {setControlType(e.target.value)}}>  
 
-              <option className='btn btn__primary' onClick={() => {setIsDriveControl(true); setIsArmControl(false)}}>Drive System</option>
-              <option className='btn btn__primary' onClick={() => {setIsDriveControl(false); setIsArmControl(false)}}>MMT System</option> 
+              <option className='btn btn__primary' value={"drive"} >Drive System</option>
+              <option className='btn btn__primary' value={"mmt"} >MMT System</option> 
               
-              <option className='btn btn__primary' onClick={() => {setIsDriveControl(false); setIsArmControl(true)}}>Arm System</option>
+              <option className='btn btn__primary' value={"arm"} >Arm System</option>
                         
           </select>
+          </div>
         
         <Serial commands={commands} isDriveControl={isDriveControl} />
         <Wifi commands={commands} setStatus={setStatus} />
@@ -46,8 +49,10 @@ function App() {
       
 
       <div className="grid-container">
-        {isDriveControl ? <DriveSystem commands={commands} /> : 
-        isArmControl ? <ArmSystem commands={commands} /> : <MMTSystem /> }
+        
+        {controlType === 'drive' && <DriveSystem commands={commands} /> } 
+        {controlType === 'arm' && <ArmSystem commands={commands} /> } 
+        {controlType === 'mmt' && <MMTSystem /> }
         <Status status={status} />
         <Camera name="0" src="http://raspberrypi:8000/stream.mjpg" />
         <Camera name="1" src="http://raspberrypi:8001/stream.mjpg" />
