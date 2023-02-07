@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { NUMBER_OF_ARM_KEYS, NUMBER_OF_DRIVE_KEYS } from '../util/constants';
 import serialParser from '../util/serial-parser';
+import axios from 'axios'
 
-export default function Serial({ commands, setStatus, isDriveControl }) {
+export default function Serial({ serverAddress }) {
     let rawSerial: string = "";
     const port = useRef<SerialPort>(undefined);
     const reader = useRef<ReadableStreamDefaultReader>();
@@ -50,35 +51,15 @@ export default function Serial({ commands, setStatus, isDriveControl }) {
             const { value } = await reader.current.read();
             let decoded = await new TextDecoder().decode(value);
             rawSerial += await decoded;
-            console.log(decoded);
-            if (hasRoverStatus()) {
-                await writeSerial();
-            }
-        }
-    }
-
-    async function writeSerial() {
-        try {
-            if (isConnected && writer.current) {
-                await writer.current.write(new TextEncoder().encode(commands.current + "\n"));
-            }
-        } catch (error) {
-            console.error(error);
-            writer.current.abort();
-        }
-    }
-
-    async function hasRoverStatus() {
-        try {
-            const numberOfKeys = isDriveControl ? NUMBER_OF_DRIVE_KEYS : NUMBER_OF_ARM_KEYS;
-            const command = serialParser(rawSerial, numberOfKeys);
+            const command = serialParser(rawSerial, NUMBER_OF_ARM_KEYS);
             if (command !== null) {
-                setStatus(command);
-                return true;
+                rawSerial = "";
+                console.log(command);
+                await axios.post(serverAddress, command);
             }
-            return false;
-        } catch (error) {
-            return false;
+            else {
+                console.log(decoded);
+            }
         }
     }
 
@@ -103,7 +84,7 @@ export default function Serial({ commands, setStatus, isDriveControl }) {
             {isDtrModeEnabled ? <button className='btn btn__danger' onClick={() => toggleDataTerminalMode()}>Toggle DTR OFF</button>
                 : <button className='btn btn__primary' onClick={() => toggleDataTerminalMode()}>Toggle DTR ON</button>}
             {isConnected ? <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button>
-                : <button className='btn btn__primary' onClick={() => connect()}>Connect</button>}
+                : <button className='btn btn__primary' onClick={() => connect()}>Connect Mimic + WiFi</button>}
         </>
     )
 }
