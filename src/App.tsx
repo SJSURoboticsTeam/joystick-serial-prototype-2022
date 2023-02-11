@@ -7,7 +7,8 @@ import Serial from './components/Serial'
 import ArmControl from './components/ArmControl';
 import DriveControl from './components/DriveControl';
 import { ArmFormat, DriveFormat } from './dto/commands';
-import MapContainer from './components/GpsMap';
+//import MapContainer from './components/GpsMap';
+import OfflineMap from './components/Map';
 
 function App() {
   const commands = useRef<string>("");
@@ -36,7 +37,7 @@ function App() {
         <Camera name="1" src="http://raspberrypi:8001/stream.mjpg" />
         <Camera name="2" src="http://raspberrypi:8002/stream.mjpg" />
         <Camera name="3" src="http://raspberrypi:8003/stream.mjpg" />
-        <MapContainer setQueue={setQueue} commands={commands} />
+        <OfflineMap />
         <div>
            <table style={{width:'100%',border:'1px solid grey'}}>
               <thead>
