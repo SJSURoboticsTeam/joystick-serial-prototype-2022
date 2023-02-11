@@ -3,7 +3,7 @@ import { NUMBER_OF_ARM_KEYS, NUMBER_OF_DRIVE_KEYS } from '../util/constants';
 import serialParser from '../util/serial-parser';
 import axios from 'axios'
 
-export default function Serial({ serverAddress }) {
+export default function Serial({ serverAddress, setStatus }) {
     let rawSerial: string = "";
     const port = useRef<SerialPort>(undefined);
     const reader = useRef<ReadableStreamDefaultReader>();
@@ -61,6 +61,7 @@ export default function Serial({ serverAddress }) {
                 console.log(decoded);
             }
         }
+        
     }
 
     async function toggleDataTerminalMode() {

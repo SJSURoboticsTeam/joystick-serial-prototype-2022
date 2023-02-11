@@ -9,8 +9,8 @@ import ArmSystem from './components/ArmSystem';
 import DriveSystem from './components/DriveSystem';
 import MMTSystem from './components/MMTSystem';
 import { ArmCommandDTO, DriveCommandDTO } from './util/command-dto';
-import { armStringFormat, driveStringFormat } from './util/command-formats';
-import { DEFAULT_ARM_COMMANDS, DEFAULT_DRIVE_COMMANDS } from './util/constants';
+import { armStringFormat, driveStringFormat, mmtStringFormat } from './util/command-formats';
+import { DEFAULT_ARM_COMMANDS, DEFAULT_DRIVE_COMMANDS, DEFAULT_MMT_COMMANDS } from './util/constants';
 
 
 function App() {
@@ -27,6 +27,19 @@ function App() {
     commands.current = isDriveControl ? driveStringFormat(DEFAULT_DRIVE_COMMANDS) : armStringFormat(DEFAULT_ARM_COMMANDS);
   }, [isDriveControl]);
 
+  useEffect(() => {
+  if (controlType === 'drive'){
+    commands.current = driveStringFormat(DEFAULT_DRIVE_COMMANDS);
+  }
+  else if (controlType === 'arm'){
+    commands.current = armStringFormat(DEFAULT_ARM_COMMANDS);
+  }
+  else{
+    commands.current = mmtStringFormat(DEFAULT_MMT_COMMANDS)
+  }
+}, [controlType]);
+
+
   return (
     <div id="app">
       <header className='btn-group'>
@@ -41,7 +54,7 @@ function App() {
           </select>
          
           <button className='btn btn__primary' onClick={() => setIsSerial(!isSerial)}>Toggle Connection Type</button> 
-          {isSerial ? <Serial serverAddress={"http://192.168.1.28:5000/arm"} /> : <Wifi commands={commands} setStatus={setStatus} />}
+          {isSerial ? <Serial serverAddress={"http://192.168.1.28:5000/arm"} setStatus={setStatus} /> : <Wifi commands={commands} setStatus={setStatus} />}
       </header>
       
 
