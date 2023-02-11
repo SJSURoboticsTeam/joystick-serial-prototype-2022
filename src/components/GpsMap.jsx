@@ -4,6 +4,7 @@ import { Map, InfoWindow, Marker, GoogleApiWrapper } from "google-maps-react";
 var queue = [];
 var timerQue={};
 var timer=null;
+var counter = 0;
 
 class MapContainer extends Component {
   //constructor for your marker
@@ -29,6 +30,7 @@ class MapContainer extends Component {
     const lat = clickEvent.latLng.lat();
     const lng = clickEvent.latLng.lng();
 
+
    
     // queue.push(JSON.stringify(temp))
     // console.log(queue)
@@ -44,8 +46,13 @@ class MapContainer extends Component {
           return
         }
         let temp=JSON.parse(this.props.commands.current)
-        temp.lat=firstElement.lat
-        temp.lng=firstElement.lng
+        counter += 1;
+        console.log(counter)
+        var x = counter.toString();
+        temp.coordinates = {
+           [x] : [lat, lng]
+        }
+        
         this.props.commands.current=JSON.stringify(temp)
         timer=null
         console.log(this.props.commands.current)
