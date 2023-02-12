@@ -1,12 +1,15 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from "react";
 import { Map, InfoWindow, Marker, GoogleApiWrapper } from "google-maps-react";
+import axios from 'axios'
 
 var queue = [];
 var timerQue={};
 var timer=null;
 var counter = 0;
+var dict = [] 
 
 class MapContainer extends Component {
+  
   //constructor for your marker
   const 
   constructor(props) {
@@ -24,6 +27,8 @@ class MapContainer extends Component {
     };
     this.mapClicked = this.mapClicked.bind(this);
   }
+
+  
 
   //function for clicking on the map
   mapClicked(mapProps, map, clickEvent) {
@@ -49,13 +54,12 @@ class MapContainer extends Component {
         counter += 1;
         console.log(counter)
         var x = counter.toString();
-        temp.coordinates = {
-           [x] : [lat, lng]
-        }
-        
+        dict.push({[x]: [lat, lng]})
+        temp.coordinates = dict
         this.props.commands.current=JSON.stringify(temp)
         timer=null
         console.log(this.props.commands.current)
+        axios.post('http://10.250.36.94:5001/gps', temp.coordinates)
         
       },[10000])
     }

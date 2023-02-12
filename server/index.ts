@@ -2,7 +2,7 @@ import os from "os";
 import cors from 'cors'
 import express from "express";
 
-const port = 5000;
+const port = 5001;
 const app = express();
 const networkInterfaces = os.networkInterfaces();
 
@@ -11,7 +11,7 @@ const defaultResponse = {
     "is_operational": 0
 };
 
-let gpsStatus: { longitude: number, latitude: number } = { longitude: 0, latitude: 0 };
+let gpsStatus: any = [{"1":[37.33304950528962,-121.87961704036292]},{"2":[37.33223907939224,-121.88136584064063]}]
 let driveStatus: any = defaultResponse;
 let armStatus: any = defaultResponse;
 let armCommands: any = defaultResponse;
@@ -65,8 +65,7 @@ app.get("/gps", (req, res) => {
 });
 
 app.post("/gps", (req, res) => {
-    gpsStatus = ({ longitude: parseFloat(req.body.longitude), latitude: parseFloat(req.body.latitude) });
-    console.log(req.body)
+    gpsStatus = (req.body);
     console.log("POST /gps");
     res.send("GPS Data Received");
 });
