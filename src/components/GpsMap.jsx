@@ -59,7 +59,7 @@ class MapContainer extends Component {
         this.props.commands.current=JSON.stringify(temp)
         timer=null
         console.log(this.props.commands.current)
-        axios.post('http://10.250.36.94:5001/gps_map', temp.coordinates)
+        axios.post('http://10.250.36.94:5002/gps_map', temp.coordinates)
         
       },[10000])
     }

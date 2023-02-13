@@ -2,7 +2,7 @@ import os from "os";
 import cors from 'cors'
 import express from "express";
 
-const port = 5001;
+const port = 5002;
 const app = express();
 const networkInterfaces = os.networkInterfaces();
 
@@ -12,7 +12,7 @@ const defaultResponse = {
 };
 
 let gpsStatus: { longitude: number, latitude: number } = { longitude: 0, latitude: 0 };
-let gpsMapStatus: any = [{"1":[37.33304950528962,-121.87961704036292]},{"2":[37.33223907939224,-121.88136584064063]}]
+let gpsMapStatus: any = [{"1":[37.33304950528962,-121.87961704036292]},{"2":[37.33223907939224,-121.88136584064063]}];
 
 
 let driveStatus: any = defaultResponse;
@@ -78,14 +78,14 @@ app.get("/gps_map", (req, res) => {
     res.send(gpsMapStatus);
 });
 
-app.post("gps_map", (req, res) => {
+app.post("/gps_map", (req, res) => {
     gpsMapStatus = (req.body);
     console.log("POST /gps_map");
-    res.send("GPSMap Data Recevied")
+    res.send("GPSMap Data Recevied");
 });
 
 app.listen(port, () => {
-    console.log(`Server: http://localhost:5000`);
+    console.log(`Server: http://localhost:5002`);
     for (const key in networkInterfaces) {
         const networkInterface = networkInterfaces[key];
         for (const network of networkInterface as any) {
