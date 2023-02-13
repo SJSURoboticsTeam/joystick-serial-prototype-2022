@@ -11,7 +11,10 @@ const defaultResponse = {
     "is_operational": 0
 };
 
-let gpsStatus: any = [{"1":[37.33304950528962,-121.87961704036292]},{"2":[37.33223907939224,-121.88136584064063]}]
+let gpsStatus: { longitude: number, latitude: number } = { longitude: 0, latitude: 0 };
+let gpsMapStatus: any = [{"1":[37.33304950528962,-121.87961704036292]},{"2":[37.33223907939224,-121.88136584064063]}]
+
+
 let driveStatus: any = defaultResponse;
 let armStatus: any = defaultResponse;
 let armCommands: any = defaultResponse;
@@ -68,6 +71,17 @@ app.post("/gps", (req, res) => {
     gpsStatus = (req.body);
     console.log("POST /gps");
     res.send("GPS Data Received");
+});
+
+app.get("/gps_map", (req, res) => {
+    console.log("GET /gps_map");
+    res.send(gpsMapStatus);
+});
+
+app.post("gps_map", (req, res) => {
+    gpsMapStatus = (req.body);
+    console.log("POST /gps_map");
+    res.send("GPSMap Data Recevied")
 });
 
 app.listen(port, () => {
