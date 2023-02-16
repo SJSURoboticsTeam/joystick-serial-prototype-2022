@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
+import {Router, Route, Link} from "react-router-dom";
 
 import Wifi from './components/Wifi';
 import Serial from './components/Serial';
 import Camera from './components/Camera';
 import Status from './components/Status';
+import Science from './components/Science'
+import ScienceButton from './components/ScienceButton';
 // import MapContainer from './components/GpsMap';
 import ArmSystem from './components/ArmSystem';
 import DriveSystem from './components/DriveSystem';
@@ -55,6 +58,12 @@ function App() {
          
           <button className='btn btn__primary' onClick={() => setIsSerial(!isSerial)}>Toggle Connection Type</button> 
           {isSerial ? <Serial serverAddress={"http://192.168.1.28:5000/arm"} setStatus={setStatus} /> : <Wifi commands={commands} setStatus={setStatus} />}
+          <Link>
+            <button className="btn btn__primary">Science</button>
+        </Link>
+          
+          
+
       </header>
       
 
