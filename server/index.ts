@@ -18,6 +18,8 @@ let armCommands: any = defaultResponse;
 let driveCommands: any = defaultResponse;
 let scienceCommands: any = defaultResponse;
 let scienceStatus: any = defaultResponse;
+let autonomyCommands: any = defaultResponse;
+let autonomyStatus: any = defaultResponse;
 
 app.use(cors());
 app.use(express.json({ limit: "2mb" }));
@@ -88,6 +90,23 @@ app.post("/science", (req, res) => {
 app.get("/science/status", (req, res) => {
     console.log("GET /science/status");
     res.send(scienceStatus);
+})
+
+app.get("/autonomy", (req, res) => {
+    console.log("GET /autonomy");
+    autonomyStatus = req.query;
+    res.send(autonomyCommands);
+})
+
+app.post("/autonomy", (req, res) => {
+    autonomyCommands = (req.body);
+    console.log("POST /autonomy");
+    res.send("Autonomy Commands Received");
+})
+
+app.get("/autonomy/status", (req, res) => {
+    console.log("GET /science/status");
+    res.send(autonomyStatus);
 })
 
 

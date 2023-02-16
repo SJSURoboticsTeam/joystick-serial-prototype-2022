@@ -1,15 +1,12 @@
 
-import { DropdownButtonSelector, FooterButtons } from './Forms/ControlForm';
+import { DropdownButtonSelector } from './Forms/ControlForm';
 import { useEffect, useState } from 'react'
-import { userInfo } from 'os';
-import { DRIVE_MODES } from '../util/constants';
 
 export default function Science({ commands }) {
     const [scienceCommands, setScienceCommands] = useState({
         is_operational: 1,
-        step: 0,
-        emergency: 0,
-        mode: 0
+        state_step: 0,
+        mode: 'A'
     });
 
 
@@ -30,37 +27,36 @@ export default function Science({ commands }) {
                     name='mode'
                     label='Mode'
                     options={[
-                        { label: "Automatic", value: 1 },
-                        { label: "Manual", value: 0 }
+                        { label: "Automatic", value: 'A' },
+                        { label: "Manual", value: 'M' }
                     ]}
                     value={scienceCommands.mode}
                     onChange={handleChange}
                 />
 
                 <DropdownButtonSelector
-                    name='step'
-                    label='Step'
+                    name='state_step'
+                    label='State Step'
                     options={[
                         { label: "Move Revolver", value: 0 },
                         { label: "Seal", value: 1 },
                         { label: "Depressurize", value: 2 },
                         { label: "Inject", value: 3 },
-                        { label: "Sensors", value: 4 },
-                        { label: "Clear Chamber", value: 5 }
-
+                        { label: "Clear Chamber", value: 4 },
+                        { label: "Unseal", value: 5 }
                     ]}
-                    value={scienceCommands.step}
+                    value={scienceCommands.state_step}
                     onChange={handleChange}
                 />
 
                 <DropdownButtonSelector
-                    name='emergency'
+                    name='is_operational'
                     label='Is Operational'
                     options={[
                         { label: "True", value: 1 },
                         { label: "False", value: 0 }
                     ]}
-                    value={scienceCommands.emergency}
+                    value={scienceCommands.is_operational}
                     onChange={handleChange}
                 />
             </form>
