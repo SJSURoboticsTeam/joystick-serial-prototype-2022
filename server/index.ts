@@ -12,7 +12,8 @@ const defaultResponse = {
 };
 
 let gpsStatus: { longitude: number, latitude: number } = { longitude: 0, latitude: 0 };
-let gpsMapStatus: any = [{"1":[37.33304950528962,-121.87961704036292]},{"2":[37.33223907939224,-121.88136584064063]}];
+let gpsMapStatus: any = {"1":[37.33304950528962,-121.87961704036292],"2":[37.33223907939224,-121.88136584064063]};
+
 
 
 let driveStatus: any = defaultResponse;
