@@ -3,13 +3,14 @@ import { NUMBER_OF_ARM_KEYS, NUMBER_OF_DRIVE_KEYS } from '../util/constants';
 import serialParser from '../util/serial-parser';
 import axios from 'axios'
 
-export default function Serial({ serverAddress, setStatus }) {
+export default function Serial({ setStatus }) {
     let rawSerial: string = "";
     const port = useRef<SerialPort>(undefined);
     const reader = useRef<ReadableStreamDefaultReader>();
     const writer = useRef<WritableStreamDefaultWriter>();
     const [isConnected, setIsConnected] = useState(false);
     const [isDtrModeEnabled, setIsDtrModeEnabled] = useState(false);
+    const [serverAddress, setServerAddress] = useState('http://localhost:5000/drive');
 
     async function connect() {
         try {
@@ -64,7 +65,7 @@ export default function Serial({ serverAddress, setStatus }) {
                 let response = await axios.get(serverAddress + "/status");
                 setStatus(response.data);
             }
-            catch(error) {
+            catch (error) {
                 disconnect();
                 setStatus({
                     message: error.message,
@@ -72,7 +73,7 @@ export default function Serial({ serverAddress, setStatus }) {
                 });
             }
         }
-        
+
     }
 
     async function toggleDataTerminalMode() {
@@ -93,6 +94,7 @@ export default function Serial({ serverAddress, setStatus }) {
 
     return (
         <>
+            <input type='text' value={serverAddress} onChange={(e) => setServerAddress(e.target.value)} />
             {isDtrModeEnabled ? <button className='btn btn__danger' onClick={() => toggleDataTerminalMode()}>Toggle DTR OFF</button>
                 : <button className='btn btn__primary' onClick={() => toggleDataTerminalMode()}>Toggle DTR ON</button>}
             {isConnected ? <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button>

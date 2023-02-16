@@ -1,15 +1,15 @@
 
 import { DropdownButtonSelector, FooterButtons } from './Forms/ControlForm';
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { userInfo } from 'os';
 import { DRIVE_MODES } from '../util/constants';
 
-export default function Science() {
+export default function Science({ commands }) {
     const [scienceCommands, setScienceCommands] = useState({
-        is_operational: false,
+        is_operational: 1,
         step: 0,
-        emergency: true,
-        mode: false,
+        emergency: 0,
+        mode: 0
     });
 
 
@@ -18,7 +18,9 @@ export default function Science() {
         setScienceCommands(newCommands);
     }
 
-    // every 100ms send the commands to the rover by updating the commands ref
+    useEffect(() => {
+        commands.current = JSON.stringify(scienceCommands); // TODO: Add science string format
+    }, [scienceCommands]);
 
     return (
         <div>
@@ -53,10 +55,10 @@ export default function Science() {
 
                 <DropdownButtonSelector
                     name='emergency'
-                    label='Emergency Stop'
+                    label='Is Operational'
                     options={[
-                        { label: "Enabled", value: 1 },
-                        { label: "Disabled", value: 0 }
+                        { label: "True", value: 1 },
+                        { label: "False", value: 0 }
                     ]}
                     value={scienceCommands.emergency}
                     onChange={handleChange}

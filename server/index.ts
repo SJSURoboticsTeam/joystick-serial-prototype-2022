@@ -81,7 +81,7 @@ app.get("/science", (req, res) => {
 
 app.post("/science", (req, res) => {
     scienceCommands = (req.body);
-    console.log("POST /arm");
+    console.log("POST /science");
     res.send("Science Commands Received");
 })
 

@@ -12,3 +12,5 @@ export function armStringFormat(commands: ArmCommandDTO): string {
 export function mmtStringFormat(commands: MMTCommandDTO): string {
     return `{"heartbeat_count":${commands.heartbeat_count}, "is_operation":${commands.is_operational}, "angle":${commands.angle}`;
 }
+
+// TODO: Add Science String Format
