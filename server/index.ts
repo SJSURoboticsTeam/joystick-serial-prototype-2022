@@ -2,7 +2,7 @@ import os from "os";
 import cors from 'cors'
 import express from "express";
 
-const port = 5000;
+const port = 5001;
 const app = express();
 const networkInterfaces = os.networkInterfaces();
 
@@ -72,7 +72,7 @@ app.post("/gps", (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Server: http://localhost:5000`);
+    console.log(`Server: http://localhost:5001`);
     for (const key in networkInterfaces) {
         const networkInterface = networkInterfaces[key];
         for (const network of networkInterface as any) {
