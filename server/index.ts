@@ -11,11 +11,13 @@ const defaultResponse = {
     "is_operational": 0
 };
 
-let gpsStatus: { longitude: number, latitude: number } = { longitude: 0, latitude: 0 };
+let gpsStatus: any = defaultResponse;
 let driveStatus: any = defaultResponse;
 let armStatus: any = defaultResponse;
 let armCommands: any = defaultResponse;
 let driveCommands: any = defaultResponse;
+let scienceCommands: any = defaultResponse;
+let scienceStatus: any = defaultResponse;
 
 app.use(cors());
 app.use(express.json({ limit: "2mb" }));
@@ -65,14 +67,32 @@ app.get("/gps", (req, res) => {
 });
 
 app.post("/gps", (req, res) => {
-    gpsStatus = ({ longitude: parseFloat(req.body.longitude), latitude: parseFloat(req.body.latitude) });
+    gpsStatus = req.body;
     console.log(req.body)
     console.log("POST /gps");
     res.send("GPS Data Received");
 });
 
+app.get("/science", (req, res) => {
+    console.log("GET /science");
+    scienceStatus = req.query;
+    res.send(scienceCommands);
+})
+
+app.post("/science", (req, res) => {
+    scienceCommands = (req.body);
+    console.log("POST /arm");
+    res.send("Science Commands Received");
+})
+
+app.get("/science/status", (req, res) => {
+    console.log("GET /science/status");
+    res.send(scienceStatus);
+})
+
+
 app.listen(port, () => {
-    console.log(`Server: http://localhost:5000`);
+    console.log(`Server: http://localhost:${port}`);
     for (const key in networkInterfaces) {
         const networkInterface = networkInterfaces[key];
         for (const network of networkInterface as any) {

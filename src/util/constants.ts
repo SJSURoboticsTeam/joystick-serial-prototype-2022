@@ -1,4 +1,4 @@
-import { ArmCommandDTO, DriveCommandDTO } from "./command-dto";
+import { ArmCommandDTO, DriveCommandDTO, MMTCommandDTO } from "./command-dto";
 
 export const DEFAULT_DRIVE_COMMANDS: DriveCommandDTO = {
     heartbeat_count: 0,
@@ -19,6 +19,12 @@ export const DEFAULT_ARM_COMMANDS: ArmCommandDTO = {
     wrist_pitch_angle: 0,
     wrist_roll_angle: 0,
     end_effector_angle: 0
+};
+
+export const DEFAULT_MMT_COMMANDS : MMTCommandDTO = {
+    heartbeat_count: 0,
+    is_operational: 1,
+    angle: 0
 };
 
 export const DRIVE_MODES = [
@@ -62,4 +68,7 @@ export const MAX_WRIST_ROLL_ANGLE = 360;
 
 export const MIN_END_EFFECTOR_ANGLE = 0;
 export const MAX_END_EFFECTOR_ANGLE = 150;
+
+
+
 
