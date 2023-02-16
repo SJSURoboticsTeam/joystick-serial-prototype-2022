@@ -60,8 +60,6 @@ export default function Serial({ serverAddress, setStatus }) {
             else {
                 console.log(decoded);
             }
-        }
-        if (isConnected){
             try {
                 let response = await axios.get(serverAddress + "/status");
                 setStatus(response.data);

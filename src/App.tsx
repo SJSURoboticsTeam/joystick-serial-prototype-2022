@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import {Router, Route, Link} from "react-router-dom";
 
+
+import Science from './components/Science';
 import Wifi from './components/Wifi';
 import Serial from './components/Serial';
 import Camera from './components/Camera';
 import Status from './components/Status';
-import Science from './components/Science'
-import ScienceButton from './components/ScienceButton';
 // import MapContainer from './components/GpsMap';
 import ArmSystem from './components/ArmSystem';
 import DriveSystem from './components/DriveSystem';
@@ -21,8 +20,6 @@ function App() {
   const [isDriveControl, setIsDriveControl] = useState(true)
   const [isSerial, setIsSerial] = useState(true);
   const [status, setStatus] = useState<ArmCommandDTO | DriveCommandDTO>();
-  
-
   const [controlType, setControlType] = useState('drive');
 
   console.log(commands.current)
@@ -45,39 +42,33 @@ function App() {
 
   return (
     <div id="app">
+      
       <header className='btn-group'>
         
           <select className='btn btn__primary ' onChange={(e) => {setControlType(e.target.value)}}>  
-
               <option className='btn btn__primary' value={"drive"}>Drive System</option>
-              <option className='btn btn__primary' value={"mmt"}>MMT System</option> 
-              
+              <option className='btn btn__primary' value={"mmt"}>MMT System</option>   
               <option className='btn btn__primary' value={"arm"}>Arm System</option>
-                        
+              <option className='btn btn__primary' value={"science"}>Science</option>       
           </select>
          
           <button className='btn btn__primary' onClick={() => setIsSerial(!isSerial)}>Toggle Connection Type</button> 
-          {isSerial ? <Serial serverAddress={"http://192.168.1.28:5000/arm"} setStatus={setStatus} /> : <Wifi commands={commands} setStatus={setStatus} />}
-          <Link>
-            <button className="btn btn__primary">Science</button>
-        </Link>
-          
-          
-
+          {isSerial ? <Serial serverAddress={"http://192.168.1.28:5000/arm"} setStatus={setStatus} /> : <Wifi commands={commands} setStatus={setStatus} />} 
       </header>
       
 
-      <div className="grid-container">
-        
+      <div className="grid-container">       
         {controlType === 'drive' && <DriveSystem commands={commands} /> } 
         {controlType === 'arm' && <ArmSystem commands={commands} /> } 
         {controlType === 'mmt' && <MMTSystem /> }
+        {controlType === 'science' && <Science /> }
         <Status status={status} />
         <Camera name="0" src="http://raspberrypi:8000/stream.mjpg" />
         <Camera name="1" src="http://raspberrypi:8001/stream.mjpg" />
         <Camera name="2" src="http://raspberrypi:8002/stream.mjpg" />
-        <Camera name="3" src="http://raspberrypi:8003/stream.mjpg" />
-      </div>
+        <Camera name="3" src="http://raspberrypi:8003/stream.mjpg" /> 
+      </div>   
+      
     </div>
   );
 }
