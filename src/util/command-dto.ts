@@ -19,8 +19,8 @@ export interface ArmCommandDTO {
     end_effector_angle: number;
 }
 
-export interface MMTCommandDTO {
+export interface AutonomyCommandDTO {
     heartbeat_count: number;
     is_operational: number;
-    angle: number;  
+    angle: number;
 }

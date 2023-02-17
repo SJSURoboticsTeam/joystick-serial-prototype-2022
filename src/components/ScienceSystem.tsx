@@ -2,7 +2,7 @@
 import { DropdownButtonSelector } from './Forms/ControlForm';
 import { useEffect, useState } from 'react'
 
-export default function Science({ commands }) {
+export default function ScienceSystem({ commands }) {
     const [scienceCommands, setScienceCommands] = useState({
         is_operational: 1,
         state_step: 0,

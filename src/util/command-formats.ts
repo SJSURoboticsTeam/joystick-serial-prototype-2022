@@ -1,4 +1,4 @@
-import { ArmCommandDTO, DriveCommandDTO, MMTCommandDTO } from "./command-dto";
+import { ArmCommandDTO, DriveCommandDTO, AutonomyCommandDTO } from "./command-dto";
 
 
 export function driveStringFormat(commands: DriveCommandDTO): string {
@@ -9,7 +9,7 @@ export function armStringFormat(commands: ArmCommandDTO): string {
     return `{"heartbeat_count":${commands.heartbeat_count},"is_operational":${commands.is_operational},"speed":${commands.speed},"angles":[${commands.rotunda_angle},${commands.shoulder_angle},${commands.elbow_angle},${commands.wrist_pitch_angle},${commands.wrist_roll_angle},${commands.end_effector_angle}]}`;
 };
 
-export function mmtStringFormat(commands: MMTCommandDTO): string {
+export function mmtStringFormat(commands: AutonomyCommandDTO): string {
     return `{"heartbeat_count":${commands.heartbeat_count}, "is_operation":${commands.is_operational}, "angle":${commands.angle}`;
 }
 

@@ -94,11 +94,11 @@ export default function Serial({ setStatus }) {
 
     return (
         <>
-            <input type='text' value={serverAddress} onChange={(e) => setServerAddress(e.target.value)} />
             {isDtrModeEnabled ? <button className='btn btn__danger' onClick={() => toggleDataTerminalMode()}>Toggle DTR OFF</button>
                 : <button className='btn btn__primary' onClick={() => toggleDataTerminalMode()}>Toggle DTR ON</button>}
+            <input type='text' value={serverAddress} onChange={(e) => setServerAddress(e.target.value)} />
             {isConnected ? <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button>
-                : <button className='btn btn__primary' onClick={() => connect()}>Connect Mimic + WiFi</button>}
+                : <button className='btn btn__primary' onClick={() => connect()}>Connect Mimic</button>}
         </>
     )
 }
