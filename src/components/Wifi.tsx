@@ -3,7 +3,7 @@ import axios from 'axios'
 
 export default function Wifi({ commands, setStatus }) {
     const [isConnected, setIsConnected] = useState(false);
-    const [serverAddress, setServerAddress] = useState("http://localhost:5000/drive");
+    const [serverAddress, setServerAddress] = useState("http://localhost:5000/endpoint");
 
     function connect() {
         setIsConnected(true);
@@ -44,7 +44,6 @@ export default function Wifi({ commands, setStatus }) {
     useEffect(() => {
         const writeInterval = setInterval(() => {
             if (isConnected) {
-                console.log("Reading and writing commands...");
                 readStatus();
                 writeCommands();
             }

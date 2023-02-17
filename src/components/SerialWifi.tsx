@@ -3,14 +3,14 @@ import { NUMBER_OF_ARM_KEYS, NUMBER_OF_DRIVE_KEYS } from '../util/constants';
 import serialParser from '../util/serial-parser';
 import axios from 'axios'
 
-export default function Serial({ setStatus }) {
+export default function SerialWifi({ setStatus }) {
     let rawSerial: string = "";
     const port = useRef<SerialPort>(undefined);
     const reader = useRef<ReadableStreamDefaultReader>();
     const writer = useRef<WritableStreamDefaultWriter>();
     const [isConnected, setIsConnected] = useState(false);
     const [isDtrModeEnabled, setIsDtrModeEnabled] = useState(false);
-    const [serverAddress, setServerAddress] = useState('http://localhost:5000/drive');
+    const [serverAddress, setServerAddress] = useState('http://localhost:5000/arm');
 
     async function connect() {
         try {
@@ -57,9 +57,6 @@ export default function Serial({ setStatus }) {
                 rawSerial = "";
                 console.log(command);
                 await axios.post(serverAddress, command);
-            }
-            else {
-                console.log(decoded);
             }
             try {
                 let response = await axios.get(serverAddress + "/status");

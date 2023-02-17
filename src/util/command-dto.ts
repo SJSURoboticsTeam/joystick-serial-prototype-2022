@@ -19,7 +19,7 @@ export interface ArmCommandDTO {
     end_effector_angle: number;
 }
 
-export interface AutonomyCommandDTO {
+export interface autonomyCommandDTO {
     heartbeat_count: number;
     is_operational: number;
     angle: number;

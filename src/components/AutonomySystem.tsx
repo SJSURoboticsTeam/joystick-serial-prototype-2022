@@ -1,16 +1,16 @@
 import { useState } from 'react';
 
 import {
-    DEFAULT_MMT_COMMANDS,
+    DEFAULT_AUTONOMY_COMMANDS,
 } from '../util/constants';
 
-import { AutonomyCommandDTO } from '../util/command-dto';
+import { autonomyCommandDTO } from '../util/command-dto';
 import { TextSliderInput, FooterButtons } from './Forms/ControlForm';
 
 
 export default function MMTSystem({ commands }) {
 
-    const [mmtCommands, setMMTCommands] = useState<AutonomyCommandDTO>(DEFAULT_MMT_COMMANDS);
+    const [mmtCommands, setMMTCommands] = useState<autonomyCommandDTO>(DEFAULT_AUTONOMY_COMMANDS);
 
     function updateCommands(newCommands) {
         setMMTCommands(newCommands);
@@ -23,7 +23,7 @@ export default function MMTSystem({ commands }) {
 
     function resetCommands() {
         updateCommands({
-            ...DEFAULT_MMT_COMMANDS
+            ...DEFAULT_AUTONOMY_COMMANDS
         });
     }
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import Wifi from './components/Wifi';
-import Serial from './components/Serial';
+import SerialWifi from './components/SerialWifi';
 import Camera from './components/Camera';
 import Status from './components/Status';
 import ArmSystem from './components/ArmSystem';
@@ -9,17 +9,13 @@ import DriveSystem from './components/DriveSystem';
 import ScienceSystem from './components/ScienceSystem';
 import AutonomySystem from './components/AutonomySystem';
 import { ArmCommandDTO, DriveCommandDTO } from './util/command-dto';
-import { armStringFormat, driveStringFormat, mmtStringFormat } from './util/command-formats';
-import { DEFAULT_ARM_COMMANDS, DEFAULT_DRIVE_COMMANDS, DEFAULT_MMT_COMMANDS } from './util/constants';
-
+import { armStringFormat, driveStringFormat, autonomyStringFormat } from './util/command-formats';
+import { DEFAULT_ARM_COMMANDS, DEFAULT_DRIVE_COMMANDS, DEFAULT_AUTONOMY_COMMANDS } from './util/constants';
 
 function App() {
   const commands = useRef<string>(driveStringFormat(DEFAULT_DRIVE_COMMANDS));
-  const [isSerial, setIsSerial] = useState(true);
   const [status, setStatus] = useState<ArmCommandDTO | DriveCommandDTO>();
   const [system, setSystem] = useState('drive');
-
-  console.log(commands);
 
   useEffect(() => {
     switch (system) {
@@ -30,10 +26,10 @@ function App() {
         commands.current = armStringFormat(DEFAULT_ARM_COMMANDS);
         break;
       case 'autonomy':
-        commands.current = mmtStringFormat(DEFAULT_MMT_COMMANDS);
+        commands.current = autonomyStringFormat(DEFAULT_AUTONOMY_COMMANDS);
         break;
       case 'science':
-        // commands.current = mmtStringFormat(DEFAULT_MMT_COMMANDS);
+        // TODO: Add science commands format
         break;
       default:
         commands.current = driveStringFormat(DEFAULT_DRIVE_COMMANDS);
@@ -50,8 +46,7 @@ function App() {
           <option className='btn btn__primary' value={"autonomy"}>Autonomy System</option>
           <option className='btn btn__primary' value={"science"}>Science System</option>
         </select>
-        <button className='btn btn__primary' onClick={() => setIsSerial(!isSerial)}>Toggle Connection Type</button>
-        {isSerial ? <Serial setStatus={setStatus} /> : <Wifi commands={commands} setStatus={setStatus} />}
+        {system === 'arm' ? <SerialWifi setStatus={setStatus} /> : <Wifi commands={commands} setStatus={setStatus} />}
       </header>
 
       <div className="grid-container">
