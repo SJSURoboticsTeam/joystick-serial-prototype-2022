@@ -105,7 +105,7 @@ app.post("/autonomy", (req, res) => {
 })
 
 app.get("/autonomy/status", (req, res) => {
-    console.log("GET /science/status");
+    console.log("GET /autonomy/status");
     res.send(autonomyStatus);
 })
 
