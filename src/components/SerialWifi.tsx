@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { NUMBER_OF_ARM_KEYS, NUMBER_OF_DRIVE_KEYS } from '../util/constants';
+import { NUMBER_OF_ARM_KEYS } from '../util/constants';
 import serialParser from '../util/serial-parser';
 import axios from 'axios'
 
@@ -91,11 +91,13 @@ export default function SerialWifi({ setStatus }) {
 
     return (
         <>
-            {isDtrModeEnabled ? <button className='btn btn__danger' onClick={() => toggleDataTerminalMode()}>Toggle DTR OFF</button>
-                : <button className='btn btn__primary' onClick={() => toggleDataTerminalMode()}>Toggle DTR ON</button>}
             <input type='text' value={serverAddress} onChange={(e) => setServerAddress(e.target.value)} />
-            {isConnected ? <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button>
-                : <button className='btn btn__primary' onClick={() => connect()}>Connect Mimic</button>}
+            <div className='btn-group'>
+                {isDtrModeEnabled ? <button className='btn btn__danger' onClick={() => toggleDataTerminalMode()}>Toggle DTR OFF</button>
+                    : <button className='btn btn__primary' onClick={() => toggleDataTerminalMode()}>Toggle DTR ON</button>}
+                {isConnected ? <button className='btn btn__danger' onClick={() => disconnect()}>Disconnect</button>
+                    : <button className='btn btn__primary' onClick={() => connect()}>Connect</button>}
+            </div>
         </>
     )
 }

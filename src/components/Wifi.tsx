@@ -55,7 +55,7 @@ export default function Wifi({ commands, setStatus }) {
         <>
             <input autoComplete='off' className='input-text' type='text' value={serverAddress} onChange={e => setServerAddress(e.target.value)} />
             {isConnected ? <button className='btn btn__danger' onClick={disconnect}>Disconnect</button>
-                : <button className='btn btn__primary' onClick={connect}>Connect WiFi</button>}
+                : <button className='btn btn__primary' onClick={connect}>Connect</button>}
         </>
     )
 }
