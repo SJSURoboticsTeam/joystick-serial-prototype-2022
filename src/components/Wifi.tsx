@@ -3,7 +3,7 @@ import axios from 'axios'
 
 export default function Wifi({ commands, setStatus }) {
     const [isConnected, setIsConnected] = useState(false);
-    const [serverAddress, setServerAddress] = useState("http://localhost:5000/drive");
+    const [serverAddress, setServerAddress] = useState("http://localhost:5000/endpoint");
 
     function connect() {
         setIsConnected(true);
@@ -44,7 +44,6 @@ export default function Wifi({ commands, setStatus }) {
     useEffect(() => {
         const writeInterval = setInterval(() => {
             if (isConnected) {
-                console.log("Reading and writing commands...");
                 readStatus();
                 writeCommands();
             }
@@ -56,7 +55,7 @@ export default function Wifi({ commands, setStatus }) {
         <>
             <input autoComplete='off' className='input-text' type='text' value={serverAddress} onChange={e => setServerAddress(e.target.value)} />
             {isConnected ? <button className='btn btn__danger' onClick={disconnect}>Disconnect</button>
-                : <button className='btn btn__primary' onClick={connect}>Connect WiFi</button>}
+                : <button className='btn btn__primary' onClick={connect}>Connect</button>}
         </>
     )
 }

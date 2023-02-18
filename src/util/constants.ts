@@ -1,4 +1,4 @@
-import { ArmCommandDTO, DriveCommandDTO, MMTCommandDTO } from "./command-dto";
+import { ArmCommandDTO, DriveCommandDTO, autonomyCommandDTO } from "./command-dto";
 
 export const DEFAULT_DRIVE_COMMANDS: DriveCommandDTO = {
     heartbeat_count: 0,
@@ -21,7 +21,7 @@ export const DEFAULT_ARM_COMMANDS: ArmCommandDTO = {
     end_effector_angle: 0
 };
 
-export const DEFAULT_MMT_COMMANDS : MMTCommandDTO = {
+export const DEFAULT_AUTONOMY_COMMANDS: autonomyCommandDTO = {
     heartbeat_count: 0,
     is_operational: 1,
     angle: 0
