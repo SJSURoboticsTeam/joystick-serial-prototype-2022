@@ -9,7 +9,7 @@ describe("testing arm and drive string formats", () => {
     });
 
     it("should return a valid arm command string", () => {
-        const expected = `{"heartbeat_count":0,"is_operational":1,"speed":0,"angles":[0,0,0,0,0,0]}`;
+        const expected = `{"heartbeat_count":0,"is_operational":1,"speed":1,"angles":[0,0,0,0,0,0]}`;
         const actual = armStringFormat(DEFAULT_ARM_COMMANDS);
         expect(actual).toEqual(expected);
     });
