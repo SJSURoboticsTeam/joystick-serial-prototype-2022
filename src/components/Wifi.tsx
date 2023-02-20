@@ -13,30 +13,15 @@ export default function Wifi({ commands, setStatus }) {
         setIsConnected(false);
     }
 
-    async function readStatus() {
-        if (isConnected) {
-            try {
-                let response = await axios.get(serverAddress + "/status");
-                setStatus(response.data);
-            }
-            catch (error) {
-                disconnect();
-                setStatus({
-                    message: error.message,
-                    url: error.config.url,
-                });
-            }
-        }
-    }
-
     async function writeCommands() {
         if (isConnected) {
             try {
-                await axios.post(serverAddress, JSON.parse(commands.current))
+                const responseStatus = await axios.post(serverAddress, JSON.parse(commands.current))
+                setStatus(responseStatus.data);
             }
             catch (error) {
                 disconnect();
-                console.error("Verify backend is running!");
+                setStatus("Unable to post commands, verify backend is running");
             }
         }
     }
@@ -44,7 +29,7 @@ export default function Wifi({ commands, setStatus }) {
     useEffect(() => {
         const writeInterval = setInterval(() => {
             if (isConnected) {
-                readStatus();
+                // readStatus();
                 writeCommands();
             }
         }, 200);

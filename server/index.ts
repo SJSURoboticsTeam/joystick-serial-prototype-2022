@@ -11,14 +11,16 @@ const defaultResponse = {
     "is_operational": 0
 };
 
-let gpsStatus: any = defaultResponse;
-let driveStatus: any = defaultResponse;
-let armStatus: any = defaultResponse;
+let gpsCommands: any = defaultResponse;
 let armCommands: any = defaultResponse;
 let driveCommands: any = defaultResponse;
 let scienceCommands: any = defaultResponse;
-let scienceStatus: any = defaultResponse;
 let autonomyCommands: any = defaultResponse;
+
+let gpsStatus: any = defaultResponse;
+let armStatus: any = defaultResponse;
+let driveStatus: any = defaultResponse;
+let scienceStatus: any = defaultResponse;
 let autonomyStatus: any = defaultResponse;
 
 app.use(cors());
@@ -38,7 +40,7 @@ app.get("/drive", (req, res) => {
 app.post("/drive", (req, res) => {
     driveCommands = (req.body);
     console.log("POST /drive");
-    res.send("Drive Commands Received");
+    res.send(driveStatus);
 });
 
 app.get("/drive/status", (req, res) => {
@@ -55,7 +57,7 @@ app.get("/arm", (req, res) => {
 app.post("/arm", (req, res) => {
     armCommands = (req.body);
     console.log("POST /arm");
-    res.send("Arm Commands Received");
+    res.send(armStatus);
 });
 
 app.get("/arm/status", (req, res) => {
@@ -65,15 +67,20 @@ app.get("/arm/status", (req, res) => {
 
 app.get("/gps", (req, res) => {
     console.log("GET /gps");
-    res.send(gpsStatus);
+    gpsStatus = req.query;
+    res.send(gpsCommands);
 });
 
 app.post("/gps", (req, res) => {
-    gpsStatus = req.body;
-    console.log(req.body)
+    gpsCommands = req.body;
     console.log("POST /gps");
-    res.send("GPS Data Received");
+    res.send(gpsStatus);
 });
+
+app.get("/gps/status", (req, res) => {
+    console.log("GET /gps/status");
+    res.send(gpsStatus);
+})
 
 app.get("/science", (req, res) => {
     console.log("GET /science");
@@ -84,7 +91,7 @@ app.get("/science", (req, res) => {
 app.post("/science", (req, res) => {
     scienceCommands = (req.body);
     console.log("POST /science");
-    res.send("Science Commands Received");
+    res.send(autonomyStatus);
 })
 
 app.get("/science/status", (req, res) => {
@@ -101,7 +108,7 @@ app.get("/autonomy", (req, res) => {
 app.post("/autonomy", (req, res) => {
     autonomyCommands = (req.body);
     console.log("POST /autonomy");
-    res.send("Autonomy Commands Received");
+    res.send(autonomyStatus);
 })
 
 app.get("/autonomy/status", (req, res) => {
