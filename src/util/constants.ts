@@ -39,6 +39,20 @@ export const WHEEL_ORIENTATIONS = [
     { label: "2", value: 2 }
 ];
 
+export const SCIENCE_STEPS = [
+    { label: "Move Revolver", value: 0 },
+    { label: "Seal", value: 1 },
+    { label: "Depressurize", value: 2 },
+    { label: "Inject", value: 3 },
+    { label: "Clear Chamber", value: 4 },
+    { label: "Unseal", value: 5 }
+]
+
+export const SCIENCE_MODES = [
+    { label: "Automatic", value: 'A' },
+    { label: "Manual", value: 'M' }
+]
+
 export const NUMBER_OF_DRIVE_KEYS = 5;
 export const NUMBER_OF_ARM_KEYS = 4;
 

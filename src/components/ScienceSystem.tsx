@@ -1,14 +1,22 @@
 
-import { DropdownButtonSelector } from './Forms/ControlForm';
+import { DropdownButtonSelector, StepperInput } from './Forms/ControlForm';
 import { useEffect, useState } from 'react'
+import { SCIENCE_MODES, SCIENCE_STEPS } from '../util/constants';
 
 export default function ScienceSystem({ commands }) {
     const [scienceCommands, setScienceCommands] = useState({
-        is_operational: 1,
+        is_operational: 0,
         state_step: 0,
         mode: 'A'
     });
 
+    function connect() {
+        setScienceCommands({ ...scienceCommands, is_operational: 1 });
+    }
+
+    function disconnect() {
+        setScienceCommands({ ...scienceCommands, is_operational: 0 });
+    }
 
     function handleChange(e) {
         const newCommands = { ...scienceCommands, [e.target.name]: e.target.value };
@@ -26,39 +34,41 @@ export default function ScienceSystem({ commands }) {
                 <DropdownButtonSelector
                     name='mode'
                     label='Mode'
-                    options={[
-                        { label: "Automatic", value: 'A' },
-                        { label: "Manual", value: 'M' }
-                    ]}
+                    options={SCIENCE_MODES}
                     value={scienceCommands.mode}
                     onChange={handleChange}
                 />
 
-                <DropdownButtonSelector
+                <StepperInput
                     name='state_step'
                     label='State Step'
-                    options={[
-                        { label: "Move Revolver", value: 0 },
-                        { label: "Seal", value: 1 },
-                        { label: "Depressurize", value: 2 },
-                        { label: "Inject", value: 3 },
-                        { label: "Clear Chamber", value: 4 },
-                        { label: "Unseal", value: 5 }
-                    ]}
+                    options={SCIENCE_STEPS}
                     value={scienceCommands.state_step}
                     onChange={handleChange}
                 />
 
-                <DropdownButtonSelector
-                    name='is_operational'
-                    label='Is Operational'
-                    options={[
-                        { label: "True", value: 1 },
-                        { label: "False", value: 0 }
-                    ]}
-                    value={scienceCommands.is_operational}
-                    onChange={handleChange}
-                />
+                <div className='btn-group'>
+                    {scienceCommands.is_operational === 0 && <button className='btn btn__primary' onClick={() => {
+                        setScienceCommands({
+                            is_operational: 0,
+                            state_step: 0,
+                            mode: 'A'
+                        });
+                    }}>Reset</button>}
+                    {scienceCommands.is_operational === 0 ?
+                        <button
+                            className='btn btn__primary'
+                            onClick={connect}>
+                            Start
+                        </button>
+                        :
+                        <button
+                            className='btn btn__danger'
+                            onClick={disconnect}>
+                            Stop
+                        </button>
+                    }
+                </div>
             </form>
         </div>
     )

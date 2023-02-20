@@ -29,7 +29,6 @@ export default function Wifi({ commands, setStatus }) {
     useEffect(() => {
         const writeInterval = setInterval(() => {
             if (isConnected) {
-                // readStatus();
                 writeCommands();
             }
         }, 200);
