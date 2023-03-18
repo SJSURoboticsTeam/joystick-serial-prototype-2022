@@ -4,6 +4,7 @@ import Wifi from './components/Wifi';
 import Serial from './components/Serial';
 import Camera from './components/Camera';
 import Status from './components/Status';
+import InverseKinematics from './components/InverseKinematics';
 import ArmSystem from './components/ArmSystem';
 import SerialWifi from './components/SerialWifi';
 import DriveSystem from './components/DriveSystem';
@@ -66,6 +67,7 @@ function App() {
         {system === 'drive' && <DriveSystem commands={commands} />}
         {system === 'autonomy' && <AutonomySystem commands={commands} />}
         {system === 'science' && <ScienceSystem commands={commands} />}
+        <InverseKinematics />
         <Status status={status} />
         <Camera name="0" src="http://raspberrypi:8000/stream.mjpg" />
         <Camera name="1" src="http://raspberrypi:8001/stream.mjpg" />
