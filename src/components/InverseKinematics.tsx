@@ -16,15 +16,16 @@ export default function InverseKinematics() {
     const ref = useRef<Mesh<BoxGeometry, MeshNormalMaterial>>()
     const [target, setTarget] = useState([0, 0, 0] as V3)
     const [transforms, setTransforms] = useState<Solve3D.JointTransform[]>()
-
-    const baseConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: 0}}
-    const shoulderConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: 0}, roll:{min: 90, max: 180}}
-
+    const pi = 3.14159
+    const baseConstraint = {yaw:{min: 0, max: 2*pi}, pitch:{min: 0, max: 0}, roll:{min: 0, max: 0}} //in the stimulation, the base and the shoulder are the same joint
+    const shoulderConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: pi}, roll:{min: 0, max: 0}}
+    const elbowConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: 0}, roll:{min: -pi/2, max: pi/2}}
     const [links, setLinks] = useState([
-        { position: [0, 0, 1], rotation: QuaternionO.zeroRotation(), constraints: baseConstraint },
-        { position: [0, 0, 1], rotation: QuaternionO.zeroRotation(), constraints: shoulderConstraint },
+        { position: [0, 0, 0], rotation: QuaternionO.zeroRotation(), constraints: baseConstraint },
+        { position: [0,0, 0.25], rotation: QuaternionO.zeroRotation(), contraints: elbowConstraint},
+        { position: [0, 0, 1.5], rotation: QuaternionO.zeroRotation(), constraints: shoulderConstraint },
         { position: [0, 0, 1], rotation: QuaternionO.zeroRotation() },
-        { position: [0, 0, 1], rotation: QuaternionO.zeroRotation() },
+        // { position: [0, 0, 1], rotation: QuaternionO.zeroRotation() },
     ] as Solve3D.Link[])
 
     const base: Solve3D.JointTransform = {
@@ -33,7 +34,7 @@ export default function InverseKinematics() {
       }
 
     useAnimationFrame(60, () => {
-        const knownRangeOfMovement = 4 * 1
+        const knownRangeOfMovement = links.length * 1 //originally 4
     
         function learningRate(errorDistance: number): number {
           const relativeDistanceToTarget = MathUtils.clamp(errorDistance / knownRangeOfMovement, 0, 1)
