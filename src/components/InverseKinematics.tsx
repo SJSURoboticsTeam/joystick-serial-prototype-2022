@@ -10,10 +10,12 @@ import { Logger } from './3D-components/Logger'
 import { Target } from './3D-components/Target'
 import { useAnimationFrame } from './3D-components/useAnimationFrame'
 
-import  { useRef, useState } from 'react'
+import  { useRef, useState, useEffect} from 'react'
 
 export default function InverseKinematics() {
     const ref = useRef<Mesh<BoxGeometry, MeshNormalMaterial>>()
+    const refToInverseKinematics = useRef(null);
+
     const [target, setTarget] = useState([0, 0, 0] as V3)
     const [transforms, setTransforms] = useState<Solve3D.JointTransform[]>()
     const pi = 3.14159
@@ -22,17 +24,25 @@ export default function InverseKinematics() {
     const elbowConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: 0}, roll:{min: -pi/2, max: pi/2}}
     const [links, setLinks] = useState([
         { position: [0, 0, 0], rotation: QuaternionO.zeroRotation(), constraints: baseConstraint },
-        { position: [0,0, 0.25], rotation: QuaternionO.zeroRotation(), contraints: elbowConstraint},
+        { position: [0,0, 0.25], rotation: QuaternionO.zeroRotation(), contraints: elbowConstraint},  
         { position: [0, 0, 1.5], rotation: QuaternionO.zeroRotation(), constraints: shoulderConstraint },
         { position: [0, 0, 1], rotation: QuaternionO.zeroRotation() },
         // { position: [0, 0, 1], rotation: QuaternionO.zeroRotation() },
     ] as Solve3D.Link[])
-
     const base: Solve3D.JointTransform = {
-        position: [0, 0, 0],
-        rotation: QuaternionO.zeroRotation(),
-      }
+      position: [0, 0, 0],
+      rotation: QuaternionO.zeroRotation(),
+    }
 
+    // useEffect(()=>{
+    //   const element = refToInverseKinematics.current;
+    // },[target])
+    // console.log(refToInverseKinematics.current)
+    //without ref code:
+    // let element2 = document.querySelector("inverse-kin")
+    //   let rect = element.getBoundingClientRect();
+    //   console.log(rect.x);
+    //   console.log(rect.y);
     useAnimationFrame(60, () => {
         const knownRangeOfMovement = links.length * 1 //originally 4
     
@@ -61,9 +71,9 @@ export default function InverseKinematics() {
           links[index] = result[index]!
         })
       })
-
+    
     return (
-        <div>
+        <div ref={refToInverseKinematics} className="inverse-kin">
           <Canvas
             linear
           >
@@ -71,10 +81,18 @@ export default function InverseKinematics() {
             <group>
               <Base base={base} links={links} />
               <JointTransforms links={links} base={base} setTransforms={setTransforms} />
-              <Target position={target} setPosition={setTarget} />
+              <Target 
+              position={target} 
+              setPosition={setTarget} 
+                // width={refToInverseKinematics.current.clientWidth} 
+                // height={refToInverseKinematics.current.clientHeight}
+              />
+              
+              
+              
             </group>
           </Canvas>
-          <Logger target={target} links={links} base={base} />
+          <Logger target={target} links={links} base={base}/>
         </div>
       )
 }

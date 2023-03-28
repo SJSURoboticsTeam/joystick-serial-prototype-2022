@@ -1,15 +1,27 @@
 import { useThree } from '@react-three/fiber'
 import { V3, V3O } from 'inverse-kinematics'
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Vector3 } from 'three'
 
-export const Target = ({ position, setPosition }: { position: V3; setPosition: (position: V3) => void }) => {
+export const Target = ({ position, setPosition}: { position: V3; setPosition: (position: V3) => void}) => {
   const { camera } = useThree()
+
+  function getDimensions(){ // works but is there a React way to do this
+    let element = document.querySelector(".inverse-kin");
+    let height = element.clientHeight;    
+    let width = element.clientWidth;
+    let topDiff = element.getBoundingClientRect().y;
+    let leftDiff = element.getBoundingClientRect().x;
+    let dimensions = [width, height, topDiff, leftDiff];
+    return dimensions;
+  } 
+  // console.log(getDimensions())
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
       const vec = new Vector3()
       const clickPosition = new Vector3()
-      vec.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5)
+      
+      vec.set(((event.clientX -getDimensions()[3]) / getDimensions()[0]) * 2 - 1, -((event.clientY-getDimensions()[2]) /getDimensions()[1]) * 2 + 1, 0.5) //accurately places xy coordinates of target
       vec.unproject(camera)
       vec.sub(camera.position).normalize()
       const distance = -camera.position.z / vec.z
@@ -21,6 +33,7 @@ export const Target = ({ position, setPosition }: { position: V3; setPosition: (
       window.removeEventListener('click', onClick)
     }
   }, [])
+ 
   return (
     <mesh position={[...position]}>
       <boxBufferGeometry args={[0.3, 0.3, 0.3]} />
