@@ -1,0 +1,69 @@
+body {
+    margin: 5px;
+    background: rgb(130, 163, 157);
+   }
+   .ViewHeader{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+   width:50%
+   }
+   .Return-pty-btn{
+    position:absolute;
+    bottom: 10%;
+    right:20%;
+    transform: translateY(-50%);
+   
+   
+   }
+   .Return-btn{
+     position:absolute;
+      bottom: 5%;
+      right:21%;
+     
+      background-color: #65c6ed;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    border: none;
+    display: inline-block;
+   
+   
+   }
+   .Return-pty-btn{
+    background-color: #65c6ed;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    border: none;
+    display: inline-block;
+    position:absolute;
+     right:21%;
+   }
+   .cam3-view{
+   left: 100 px;
+   }
+   /* .cam1-toggle{
+    background-color: #65c6ed;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    border: none;
+    display: inline-block;
+   }
+   .cam3-toggle{
+    background-color: #b75315;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    border: none;
+    display: inline-block;
+   }
+   .cam2-toggle{
+    background-color: #94b62e;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    border: none;
+    display: inline-block;
+   } */
