@@ -1,11 +1,11 @@
 import { useFrame } from '@react-three/fiber'
 import { QuaternionO, Solve3D } from 'inverse-kinematics'
 import React, { useMemo, useRef } from 'react'
-import { BoxGeometry, Mesh, MeshNormalMaterial } from 'three'
+import { CylinderGeometry, Mesh, MeshNormalMaterial } from 'three'
 import { Link, LinkProps } from './Link'
 
 export const Base = ({ base: base, links }: { links: Solve3D.Link[]; base: Solve3D.JointTransform }) => {
-  const ref = useRef<Mesh<BoxGeometry, MeshNormalMaterial>>()
+  const ref = useRef<Mesh<CylinderGeometry, MeshNormalMaterial>>()
   const chain = useMemo(() => makeChain(links), [links])
 
   useFrame(() => {
@@ -25,8 +25,8 @@ export const Base = ({ base: base, links }: { links: Solve3D.Link[]; base: Solve
 
   return (
     <mesh ref={ref}>
-      <boxBufferGeometry args={[0.3, 0.3, 0.01]} />
-      <meshNormalMaterial />
+      <cylinderBufferGeometry args={[1,1,0.001]}/>
+      <meshStandardMaterial transparent wireframe />
       {chain && <Link {...chain} />}
     </mesh>
   )

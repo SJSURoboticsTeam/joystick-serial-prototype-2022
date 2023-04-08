@@ -11,40 +11,47 @@ import { Target } from './3D-components/Target'
 import { useAnimationFrame } from './3D-components/useAnimationFrame'
 
 import  { useRef, useState, useEffect} from 'react'
+import { randFloat, randInt } from 'three/src/math/MathUtils'
 
 export default function InverseKinematics() {
     const ref = useRef<Mesh<BoxGeometry, MeshNormalMaterial>>()
     const refToInverseKinematics = useRef(null);
 
-    const [target, setTarget] = useState([0, 0, 0] as V3)
+    const [target, setTarget] = useState([0, 2, 0] as V3)
     const [transforms, setTransforms] = useState<Solve3D.JointTransform[]>()
-    const pi = 3.14159
-    const baseConstraint = {yaw:{min: 0, max: 2*pi}, pitch:{min: 0, max: 0}, roll:{min: 0, max: 0}} //in the stimulation, the base and the shoulder are the same joint
-    const shoulderConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: pi}, roll:{min: 0, max: 0}}
-    const elbowConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: 0}, roll:{min: -pi/2, max: pi/2}}
+
+    const degToRad = (degrees) => {
+      const pi = 3.14159
+      return degrees*pi/180
+    }
+    
+    const rotundaConstraint = {yaw:degToRad(360), pitch:0, roll:{min: 0, max: 0}} //in the stimulation, the base and the shoulder are the same joint
+    const shoulderConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: 0}, roll:{min:degToRad(-90),max:degToRad(10)}}
+    const elbowConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: 0}, roll:{min: degToRad(-170), max: degToRad(10)}}
+
     const [links, setLinks] = useState([
-        { position: [0, 0, 0], rotation: QuaternionO.zeroRotation(), constraints: baseConstraint },
-        { position: [0,0, 0.25], rotation: QuaternionO.zeroRotation(), contraints: elbowConstraint},  
-        { position: [0, 0, 1.5], rotation: QuaternionO.zeroRotation(), constraints: shoulderConstraint },
-        { position: [0, 0, 1], rotation: QuaternionO.zeroRotation() },
-        // { position: [0, 0, 1], rotation: QuaternionO.zeroRotation() },
+        { position: [0, .1, 0], rotation: QuaternionO.zeroRotation(), constraints: rotundaConstraint },
+        { position: [0, 1, 0], rotation: QuaternionO.zeroRotation(), constraints: shoulderConstraint },  
+        { position: [0, 1, 0], rotation: QuaternionO.zeroRotation(), constraints: elbowConstraint },
+        // { position: [0, 1, 0], rotation: QuaternionO.zeroRotation(), constraints: wristPitchConstraint},
+        // { position: [0, 0, 1], rotation: QuaternionO.zeroRotation(), constraints: wristRollConstraint},
     ] as Solve3D.Link[])
+
     const base: Solve3D.JointTransform = {
       position: [0, 0, 0],
       rotation: QuaternionO.zeroRotation(),
     }
 
-    // useEffect(()=>{
-    //   const element = refToInverseKinematics.current;
-    // },[target])
-    // console.log(refToInverseKinematics.current)
-    //without ref code:
-    // let element2 = document.querySelector("inverse-kin")
-    //   let rect = element.getBoundingClientRect();
-    //   console.log(rect.x);
-    //   console.log(rect.y);
+    // Set a random target near the arm
+    // useEffect( () => {
+    //   const timeout = setInterval(()=>{setTarget(V3O.fromArray([randFloat(-3,3),randFloat(0,3),randFloat(-3,3)]))}, 5000)
+    //   return () => {
+    //     clearTimeout(timeout);
+    //   };
+    // },[])
+
     useAnimationFrame(60, () => {
-        const knownRangeOfMovement = links.length * 1 //originally 4
+        const knownRangeOfMovement = 2.1 //originally 4
     
         function learningRate(errorDistance: number): number {
           const relativeDistanceToTarget = MathUtils.clamp(errorDistance / knownRangeOfMovement, 0, 1)
@@ -62,9 +69,9 @@ export default function InverseKinematics() {
         }
     
         const result = Solve3D.solve(links, base, target, {
-          method: 'FABRIK',
-          learningRate,
-          acceptedError: 0,
+          method: 'CCD',
+          learningRate: 0.6,
+          acceptedError: 0.0001,
         }).links
     
         links.forEach((_, index) => {

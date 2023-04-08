@@ -7,15 +7,15 @@ export const Target = ({ position, setPosition}: { position: V3; setPosition: (p
   const { camera } = useThree()
 
   function getDimensions(){ // works but is there a React way to do this
-    let element = document.querySelector(".inverse-kin");
-    let height = element.clientHeight;    
-    let width = element.clientWidth;
-    let topDiff = element.getBoundingClientRect().y;
-    let leftDiff = element.getBoundingClientRect().x;
-    let dimensions = [width, height, topDiff, leftDiff];
+    const element = document.querySelector(".inverse-kin");
+    const height = element.clientHeight;    
+    const width = element.clientWidth;
+    const topDiff = element.getBoundingClientRect().y;
+    const leftDiff = element.getBoundingClientRect().x;
+    const dimensions = [width, height, topDiff, leftDiff];
     return dimensions;
   } 
-  // console.log(getDimensions())
+
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
       const vec = new Vector3()
