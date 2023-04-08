@@ -5,7 +5,7 @@
 import React from "react";
 import Camera from '../components/Camera';
 import Status from '../components/Status';
-import "./OperationalView1.css";
+//import "./OperationalView1.css";
 
 function App(props) {
     return (
