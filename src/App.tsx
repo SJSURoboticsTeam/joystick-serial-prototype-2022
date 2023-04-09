@@ -67,8 +67,8 @@ function App() {
         {system === 'drive' && <DriveSystem commands={commands} />}
         {system === 'autonomy' && <AutonomySystem commands={commands} />}
         {system === 'science' && <ScienceSystem commands={commands} />}
-        <InverseKinematics />
         <Status status={status} />
+        <InverseKinematics />
         <Camera name="0" src="http://raspberrypi:8000/stream.mjpg" />
         <Camera name="1" src="http://raspberrypi:8001/stream.mjpg" />
         <Camera name="2" src="http://raspberrypi:8002/stream.mjpg" />
