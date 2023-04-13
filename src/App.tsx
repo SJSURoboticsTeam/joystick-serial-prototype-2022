@@ -10,6 +10,8 @@ import DriveSystem from './components/DriveSystem';
 import ScienceSystem from './components/ScienceSystem';
 import AutonomySystem from './components/AutonomySystem';
 
+import OperationalView1 from './components/OperationalView1';
+
 import { ArmCommandDTO, DriveCommandDTO } from './util/command-dto';
 import { armStringFormat, driveStringFormat, autonomyStringFormat } from './util/command-formats';
 import { DEFAULT_ARM_COMMANDS, DEFAULT_DRIVE_COMMANDS, DEFAULT_AUTONOMY_COMMANDS } from './util/constants';
@@ -49,6 +51,7 @@ function App() {
             <option className='btn btn__primary' value={"arm"}>Arm System</option>
             <option className='btn btn__primary' value={"autonomy"}>Autonomy System</option>
             <option className='btn btn__primary' value={"science"}>Science System</option>
+            <option className= 'btn btn__primary' value={"operational view 1"}>Operational View 1</option>
           </select>
           <select className='btn btn__primary ' onChange={(e) => { setCommunicationMode(e.target.value) }}>
             <option className='btn btn__primary' value={"wifi"}>Wifi</option>
@@ -66,6 +69,7 @@ function App() {
         {system === 'drive' && <DriveSystem commands={commands} />}
         {system === 'autonomy' && <AutonomySystem commands={commands} />}
         {system === 'science' && <ScienceSystem commands={commands} />}
+        {system === 'operational view 1' && <OperationalView1 command={commands}/>}
         <Status status={status} />
         <Camera name="0" src="http://raspberrypi:8000/stream.mjpg" />
         <Camera name="1" src="http://raspberrypi:8001/stream.mjpg" />
