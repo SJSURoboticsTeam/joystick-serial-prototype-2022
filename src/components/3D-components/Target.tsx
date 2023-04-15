@@ -7,27 +7,29 @@ export const Target = ({ position, setPosition}: { position: V3; setPosition: (p
   const { camera } = useThree()
 
   function getDimensions(){ // works but is there a React way to do this
-    let element = document.querySelector(".inverse-kin");
-    let height = element.clientHeight;    
-    let width = element.clientWidth;
-    let topDiff = element.getBoundingClientRect().y;
-    let leftDiff = element.getBoundingClientRect().x;
-    let dimensions = [width, height, topDiff, leftDiff];
+    const element = document.querySelector(".inverse-kin");
+    const height = element.clientHeight;    
+    const width = element.clientWidth;
+    const topDiff = element.getBoundingClientRect().y;
+    const leftDiff = element.getBoundingClientRect().x;
+    const dimensions = [width, height, topDiff, leftDiff];
     return dimensions;
   } 
-  // console.log(getDimensions())
+
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
-      const vec = new Vector3()
-      const clickPosition = new Vector3()
-      
-      vec.set(((event.clientX -getDimensions()[3]) / getDimensions()[0]) * 2 - 1, -((event.clientY-getDimensions()[2]) /getDimensions()[1]) * 2 + 1, 0.5) //accurately places xy coordinates of target
-      vec.unproject(camera)
-      vec.sub(camera.position).normalize()
-      const distance = -camera.position.z / vec.z
-      clickPosition.copy(camera.position).add(vec.multiplyScalar(distance))
-      
-      setPosition(V3O.fromVector3(clickPosition))
+      //check if click occured in the component
+      if(document.querySelector(".inverse-kin").contains(event.target as Node))
+      {
+        const vec = new Vector3()
+        const clickPosition = new Vector3()
+        vec.set(((event.clientX -getDimensions()[3]) / getDimensions()[0]) * 2 - 1, -((event.clientY-getDimensions()[2]) /getDimensions()[1]) * 2 + 1, 0.5) //accurately places xy coordinates of target
+        vec.unproject(camera)
+        vec.sub(camera.position).normalize()
+        const distance = -camera.position.z / vec.z
+        clickPosition.copy(camera.position).add(vec.multiplyScalar(distance))
+        setPosition(V3O.fromVector3(clickPosition))
+      }
     }
     window.addEventListener('click', onClick)
     return () => {

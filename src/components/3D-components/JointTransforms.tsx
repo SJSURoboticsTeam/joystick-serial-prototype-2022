@@ -8,14 +8,16 @@ export const JointTransforms = ({ links, base, setTransforms }: { links: Solve3D
 
   useFrame(() => {
     if (ref.current === undefined) return
-
+   
     const { transforms } = Solve3D.getJointTransforms(links, base)
+    setTransforms(transforms)
     for (let index = 0; index < ref.current.children.length; index++) {
       const child = ref.current.children[index]!
       const jointPosition = transforms[index]?.position
       if (jointPosition === undefined) {
         throw new Error(`No corresponding child position for index ${index}`)
       }
+      
       child.position.set(...jointPosition)
     }
   })
