@@ -1,6 +1,7 @@
 // 3D Rendering tools
 import { OrbitControls } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
+import * as THREE from "three"
 import { BoxGeometry, Mesh, MeshNormalMaterial } from 'three'
 // IK utils
 import { MathUtils, QuaternionO, Range, Solve3D, V3, V3O } from 'inverse-kinematics'
@@ -11,6 +12,7 @@ import { Target } from './3D-components/Target'
 import { useAnimationFrame } from './3D-components/useAnimationFrame'
 
 import  { useRef, useState, useEffect} from 'react'
+import AxisHelper from './3D-components/AxisHelper'
 
 export default function InverseKinematics() {
     const ref = useRef<Mesh<BoxGeometry, MeshNormalMaterial>>()
@@ -75,10 +77,12 @@ export default function InverseKinematics() {
     return (
         <div ref={refToInverseKinematics} className="inverse-kin">
           <Canvas
-            linear
+          linear
           >
-            <OrbitControls />
+             <OrbitControls />
+            <AxisHelper />
             <group>
+              
               <Base base={base} links={links} />
               <JointTransforms links={links} base={base} setTransforms={setTransforms} />
               <Target 
@@ -87,9 +91,6 @@ export default function InverseKinematics() {
                 // width={refToInverseKinematics.current.clientWidth} 
                 // height={refToInverseKinematics.current.clientHeight}
               />
-              
-              
-              
             </group>
           </Canvas>
           <Logger target={target} links={links} base={base}/>

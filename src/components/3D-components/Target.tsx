@@ -26,6 +26,7 @@ export const Target = ({ position, setPosition}: { position: V3; setPosition: (p
       vec.sub(camera.position).normalize()
       const distance = -camera.position.z / vec.z
       clickPosition.copy(camera.position).add(vec.multiplyScalar(distance))
+      
       setPosition(V3O.fromVector3(clickPosition))
     }
     window.addEventListener('click', onClick)
