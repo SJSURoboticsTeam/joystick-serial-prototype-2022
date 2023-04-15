@@ -15,13 +15,15 @@ import  { useRef, useState, useEffect} from 'react'
 import { randFloat, randInt } from 'three/src/math/MathUtils'
 import AxisHelper from './3D-components/AxisHelper'
 
-export default function InverseKinematics() {
+import { armStringFormat } from '../util/command-formats';
+
+export default function InverseKinematics({ commands }) {
     const ref = useRef<Mesh<BoxGeometry, MeshNormalMaterial>>()
     const refToInverseKinematics = useRef(null);
 
     // const [target, setTarget] = useState([0.6091613387061174, 0.020408187480864926, -0.9999254846613541] as V3)
     // const [target, setTarget] = useState([.5, .5, -0.5] as V3)
-    const [target, setTarget] = useState([1, 1.1, 0] as V3)
+    const [target, setTarget] = useState([-1, 1.1, 0] as V3)
     const [transforms, setTransforms] = useState<Solve3D.JointTransform[]>()
 
     const degToRad = (degrees : number) => {
@@ -63,22 +65,22 @@ export default function InverseKinematics() {
       
       // Rotunda
       const rotundaEuler = quatToEuler(rotundaQ)
-      const rotundaAngle = radToDeg(rotundaEuler[0]) + radToDeg(rotundaEuler[1]) // Rotation about y has range [-90,90], rotation about x is either 0 or 180
+      const rotundaAngle = Math.round(radToDeg(rotundaEuler[0]) + radToDeg(rotundaEuler[1])) // Rotation about y has range [-90,90], rotation about x is either 0 or 180
 
       // Shoulder
       const shoulderAngles = anglesFromWorldQs(shoulderQ, rotundaQ)
-      const shoulderAngle = shoulderAngles[2]
+      const shoulderAngle = Math.round(shoulderAngles[2])
 
       // Elbow
       const elbowAngles = anglesFromWorldQs(elbowQ, shoulderQ)
-      const elbowAngle = elbowAngles[2]
+      const elbowAngle = Math.round(elbowAngles[2])
 
       return [rotundaAngle, shoulderAngle, elbowAngle]
     }
-    
+
     const rotundaConstraint = {yaw:degToRad(360), pitch:0, roll:{min: 0, max: 0}} //in the stimulation, the base and the shoulder are the same joint
-    const shoulderConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: 0}, roll:{min:degToRad(-90),max:degToRad(10)}}
-    const elbowConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: 0}, roll:{min: degToRad(-170), max: degToRad(10)}}
+    const shoulderConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: 0}, roll:{min:degToRad(0),max:degToRad(90)}}
+    const elbowConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: 0}, roll:{min: degToRad(-75), max: degToRad(170)}}
 
     const [links, setLinks] = useState([
         { position: [0, .1, 0], rotation: QuaternionO.zeroRotation(), constraints: rotundaConstraint },
@@ -95,7 +97,21 @@ export default function InverseKinematics() {
 
     useEffect(() => {
       if(!transforms) {return}
-      console.log(motorAngles(transforms))
+      const angles = motorAngles(transforms)
+      const newCommands = {
+        heartbeat_count: 0,
+        is_operational: 1,
+        speed: 1,
+        rotunda_angle: angles[0],
+        shoulder_angle: angles[1],
+        elbow_angle: angles[2],
+        wrist_pitch_angle: 0,
+        wrist_roll_angle: 0,
+        end_effector_angle: 0
+      }
+
+      commands.current = armStringFormat(newCommands)
+
     }, [transforms])
 
     // Set a random target near the arm
@@ -106,23 +122,8 @@ export default function InverseKinematics() {
     //   };
     // },[])
 
-    useAnimationFrame(60, () => {
-        const knownRangeOfMovement = 2.1 //originally 4
-    
-        // function learningRate(errorDistance: number): number {
-        //   const relativeDistanceToTarget = MathUtils.clamp(errorDistance / knownRangeOfMovement, 0, 1)
-        //   const cutoff = 0.5
-    
-        //   if (relativeDistanceToTarget > cutoff) {
-        //     return 10e-3
-        //   }
-    
-        //   // result is between 0 and 1
-        //   const remainingDistance = relativeDistanceToTarget / 0.02
-        //   const minimumLearningRate = 10e-4
-    
-        //   return (minimumLearningRate + remainingDistance * 10e-4) / knownRangeOfMovement
-        // }
+    useAnimationFrame(30, () => {
+        const knownRangeOfMovement = 2.1 //originally 4 
     
         const result = Solve3D.solve(links, base, target, {
           method: 'CCD',
