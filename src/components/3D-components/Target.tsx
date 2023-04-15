@@ -29,18 +29,19 @@ export const Target = ({ position, setPosition}: { position: V3; setPosition: (p
         const distance = -camera.position.z / vec.z
         clickPosition.copy(camera.position).add(vec.multiplyScalar(distance))
         setPosition(V3O.fromVector3(clickPosition))
+
       }
     }
-    window.addEventListener('click', onClick)
+    window.addEventListener('contextmenu', onClick)
     return () => {
-      window.removeEventListener('click', onClick)
+      window.removeEventListener('contextmenu', onClick)
     }
   }, [])
  
   return (
     <mesh position={[...position]}>
       <boxBufferGeometry args={[0.3, 0.3, 0.3]} />
-      <meshBasicMaterial color={'hotpink'} />
+      <meshBasicMaterial color={'black'} />
     </mesh>
   )
 }

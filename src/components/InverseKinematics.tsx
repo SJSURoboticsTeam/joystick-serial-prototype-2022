@@ -134,13 +134,15 @@ export default function InverseKinematics() {
           links[index] = result[index]!
         })
       })
-    
+    const setMouseButtons = {
+      LEFT: THREE.MOUSE.ROTATE,
+    }
     return (
         <div ref={refToInverseKinematics} className="inverse-kin">
           <Canvas
           linear
           >
-             <OrbitControls />
+             <OrbitControls mouseButtons={setMouseButtons} />
             <AxisHelper />
             <group>
               
@@ -152,6 +154,7 @@ export default function InverseKinematics() {
                 // width={refToInverseKinematics.current.clientWidth} 
                 // height={refToInverseKinematics.current.clientHeight}
               />
+
             </group>
           </Canvas>
           <Logger target={target} links={links} base={base}/>
