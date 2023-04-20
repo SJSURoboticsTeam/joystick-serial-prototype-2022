@@ -1,8 +1,34 @@
 body {
-    margin: 5px;
-    background: rgb(130, 163, 157);
-   }
-   .ViewHeader{
+  margin: 5px;
+  background: rgb(130, 163, 157);
+ }
+
+ .OperationalView{
+  width: 100vw;
+  height: 100vh;
+  margin: 0  auto;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(5, 1fr);
+ }
+
+ .MainView {
+  background: rgb(0, 47, 255);
+  /* border: 5px solid black; */
+  grid-row: 1 / 6;
+  grid-column: 1 / 2;
+}
+
+.OverlayMenu {
+  background: rgb(255, 0, 0);
+  border: 5px solid black;
+  border-radius: 50px;
+  grid-row: 4 / 6;
+  grid-column: 1 / 2;
+}
+
+   /* .ViewHeader{
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -39,10 +65,10 @@ body {
     display: inline-block;
     position:absolute;
      right:21%;
-   }
-   .cam3-view{
+   } */
+   /* .cam3-view{
    left: 100 px;
-   }
+   } */
    /* .cam1-toggle{
     background-color: #65c6ed;
     border: none;
