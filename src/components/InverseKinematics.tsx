@@ -17,13 +17,13 @@ import AxisHelper from './3D-components/AxisHelper'
 
 import { armStringFormat } from '../util/command-formats';
 
-export default function InverseKinematics({ commands }) {
+export default function InverseKinematics({ commands, send, setSend }) {
     const ref = useRef<Mesh<BoxGeometry, MeshNormalMaterial>>()
     const refToInverseKinematics = useRef(null);
 
     // const [target, setTarget] = useState([0.6091613387061174, 0.020408187480864926, -0.9999254846613541] as V3)
     // const [target, setTarget] = useState([.5, .5, -0.5] as V3)
-    const [target, setTarget] = useState([-1, 1.1, 0] as V3)
+    const [target, setTarget] = useState([-5.948, 6.948, 0] as V3)
     const [transforms, setTransforms] = useState<Solve3D.JointTransform[]>()
 
     const degToRad = (degrees : number) => {
@@ -33,6 +33,29 @@ export default function InverseKinematics({ commands }) {
     const radToDeg = (rads : number) => {
       return rads*180/Math.PI
     }
+
+    const noRotationConstraint = {yaw:0, pitch: 0, roll: 0}
+    const rotundaConstraint = {yaw:degToRad(360), pitch:0, roll:{min: 0, max: 0}} //in the stimulation, the base and the shoulder are the same joint
+    const shoulderConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: 0}, roll:{min:degToRad(0),max:degToRad(80)}}
+    const elbowConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: 0}, roll:{min: degToRad(10), max: degToRad(180)}}
+
+    // Rotunda to shoulder is 77mm, shoulder to elbow is 458mm, elbow to wrist is 458mm. Length ratio is 1:5.948
+    // Rotunda to shoulder mount is 101mm, shoulder mount to shoulder joint is 101mm, shoulder joint to elbow is 458mm, elbow to wrist is 458mm
+    const [links, setLinks] = useState([
+        { position: [0, 0, 0], rotation: QuaternionO.zeroRotation(), constraints: rotundaConstraint },
+        { position: [-1, 0, 0], rotation: QuaternionO.zeroRotation(), constraints: noRotationConstraint },
+        { position: [0, 1, 0], rotation: QuaternionO.zeroRotation(), constraints: noRotationConstraint },
+        { position: [0, 5.948, 0], rotation: QuaternionO.zeroRotation(), constraints: shoulderConstraint },  
+        { position: [0, 5.948, 0], rotation: QuaternionO.zeroRotation(), constraints: elbowConstraint },
+        // { position: [0, 1, 0], rotation: QuaternionO.zeroRotation(), constraints: wristPitchConstraint},
+        // { position: [0, 0, 1], rotation: QuaternionO.zeroRotation(), constraints: wristRollConstraint},
+    ] as Solve3D.Link[])
+
+    const base: Solve3D.JointTransform = {
+      position: [0, 0, 0],
+      rotation: QuaternionO.zeroRotation(),
+    }
+
 
     const quatToEuler = (q : Quaternion) => {
       const sinrCosp = 2 * (q.w*q.x + q.y*q.z)
@@ -60,8 +83,8 @@ export default function InverseKinematics({ commands }) {
       // Extract quaternions
       // const baseQ = new Quaternion().fromArray(joints[0].rotation)
       const rotundaQ =  new Quaternion().fromArray(joints[1].rotation)
-      const shoulderQ = new Quaternion().fromArray(joints[2].rotation)
-      const elbowQ = new Quaternion().fromArray(joints[3].rotation)
+      const shoulderQ = new Quaternion().fromArray(joints[4].rotation)
+      const elbowQ = new Quaternion().fromArray(joints[5].rotation)
       
       // Rotunda
       const rotundaEuler = quatToEuler(rotundaQ)
@@ -73,31 +96,20 @@ export default function InverseKinematics({ commands }) {
 
       // Elbow
       const elbowAngles = anglesFromWorldQs(elbowQ, shoulderQ)
-      const elbowAngle = Math.round(elbowAngles[2])
+      const elbowAngle = Math.round(elbowAngles[2])-90
 
       return [rotundaAngle, shoulderAngle, elbowAngle]
     }
 
-    const rotundaConstraint = {yaw:degToRad(360), pitch:0, roll:{min: 0, max: 0}} //in the stimulation, the base and the shoulder are the same joint
-    const shoulderConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: 0}, roll:{min:degToRad(0),max:degToRad(90)}}
-    const elbowConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: 0}, roll:{min: degToRad(-75), max: degToRad(170)}}
-
-    const [links, setLinks] = useState([
-        { position: [0, .1, 0], rotation: QuaternionO.zeroRotation(), constraints: rotundaConstraint },
-        { position: [0, 1, 0], rotation: QuaternionO.zeroRotation(), constraints: shoulderConstraint },  
-        { position: [0, 1, 0], rotation: QuaternionO.zeroRotation(), constraints: elbowConstraint },
-        // { position: [0, 1, 0], rotation: QuaternionO.zeroRotation(), constraints: wristPitchConstraint},
-        // { position: [0, 0, 1], rotation: QuaternionO.zeroRotation(), constraints: wristRollConstraint},
-    ] as Solve3D.Link[])
-
-    const base: Solve3D.JointTransform = {
-      position: [0, 0, 0],
-      rotation: QuaternionO.zeroRotation(),
-    }
-
     useEffect(() => {
       if(!transforms) {return}
+      if(send <= 0) { return }
+      setSend(val => val - 1)
+      console.log("Sending values!")
       const angles = motorAngles(transforms)
+      console.log({        rotunda_angle: angles[0],
+        shoulder_angle: angles[1],
+        elbow_angle: angles[2],})
       const newCommands = {
         heartbeat_count: 0,
         is_operational: 1,
@@ -112,23 +124,40 @@ export default function InverseKinematics({ commands }) {
 
       commands.current = armStringFormat(newCommands)
 
-    }, [transforms])
+    }, [transforms, send, setSend])
 
     // Set a random target near the arm
     // useEffect( () => {
-    //   const timeout = setInterval(()=>{setTarget(V3O.fromArray([randFloat(-3,3),randFloat(0,3),randFloat(-3,3)]))}, 5000)
+    //   const timeout = setInterval(()=>{setTarget(V3O.fromArray([randFloat(-5,5),randFloat(0,5),randFloat(-5,5)]))}, 5000)
     //   return () => {
     //     clearTimeout(timeout);
     //   };
     // },[])
 
     useAnimationFrame(30, () => {
-        const knownRangeOfMovement = 2.1 //originally 4 
+        // const knownRangeOfMovement = 2.1 //originally 4 
+        // const knownRangeOfMovement = links.reduce((acc, link) => {return acc + new Quaternion().fromArray(link.position).length() }, 0)
+        // console.log(knownRangeOfMovement)
+
+        // function learningRate(errorDistance: number): number {
+        //   const relativeDistanceToTarget = MathUtils.clamp(errorDistance / knownRangeOfMovement, 0, 1)
+        //   const cutoff = 0.5
+    
+        //   if (relativeDistanceToTarget > cutoff) {
+        //     return 10e-3
+        //   }
+    
+        //   // result is between 0 and 1
+        //   const remainingDistance = relativeDistanceToTarget / 0.02
+        //   const minimumLearningRate = 10e-4
+    
+        //   return (minimumLearningRate + remainingDistance * 10e-4) / knownRangeOfMovement
+        // }
     
         const result = Solve3D.solve(links, base, target, {
           method: 'CCD',
-          learningRate: 0.6,
-          acceptedError: 0.0001,
+          learningRate: 0.06,
+          acceptedError: 0.0000001,
         }).links
     
         links.forEach((_, index) => {

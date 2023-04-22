@@ -20,6 +20,7 @@ function App() {
   const [status, setStatus] = useState<ArmCommandDTO | DriveCommandDTO>();
   const [communicationMode, setCommunicationMode] = useState('wifi');
   const [system, setSystem] = useState('drive');
+  const [send, setSend] = useState(0);
 
   useEffect(() => {
     switch (system) {
@@ -68,7 +69,8 @@ function App() {
         {system === 'autonomy' && <AutonomySystem commands={commands} />}
         {system === 'science' && <ScienceSystem commands={commands} />}
         <Status status={status} />
-        {system === 'arm' && <InverseKinematics commands={commands}/>}
+        {system === 'arm' && <InverseKinematics commands={commands} send={send} setSend={setSend}/>}
+        {system === 'arm' && <button onClick={() => {setSend(1)}}>Send Commands</button>}
         <Camera name="0" src="http://raspberrypi:8000/stream.mjpg" />
         <Camera name="1" src="http://raspberrypi:8001/stream.mjpg" />
         <Camera name="2" src="http://raspberrypi:8002/stream.mjpg" />
