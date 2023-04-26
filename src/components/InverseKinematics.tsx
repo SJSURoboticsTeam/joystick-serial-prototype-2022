@@ -16,11 +16,11 @@ import { randFloat, randInt } from 'three/src/math/MathUtils'
 import AxisHelper from './3D-components/AxisHelper'
 
 import { armStringFormat } from '../util/command-formats';
+import { diffProps } from '@react-three/fiber/dist/declarations/src/core/utils'
 
-export default function InverseKinematics({ commands, send, setSend }) {
+export default function InverseKinematics({ commands, send, setSend, zindex }) {
     const ref = useRef<Mesh<BoxGeometry, MeshNormalMaterial>>()
     const refToInverseKinematics = useRef(null);
-
     // const [target, setTarget] = useState([0.6091613387061174, 0.020408187480864926, -0.9999254846613541] as V3)
     // const [target, setTarget] = useState([.5, .5, -0.5] as V3)
     const [target, setTarget] = useState([-5.948, 6.948, 0] as V3)
@@ -33,7 +33,7 @@ export default function InverseKinematics({ commands, send, setSend }) {
     const radToDeg = (rads : number) => {
       return rads*180/Math.PI
     }
-
+    
     const noRotationConstraint = {yaw:0, pitch: 0, roll: 0}
     const rotundaConstraint = {yaw:degToRad(360), pitch:0, roll:{min: 0, max: 0}} //in the stimulation, the base and the shoulder are the same joint
     const shoulderConstraint = {yaw:{min: 0, max: 0}, pitch:{min: 0, max: 0}, roll:{min:degToRad(0),max:degToRad(80)}}
@@ -171,6 +171,7 @@ export default function InverseKinematics({ commands, send, setSend }) {
         <div ref={refToInverseKinematics} className="inverse-kin">
           <Canvas
           linear
+          camera={{fov: 75, near: 0.1, far: 1000, position: [0, 0, 15]}}
           >
              <OrbitControls mouseButtons={setMouseButtons} />
             <AxisHelper />
@@ -181,8 +182,7 @@ export default function InverseKinematics({ commands, send, setSend }) {
               <Target 
               position={target} 
               setPosition={setTarget} 
-                // width={refToInverseKinematics.current.clientWidth} 
-                // height={refToInverseKinematics.current.clientHeight}
+              zindex = {zindex}
               />
 
             </group>

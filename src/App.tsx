@@ -10,6 +10,8 @@ import SerialWifi from './components/SerialWifi';
 import DriveSystem from './components/DriveSystem';
 import ScienceSystem from './components/ScienceSystem';
 import AutonomySystem from './components/AutonomySystem';
+import InverseKinematicsInput from './components/InverseKinematicsInput';
+import { TextSliderInput, FooterButtons } from './components/Forms/ControlForm';
 
 import { ArmCommandDTO, DriveCommandDTO } from './util/command-dto';
 import { armStringFormat, driveStringFormat, autonomyStringFormat } from './util/command-formats';
@@ -21,7 +23,16 @@ function App() {
   const [communicationMode, setCommunicationMode] = useState('wifi');
   const [system, setSystem] = useState('drive');
   const [send, setSend] = useState(0);
+  function sendButton(){
+    setSend(1)
+  }
+  const [zindex, setZindex] = useState(0);
+  function handleChange(e){
+    setZindex(prev=>{
+        return e.target.value
+    })
 
+  }
   useEffect(() => {
     switch (system) {
       case 'drive':
@@ -69,8 +80,18 @@ function App() {
         {system === 'autonomy' && <AutonomySystem commands={commands} />}
         {system === 'science' && <ScienceSystem commands={commands} />}
         <Status status={status} />
-        {system === 'arm' && <InverseKinematics commands={commands} send={send} setSend={setSend}/>}
-        {system === 'arm' && <button onClick={() => {setSend(1)}}>Send Commands</button>}
+        {system === 'arm' && <InverseKinematics 
+                                commands={commands} 
+                                send={send} 
+                                setSend={setSend}
+                                zindex = {zindex}
+                              />}
+        {system === 'arm' && <InverseKinematicsInput 
+                                sendButton={sendButton} 
+                                zindex = {zindex} 
+                                handleChange = {handleChange}
+                              />}
+        
         <Camera name="0" src="http://raspberrypi:8000/stream.mjpg" />
         <Camera name="1" src="http://raspberrypi:8001/stream.mjpg" />
         <Camera name="2" src="http://raspberrypi:8002/stream.mjpg" />

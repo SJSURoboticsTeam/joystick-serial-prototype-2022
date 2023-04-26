@@ -3,7 +3,9 @@ import { V3, V3O } from 'inverse-kinematics'
 import React, { useEffect, useRef } from 'react'
 import { Vector3 } from 'three'
 
-export const Target = ({ position, setPosition}: { position: V3; setPosition: (position: V3) => void}) => {
+// export const Target = ({ position, setPosition}: { position: V3; setPosition: (position: V3) => void}) => {
+export function Target(props){
+
   const { camera } = useThree()
 
   function getDimensions(){ // works but is there a React way to do this
@@ -27,8 +29,13 @@ export const Target = ({ position, setPosition}: { position: V3; setPosition: (p
         vec.unproject(camera)
         vec.sub(camera.position).normalize()
         const distance = -camera.position.z / vec.z
+        console.log(distance)
         clickPosition.copy(camera.position).add(vec.multiplyScalar(distance))
-        setPosition(V3O.fromVector3(clickPosition.add(new Vector3().fromArray([0,0,0]))))
+        // console.log(typeof(zvec.z))
+        let zvec = new Vector3().fromArray([0,0,props.zindex])
+
+      
+        props.setPosition(V3O.fromVector3(clickPosition.add(zvec)))
 
       }
     }
@@ -36,10 +43,10 @@ export const Target = ({ position, setPosition}: { position: V3; setPosition: (p
     return () => {
       window.removeEventListener('contextmenu', onClick)
     }
-  }, [])
+  }, [props.zindex])
  
   return (
-    <mesh position={[...position]}>
+    <mesh position={new Vector3().fromArray([...props.position])}>
       <boxBufferGeometry args={[0.3, 0.3, 0.3]} />
       <meshBasicMaterial color={'black'} />
     </mesh>
