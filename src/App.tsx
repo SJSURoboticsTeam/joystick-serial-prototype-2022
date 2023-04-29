@@ -69,7 +69,7 @@ function App() {
         {system === 'drive' && <DriveSystem commands={commands} />}
         {system === 'autonomy' && <AutonomySystem commands={commands} />}
         {system === 'science' && <ScienceSystem commands={commands} />}
-        {system === 'operational view 1' && <OperationalView1 command={commands}/>}
+        {system === 'operational view 1' && <OperationalView1 commands={commands}/>}
         <Status status={status} />
         <Camera name="0" src="http://raspberrypi:8000/stream.mjpg" />
         <Camera name="1" src="http://raspberrypi:8001/stream.mjpg" />
