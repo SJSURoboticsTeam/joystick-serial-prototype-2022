@@ -29,7 +29,7 @@ function App() {
   const [zindex, setZindex] = useState(0);
   function handleChange(e){
     setZindex(prev=>{
-        return e.target.value
+        return parseInt(e.value)
     })
 
   }

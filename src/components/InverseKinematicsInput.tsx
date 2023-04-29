@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { TextSliderInput, FooterButtons } from './Forms/ControlForm';
 
-export default function InverseKinematicsInput(props){
+// export default function InverseKinematicsInput(props){
+export default function InverseKinematicsInput({zindex, sendButton, handleChange}:{zindex:number, sendButton:()=>void, handleChange:(event: EventTarget)=>void}){
     return(
         <div>
-            <button onClick = {()=>props.sendButton()}>
+            <button onClick = {()=>sendButton()}>
                 Send commands
             </button>
             <br/>
@@ -13,8 +14,8 @@ export default function InverseKinematicsInput(props){
                 label="Z input for IK Angle"
                 min={-10}
                 max={10}
-                value={props.zindex}
-                onChange={()=>props.handleChange(event)} 
+                value={zindex}
+                onChange={()=>handleChange(event.target)} 
             />
         </div>
     )

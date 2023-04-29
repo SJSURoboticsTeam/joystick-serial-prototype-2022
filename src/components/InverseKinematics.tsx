@@ -167,6 +167,7 @@ export default function InverseKinematics({ commands, send, setSend, zindex }) {
     const setMouseButtons = {
       LEFT: THREE.MOUSE.ROTATE,
     }
+    console.log(target)
     return (
         <div ref={refToInverseKinematics} className="inverse-kin">
           <Canvas

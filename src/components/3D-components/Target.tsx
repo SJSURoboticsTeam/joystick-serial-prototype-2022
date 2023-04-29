@@ -3,8 +3,8 @@ import { V3, V3O } from 'inverse-kinematics'
 import React, { useEffect, useRef } from 'react'
 import { Vector3 } from 'three'
 
-// export const Target = ({ position, setPosition}: { position: V3; setPosition: (position: V3) => void}) => {
-export function Target(props){
+export const Target = ({ position, zindex, setPosition}: { position: V3; zindex: number; setPosition: (position: V3) => void}) => {
+// export function Target(props){
 
   const { camera } = useThree()
 
@@ -32,10 +32,8 @@ export function Target(props){
         console.log(distance)
         clickPosition.copy(camera.position).add(vec.multiplyScalar(distance))
         // console.log(typeof(zvec.z))
-        let zvec = new Vector3().fromArray([0,0,props.zindex])
-
-      
-        props.setPosition(V3O.fromVector3(clickPosition.add(zvec)))
+        let zvec = new Vector3().fromArray([0,0,zindex])
+        setPosition(V3O.fromVector3(clickPosition.add(zvec)))
 
       }
     }
@@ -43,10 +41,10 @@ export function Target(props){
     return () => {
       window.removeEventListener('contextmenu', onClick)
     }
-  }, [props.zindex])
+  }, [zindex])
  
   return (
-    <mesh position={new Vector3().fromArray([...props.position])}>
+    <mesh position={new Vector3().fromArray([...position])}>
       <boxBufferGeometry args={[0.3, 0.3, 0.3]} />
       <meshBasicMaterial color={'black'} />
     </mesh>
