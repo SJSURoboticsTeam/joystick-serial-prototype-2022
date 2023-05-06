@@ -1,9 +1,9 @@
 import React from "react";
-import Camera from "../Camera";
-import Status from "../Status";
+import Camera from "../common/Camera";
+import Status from "../common/Status";
 import { useState } from "react";
-import "./OV1-OverlayMenu";
-import "./OV1-MainView";
+import "./OVA-OverlayMenu";
+import "./OVA-MainView";
 function MainView({ setShowOverlay, showOverlay }) {
   
   return (

@@ -1,7 +1,7 @@
 
-import { DropdownButtonSelector, StepperInput } from './Forms/ControlForm';
+import { DropdownButtonSelector, StepperInput } from '../Forms/ControlForm';
 import { useEffect, useState } from 'react'
-import { SCIENCE_MODES, SCIENCE_STEPS } from '../util/constants';
+import { SCIENCE_MODES, SCIENCE_STEPS } from '../../util/constants';
 
 export default function ScienceSystem({ commands }) {
     const [scienceCommands, setScienceCommands] = useState({

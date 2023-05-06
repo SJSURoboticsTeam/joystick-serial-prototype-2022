@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { NUMBER_OF_ARM_KEYS, NUMBER_OF_DRIVE_KEYS } from '../util/constants';
-import serialParser from '../util/serial-parser';
+import { NUMBER_OF_ARM_KEYS, NUMBER_OF_DRIVE_KEYS } from '../../util/constants';
+import serialParser from '../../util/serial-parser';
 
 export default function Serial({ commands, setStatus, system }) {
     let rawSerial: string = "";

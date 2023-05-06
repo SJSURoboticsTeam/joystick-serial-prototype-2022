@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { NUMBER_OF_ARM_KEYS } from '../util/constants';
-import serialParser from '../util/serial-parser';
+import { NUMBER_OF_ARM_KEYS } from '../../util/constants';
+import serialParser from '../../util/serial-parser';
 import axios from 'axios'
 
 export default function SerialWifi({ setStatus }) {

@@ -9,11 +9,11 @@ import {
   MAX_DRIVE_SPEED,
   MAX_DRIVE_ANGLE,
   MAX_TRANSLATE_ANGLE,
-} from '../util/constants';
-import DriveController from '../controllers/drive/controller';
-import { DriveCommandDTO } from '../util/command-dto';
-import { driveStringFormat } from '../util/command-formats';
-import { DropdownButtonSelector, TextSliderInput, FooterButtons } from './Forms/ControlForm';
+} from '../../util/constants';
+import DriveController from '../../controllers/drive/controller';
+import { DriveCommandDTO } from '../../util/command-dto';
+import { driveStringFormat } from '../../util/command-formats';
+import { DropdownButtonSelector, TextSliderInput, FooterButtons } from '../Forms/ControlForm';
 
 export default function DriveSystem({ commands }) {
   const [gamepad, setGamepad] = useState<Gamepad>();

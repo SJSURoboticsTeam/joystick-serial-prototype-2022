@@ -17,11 +17,11 @@ import {
     MAX_END_EFFECTOR_ANGLE,
     MIN_ARM_SPEED,
     MAX_ARM_SPEED
-} from '../util/constants';
-import ArmController from '../controllers/arm/controller';
-import { TextSliderInput, FooterButtons } from './Forms/ControlForm';
-import { ArmCommandDTO } from '../util/command-dto';
-import { armStringFormat } from '../util/command-formats';
+} from '../../util/constants';
+import ArmController from '../../controllers/arm/controller';
+import { TextSliderInput, FooterButtons } from '../Forms/ControlForm';
+import { ArmCommandDTO } from '../../util/command-dto';
+import { armStringFormat } from '../../util/command-formats';
 
 export default function ArmSystem({ commands }) {
     const [gamepad, setGamepads] = useState<Gamepad>();

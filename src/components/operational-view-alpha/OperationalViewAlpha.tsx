@@ -1,11 +1,7 @@
-//main camera
-//side camera panels
-//return
-//mode, speed, angle
 import React, { useState } from "react";
-import MainView from "./OperationalView1Assets/OV1-MainView";
-import OverlayMenu from "./OperationalView1Assets/OV1-OverlayMenu";
-import "./OperationalView1.css";
+import MainView from "./OVA-MainView";
+import OverlayMenu from "./OVA-OverlayMenu";
+import "./OperationalViewAlpha.css";
 
 
 function OperationalView1({commands}) {

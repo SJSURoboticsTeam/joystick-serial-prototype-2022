@@ -2,10 +2,10 @@ import { useState } from 'react';
 
 import {
     DEFAULT_AUTONOMY_COMMANDS,
-} from '../util/constants';
+} from '../../util/constants';
 
-import { autonomyCommandDTO } from '../util/command-dto';
-import { TextSliderInput, FooterButtons } from './Forms/ControlForm';
+import { autonomyCommandDTO } from '../../util/command-dto';
+import { TextSliderInput, FooterButtons } from '../Forms/ControlForm';
 
 
 export default function MMTSystem({ commands }) {
