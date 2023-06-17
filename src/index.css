@@ -94,6 +94,17 @@ select {
   border-radius: 8px;
 }
 
+header {
+  margin: 0 0 5px 0;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 1000px;
+}
+
 .form-group>input[type="text"] {
   display: inline-block;
   margin-top: 0.4rem;
@@ -331,7 +342,6 @@ select {
   display: inline-block;
   margin-top: 0.4rem;
   text-align: center;
-  /* center height */
   line-height: 4.4rem;
 }
 
@@ -358,10 +368,6 @@ select {
   left: 50%;
   transform: translate(-50%, -50%);
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-}
-
-header {
-  margin: 0 0 5px 0;
 }
 
 .footer {
