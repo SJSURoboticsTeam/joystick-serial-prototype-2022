@@ -15,30 +15,30 @@ import { armStringFormat, driveStringFormat, autonomyStringFormat } from '../../
 import { DEFAULT_ARM_COMMANDS, DEFAULT_DRIVE_COMMANDS, DEFAULT_AUTONOMY_COMMANDS } from '../../util/constants';
 
 function Prototype() {
-    const commands = useRef<string>(driveStringFormat(DEFAULT_DRIVE_COMMANDS));
-    const [status, setStatus] = useState<ArmCommandDTO | DriveCommandDTO>();
-    const [communicationMode, setCommunicationMode] = useState('wifi');
-    const [system, setSystem] = useState('drive');
-  
-    useEffect(() => {
-      switch (system) {
-        case 'drive':
-          commands.current = driveStringFormat(DEFAULT_DRIVE_COMMANDS);
-          break;
-        case 'arm':
-          commands.current = armStringFormat(DEFAULT_ARM_COMMANDS);
-          break;
-        case 'autonomy':
-          commands.current = autonomyStringFormat(DEFAULT_AUTONOMY_COMMANDS);
-          break;
-        case 'science':
-          // TODO: Add science commands format
-          break;
-        default:
-          commands.current = driveStringFormat(DEFAULT_DRIVE_COMMANDS);
-          break;
-      }
-    }, [system]);
+  const commands = useRef<string>(driveStringFormat(DEFAULT_DRIVE_COMMANDS));
+  const [status, setStatus] = useState<ArmCommandDTO | DriveCommandDTO>();
+  const [communicationMode, setCommunicationMode] = useState('wifi');
+  const [system, setSystem] = useState('drive');
+
+  useEffect(() => {
+    switch (system) {
+      case 'drive':
+        commands.current = driveStringFormat(DEFAULT_DRIVE_COMMANDS);
+        break;
+      case 'arm':
+        commands.current = armStringFormat(DEFAULT_ARM_COMMANDS);
+        break;
+      case 'autonomy':
+        commands.current = autonomyStringFormat(DEFAULT_AUTONOMY_COMMANDS);
+        break;
+      case 'science':
+        // TODO: Add science commands format
+        break;
+      default:
+        commands.current = driveStringFormat(DEFAULT_DRIVE_COMMANDS);
+        break;
+    }
+  }, [system]);
 
      return (
        <div className="Prototype">

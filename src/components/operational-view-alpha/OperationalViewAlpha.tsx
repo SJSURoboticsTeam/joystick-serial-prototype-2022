@@ -4,14 +4,14 @@ import OverlayMenu from "./OVA-OverlayMenu";
 import "./OperationalViewAlpha.css";
 
 
-function OperationalView1({commands}) {
+function OperationalViewAlpha({commands, status}) {
    const [showOverlay, setShowOverlay] = useState(false)
     return (
       <div className="OperationalView">
-        <MainView setShowOverlay={setShowOverlay} showOverlay={showOverlay}/>
+        <MainView setShowOverlay={setShowOverlay} showOverlay={showOverlay} status={status} />
         {showOverlay && <OverlayMenu/>}
       </div>
     );
   }
   
-  export default OperationalView1;
+  export default OperationalViewAlpha;

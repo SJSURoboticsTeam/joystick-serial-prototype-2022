@@ -4,7 +4,7 @@ import Status from "../common/Status";
 import { useState } from "react";
 import "./OVA-OverlayMenu";
 import "./OVA-MainView";
-function MainView({ setShowOverlay, showOverlay }) {
+function MainView({ setShowOverlay, showOverlay, status }) {
   
   return (
     <div className="MainView">
