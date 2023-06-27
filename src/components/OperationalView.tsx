@@ -1,8 +1,9 @@
 import { useState } from "react";
 import Menu from "./OperationalView/Menu";
 import Camera from "./Camera";
+import OVStatus from "./OperationalView/OVStatus";
 
-export default function OperationalView({ commands }) {
+export default function OperationalView({ commands, status }) {
   const [showOverlay, setShowOverlay] = useState(false)
   return (
     <div className="operational-view">
@@ -20,6 +21,7 @@ export default function OperationalView({ commands }) {
         Overlay
       </button>
       {showOverlay && <Menu />}
+      <OVStatus status = {status}/>
     </div>
   );
 }

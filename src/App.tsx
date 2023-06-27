@@ -61,7 +61,7 @@ function App() {
         {communicationMode === 'wifi' && <Wifi commands={commands} setStatus={setStatus} />}
         {communicationMode === 'serial' && <Serial commands={commands} setStatus={setStatus} system={system} />}
       </header>
-      {system === 'operational view' && <OperationalView commands={commands} />}
+      {system === 'operational view' && <OperationalView commands={commands} status={status} />}
       {system !== 'operational view' &&
         <div className="grid-container">
           {system === 'arm' && <ArmSystem commands={commands} />}
