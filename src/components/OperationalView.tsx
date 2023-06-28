@@ -12,9 +12,9 @@ export default function OperationalView({ commands, status }) {
         <div className="operational-view-camera"> 
           Camera
         </div>
-        <div className="operational-view-camera"> 
+        {/* <div className="operational-view-camera"> 
           Camera
-        </div>
+        </div> */}
       </div>
       <button id="ov-hide-overlay" type="button" className="btn-toggle" onClick={() => setShowOverlay(!showOverlay)}>
         {showOverlay ? "Hide " : "Show "}
