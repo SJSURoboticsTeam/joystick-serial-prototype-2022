@@ -4,7 +4,7 @@
   "description": "SJSU Robotics 2022 web server for controlling the rover over WiFi",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.ts",
+    "start": "node ./build/",
     "build": "tsc --project ./",
     "test": "test"
   },

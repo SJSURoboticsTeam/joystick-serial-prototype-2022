@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@fastify/cors": "^8.3.0",
-    "@fastify/formbody": "^7.4.0",
-    "@fastify/middie": "^8.3.0",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.2.0",
     "@testing-library/user-event": "^13.5.0",
@@ -16,7 +13,6 @@
     "@types/w3c-web-serial": "^1.0.2",
     "axios": "^0.27.2",
     "cors": "^2.8.5",
-    "fastify": "^4.19.0",
     "nodemon": "^2.0.22",
     "qs": "^6.11.2",
     "react": "^18.1.0",
