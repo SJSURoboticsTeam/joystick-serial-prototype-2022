@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "es2022",      
+        "module": "es2022",
+        "rootDir": "./",
+        "outDir": "./build",
+        "esModuleInterop": true,
+        "strict": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "moduleResolution": "node",
+        "resolveJsonModule": true
+    },
+    "include": ["./*"],
+    "exclude": ["node_modules"]
+  }
+  
