@@ -1,18 +1,34 @@
+import { ArmCommandDTO } from '../../util/command-dto';
+import {
+    DEFAULT_ARM_COMMANDS,
+    MIN_ROTUNDA_ANGLE,
+    MAX_ROTUNDA_ANGLE,
+    MIN_ELBOW_ANGLE,
+    MAX_ELBOW_ANGLE,
+    MIN_SHOULDER_ANGLE,
+    MAX_SHOULDER_ANGLE,
+    MIN_WRIST_PITCH_ANGLE,
+    MAX_WRIST_PITCH_ANGLE,
+    MIN_WRIST_ROLL_ANGLE,
+    MAX_WRIST_ROLL_ANGLE,
+    MIN_END_EFFECTOR_ANGLE,
+    MAX_END_EFFECTOR_ANGLE,
+    MIN_ARM_SPEED,
+    MAX_ARM_SPEED
+} from '../../util/constants';
 
+function clamp(num: number, min: number, max: number) :number {
+    return Math.min(Math.max(num, min), max);
+}
 export interface ArmGamePad {
-    rotunda_control_index: number;
-    shoulder_control_index: number;
-    elbow_control_index: number;
-    wrist_roll_control_index: number;
-    wrist_pitch_control_index: number;
-    end_effector_control_index: number;
-    
-    getRotundaAngle();
-    getShoulderAngle();
-    getElbowAngle();
-    getWristPitchAngle();
-    getWristRollAngle(); 
-    getEndEffectorAngle();
+    gamepadInput: {[key: string]: number};
+
+    getRotundaAngle(commands: ArmCommandDTO);
+    getShoulderAngle(commands: ArmCommandDTO);
+    getElbowAngle(commands: ArmCommandDTO);
+    getWristPitchAngle(commands: ArmCommandDTO);
+    getWristRollAngle(commands: ArmCommandDTO); 
+    getEndEffectorAngle(commands: ArmCommandDTO);
 }
 
 export class Xbox360 implements ArmGamePad {
@@ -21,35 +37,78 @@ export class Xbox360 implements ArmGamePad {
         this.gamepad = gamepad;
     }
 
-    getRotundaAngle() {
-        return (this.gamepad.axes[this.rotunda_control_index]);
+    getRotundaAngle(commands: ArmCommandDTO) { 
+        let input = this.gamepad.axes[this.gamepadInput.leftStickHorizontal];
+
+        input = Math.round(input * 0.55);
+        input += commands.rotunda_angle;
+
+        input = clamp(input, MIN_ROTUNDA_ANGLE, MAX_ROTUNDA_ANGLE);
+        return input;
     }
 
-    getShoulderAngle() {
-        return this.gamepad.buttons[this.shoulder_control_index].value;
+    getShoulderAngle(commands: ArmCommandDTO) {
+        let leftBumperInput = this.gamepad.buttons[this.gamepadInput.leftBumper].value;
+        let rightBumperInput = this.gamepad.buttons[this.gamepadInput.rightBumper].value;
+        let input = leftBumperInput - rightBumperInput;
+
+        input = Math.round(input);
+        input += commands.shoulder_angle;
+        input = clamp(input, MIN_SHOULDER_ANGLE, MAX_SHOULDER_ANGLE);
+        return input;
     }
 
-    getElbowAngle() {
-        return (this.gamepad.axes[this.elbow_control_index]);
+    getElbowAngle(commands: ArmCommandDTO) {
+        let input = this.gamepad.axes[this.gamepadInput.leftStickVertical];
+
+        input = Math.round(input * 0.55);
+        input += commands.elbow_angle;
+
+        input = clamp(input, MIN_ELBOW_ANGLE, MAX_ELBOW_ANGLE);
+        return input;
     }
 
-    getWristPitchAngle() {
-        return (this.gamepad.axes[this.wrist_pitch_control_index])  
+    getWristPitchAngle(commands: ArmCommandDTO) {
+        let input = this.gamepad.axes[this.gamepadInput.rightStickVertical];
+
+        input = Math.round(input * 0.55);
+        input += commands.wrist_pitch_angle;
+
+        input = clamp(input, MIN_WRIST_PITCH_ANGLE, MAX_WRIST_PITCH_ANGLE);
+        return input;
     }
 
-    getWristRollAngle() {
-        return (this.gamepad.axes[this.wrist_roll_control_index]);
+    getWristRollAngle(commands: ArmCommandDTO) {
+        let input = this.gamepad.axes[this.gamepadInput.rightStickHorizontal];
+
+        input = Math.round(input * 0.55);
+        input += commands.wrist_roll_angle;
+
+        input = clamp(input, MIN_WRIST_ROLL_ANGLE, MAX_WRIST_ROLL_ANGLE);
+        return input;
     }
 
-    getEndEffectorAngle() {
-        return this.gamepad.buttons[this.end_effector_control_index].value;
+    getEndEffectorAngle(commands: ArmCommandDTO) {
+        let leftTriggerInput = this.gamepad.buttons[this.gamepadInput.leftTrigger].value;
+        let rightTriggerInput = this.gamepad.buttons[this.gamepadInput.rightTrigger].value;
+        let input = leftTriggerInput - rightTriggerInput;
+
+        input = Math.round(input);
+        input += commands.end_effector_angle;
+        input = clamp(input, MIN_END_EFFECTOR_ANGLE, MAX_END_EFFECTOR_ANGLE);
+        return input;
     }
 
-    rotunda_control_index = 0;          // left stick left/right
-    shoulder_control_index = 6;         // left trigger
-    elbow_control_index = 1;            // left stick up/down
-    wrist_roll_control_index = 2;       // right stick left/right
-    wrist_pitch_control_index = 3;     // right stick up/down
-    end_effector_control_index = 7;     // right trigger
+    gamepadInput: { [key: string]: number; } = {
+        leftStickHorizontal: 0,
+        leftTrigger: 6,
+        rightTrigger: 7,
+        leftStickVertical: 1,
+        rightStickHorizontal: 2,
+        rightStickVertical: 3,
+        leftBumper: 4,
+        rightBumper: 5
+    }
+
     private gamepad: Gamepad;
 }

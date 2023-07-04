@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
 import { ArmGamePad, Xbox360 } from '../controllers/arm/gamepad';
 import {
@@ -18,7 +18,6 @@ import {
     MIN_ARM_SPEED,
     MAX_ARM_SPEED
 } from '../util/constants';
-import ArmController from '../controllers/arm/controller';
 import { TextSliderInput, FooterButtons } from './Forms/ControlForm';
 import { ArmCommandDTO } from '../util/command-dto';
 import { armStringFormat } from '../util/command-formats';
@@ -26,14 +25,29 @@ import { armStringFormat } from '../util/command-formats';
 export default function ArmSystem({ commands }) {
     const [gamepad, setGamepads] = useState<Gamepad>();
     const [armCommands, setArmCommands] = useState<ArmCommandDTO>(DEFAULT_ARM_COMMANDS);
-
+    const gamepadRef = useRef(gamepad);
+    const commandsRef = useRef(armCommands);
+    
     useGamepads(gamepads => {
-        console.log("called");
         if (gamepads[0]) {
             setGamepads(gamepads[0]);
-            console.log("gamepad");
-        } else {console.log("no intial gamepad");}
+        }
     });
+
+    useEffect(() => {
+        gamepadRef.current = gamepad;
+    }, [gamepad]);
+
+    useEffect(() => {
+        commandsRef.current = armCommands;
+    }, [armCommands]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            updateController();
+        }, 125);
+        return () => clearInterval(interval);
+    }, []);
 
     function updateCommands(newCommands) {
         commands.current = armStringFormat(newCommands);
@@ -48,48 +62,42 @@ export default function ArmSystem({ commands }) {
     function resetCommands() {
         updateCommands(DEFAULT_ARM_COMMANDS);
     }
-    
-    setInterval(updateController, 750);
 
     function updateController() {
-        updateCommands({...getCommands(), speed: armCommands.speed });
-        console.log(armCommands.rotunda_angle);
+        updateCommands({ ...getCommands(), speed: armCommands.speed });
     }
 
-    function getCommands() : ArmCommandDTO {
+    function getCommands(): ArmCommandDTO {
         let controller = getGamePad();
         if (!controller) {
             console.log('controller model not supported')
-            return armCommands;
+            return commandsRef.current;
         }
 
+        let currentCommands = commandsRef.current;
         let commands = DEFAULT_ARM_COMMANDS;
 
-        commands.rotunda_angle = armCommands.rotunda_angle + controller.getRotundaAngle();
-        commands.shoulder_angle = armCommands.shoulder_angle + controller.getShoulderAngle();
-        commands.elbow_angle = armCommands.elbow_angle + controller.getElbowAngle();
-        commands.wrist_roll_angle = armCommands.wrist_roll_angle + controller.getWristRollAngle();
-        commands.wrist_pitch_angle = armCommands.wrist_pitch_angle + controller.getWristPitchAngle();
-        commands.end_effector_angle = armCommands.end_effector_angle + controller.getEndEffectorAngle();
+        commands.rotunda_angle = controller.getRotundaAngle(commandsRef.current);
+        commands.shoulder_angle = controller.getShoulderAngle(commandsRef.current);
+        commands.elbow_angle = controller.getElbowAngle(commandsRef.current);
+        commands.wrist_roll_angle = controller.getWristRollAngle(commandsRef.current);
+        commands.wrist_pitch_angle = controller.getWristPitchAngle(commandsRef.current);
+        commands.end_effector_angle = controller.getEndEffectorAngle(commandsRef.current);
 
-        commands.rotunda_angle = Math.min(Math.max(commands.rotunda_angle, MIN_ROTUNDA_ANGLE), MAX_ROTUNDA_ANGLE);
-        commands.shoulder_angle = Math.min(Math.max(commands.shoulder_angle, MIN_SHOULDER_ANGLE), MAX_SHOULDER_ANGLE);
-        commands.elbow_angle = Math.min(Math.max(commands.elbow_angle, MIN_ELBOW_ANGLE), MAX_ELBOW_ANGLE);
-        commands.wrist_roll_angle = Math.min(Math.max(commands.wrist_roll_angle, MIN_WRIST_ROLL_ANGLE), MAX_WRIST_ROLL_ANGLE);
-        commands.wrist_pitch_angle = Math.min(Math.max(commands.wrist_pitch_angle, MIN_WRIST_PITCH_ANGLE), MAX_WRIST_PITCH_ANGLE);
-        commands.end_effector_angle = Math.min(Math.max(commands.end_effector_angle, MIN_END_EFFECTOR_ANGLE), MAX_END_EFFECTOR_ANGLE);
+      
         return commands;
     }
 
     function getGamePad() {
-        if (!gamepad) {
-            console.log("no game pad")
+        if (!gamepadRef.current) {
+            console.log('no controller');
             return null
         }
-        const gamePadID = gamepad.id
-        console.log(gamePadID);
+
+        const gamePadID = gamepadRef.current.id.toLowerCase();
+
         if (gamePadID.includes('xbox') || gamePadID.includes('microsoft')) {
-            return new Xbox360(gamepad);
+            return new Xbox360(gamepadRef.current);
         }
 
         else {return null;}
