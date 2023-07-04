@@ -77,12 +77,12 @@ export default function ArmSystem({ commands }) {
         let currentCommands = commandsRef.current;
         let commands = DEFAULT_ARM_COMMANDS;
 
-        commands.rotunda_angle = controller.getRotundaAngle(commandsRef.current);
-        commands.shoulder_angle = controller.getShoulderAngle(commandsRef.current);
-        commands.elbow_angle = controller.getElbowAngle(commandsRef.current);
-        commands.wrist_roll_angle = controller.getWristRollAngle(commandsRef.current);
-        commands.wrist_pitch_angle = controller.getWristPitchAngle(commandsRef.current);
-        commands.end_effector_angle = controller.getEndEffectorAngle(commandsRef.current);
+        commands.rotunda_angle = controller.getRotundaAngle(currentCommands);
+        commands.shoulder_angle = controller.getShoulderAngle(currentCommands);
+        commands.elbow_angle = controller.getElbowAngle(currentCommands);
+        commands.wrist_roll_angle = controller.getWristRollAngle(currentCommands);
+        commands.wrist_pitch_angle = controller.getWristPitchAngle(currentCommands);
+        commands.end_effector_angle = controller.getEndEffectorAngle(currentCommands);
 
       
         return commands;
