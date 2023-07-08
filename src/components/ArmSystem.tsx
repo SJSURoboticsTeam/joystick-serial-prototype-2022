@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
-
+import { ArmGamePad, Xbox360 } from '../controllers/arm/gamepad';
 import {
     DEFAULT_ARM_COMMANDS,
     MIN_ROTUNDA_ANGLE,
@@ -18,7 +18,6 @@ import {
     MIN_ARM_SPEED,
     MAX_ARM_SPEED
 } from '../util/constants';
-import ArmController from '../controllers/arm/controller';
 import { TextSliderInput, FooterButtons } from './Forms/ControlForm';
 import { ArmCommandDTO } from '../util/command-dto';
 import { armStringFormat } from '../util/command-formats';
@@ -26,12 +25,29 @@ import { armStringFormat } from '../util/command-formats';
 export default function ArmSystem({ commands }) {
     const [gamepad, setGamepads] = useState<Gamepad>();
     const [armCommands, setArmCommands] = useState<ArmCommandDTO>(DEFAULT_ARM_COMMANDS);
-
+    const gamepadRef = useRef(gamepad);
+    const commandsRef = useRef(armCommands);
+    
     useGamepads(gamepads => {
         if (gamepads[0]) {
             setGamepads(gamepads[0]);
         }
     });
+
+    useEffect(() => {
+        gamepadRef.current = gamepad;
+    }, [gamepad]);
+
+    useEffect(() => {
+        commandsRef.current = armCommands;
+    }, [armCommands]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            updateController();
+        }, 125);
+        return () => clearInterval(interval);
+    }, []);
 
     function updateCommands(newCommands) {
         commands.current = armStringFormat(newCommands);
@@ -47,11 +63,45 @@ export default function ArmSystem({ commands }) {
         updateCommands(DEFAULT_ARM_COMMANDS);
     }
 
-    useEffect(() => {
-        if (gamepad) {
-            updateCommands({ ...new ArmController(gamepad).getCommands(), speed: armCommands.speed });
+    function updateController() {
+        updateCommands({ ...getCommands(), speed: armCommands.speed });
+    }
+
+    function getCommands(): ArmCommandDTO {
+        let controller = getGamePad();
+        if (!controller) {
+            console.log('controller model not supported')
+            return commandsRef.current;
         }
-    }, [gamepad]);
+
+        let currentCommands = commandsRef.current;
+        let commands = DEFAULT_ARM_COMMANDS;
+
+        commands.rotunda_angle = controller.getRotundaAngle(currentCommands);
+        commands.shoulder_angle = controller.getShoulderAngle(currentCommands);
+        commands.elbow_angle = controller.getElbowAngle(currentCommands);
+        commands.wrist_roll_angle = controller.getWristRollAngle(currentCommands);
+        commands.wrist_pitch_angle = controller.getWristPitchAngle(currentCommands);
+        commands.end_effector_angle = controller.getEndEffectorAngle(currentCommands);
+
+      
+        return commands;
+    }
+
+    function getGamePad() {
+        if (!gamepadRef.current) {
+            console.log('no controller');
+            return null
+        }
+
+        const gamePadID = gamepadRef.current.id.toLowerCase();
+
+        if (gamePadID.includes('xbox') || gamePadID.includes('microsoft')) {
+            return new Xbox360(gamepadRef.current);
+        }
+
+        else {return null;}
+    }
 
     return (
         <div className='serial'>
