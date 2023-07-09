@@ -376,22 +376,26 @@ video {
 
 .operational-view-camera{
   background-color: grey;
-  height: 80vh;
-  width: 40vw;
+  height: 92vh;
+  width: 52vw;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -46.5%);
 }
 
 .ov-camera-grid{
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr, 1fr;
   justify-items: center;
 }
 
 #ov-hide-overlay{
   position: absolute;
   z-index: 2;
-  left: 50%;
-  bottom: 0;
-  transform: translate(-50%, 0);
+  left: 85%;
+  top: 8%;
+  transform: translate(-50%, -50);
 
 }
 
@@ -404,10 +408,20 @@ video {
 
 dialog {
   position: fixed;
-  top: 90%;
-  left: 30%;
+  top: 20%;
+  left: 89%;
   transform: translate(-50%, -50%);
   z-index: 1;
   width: fit-content;
   background-color: rgba(0,0,0,0.5);
 }
+
+#ov-status{
+  position: fixed;
+  top: 21%;
+  left: 5%;
+  transform: translate(-80%, -100%);
+  text-align: left;
+}
+
+
