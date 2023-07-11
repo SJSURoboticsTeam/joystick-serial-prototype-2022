@@ -2,10 +2,6 @@ import Camera from "../Camera";
 
 export default function Menu() {
   return (
-    <dialog 
-    id="ov-menu"
-    open={true}
-    >
       <div id="ov-camera-grid">
         <button type="button" className="ov-camera-toggle">
           Leg A Camera
@@ -17,7 +13,7 @@ export default function Menu() {
           Leg C Camera
         </button>
       </div>
-      </dialog>
+    
   );
 }
 
