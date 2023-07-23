@@ -30,3 +30,9 @@
 * **MAKE SURE TO TURN ON FAST NETWORK IN EXPERT SETTING**
 * apply changes
 * configure the quality in the video streaming and video device
+
+## Configuring Static IP
+* In network settings, select manual IP.
+* Enter an appropriate static IP and DNS
+* Apply changes.
+* Note: The chassis camera should have an IP ending in .201, the leg cameras should span .202, .203, and .204, the arm camera should be .205, and the mast camera should be .206
