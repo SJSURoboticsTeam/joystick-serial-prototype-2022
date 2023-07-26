@@ -376,13 +376,18 @@ video {
 
 .operational-view{
   display: grid;
-  grid-template-columns: 23% 54% 23%;
+  column-gap: 5px;
+  height: vh;
+  width: vw;
+  grid-template-columns: 1fr 2.65fr 1fr;
 }
 #ov-main-camera{
-  background-color: grey;
-  height: 92vh;
-  width: 52vw;
+  background-image: url(Main\ Camera\ Test.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  aspect-ratio: 4/3;
   align-items: center;
+  overflow: hidden;
 }
 
 #ov-camera-grid{
@@ -401,5 +406,6 @@ video {
   border: 2px solid #565656;
   border-radius: 8px;
 }
+
 
 
