@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useGamepads } from 'react-gamepads';
 
 import {
@@ -19,6 +19,8 @@ export default function DriveSystem({ commands }) {
   const [gamepad, setGamepad] = useState<Gamepad>();
   const [driveCommands, setDriveCommands] = useState<DriveCommandDTO>(DEFAULT_DRIVE_COMMANDS);
   const MAX_ANGLE = driveCommands.drive_mode === "D" ? MAX_DRIVE_ANGLE : MAX_TRANSLATE_ANGLE;
+  const commandsRef = useRef(DEFAULT_DRIVE_COMMANDS)
+  const gamepadRef = useRef(gamepad);
 
   useGamepads((gamepads) => {
     if (gamepads[0]) {
@@ -26,7 +28,12 @@ export default function DriveSystem({ commands }) {
     }
   });
 
+  useEffect(() => {
+    gamepadRef.current = gamepad;
+  }, [gamepad])
+
   function updateCommands(newCommands) {
+    commandsRef.current = newCommands;
     commands.current = driveStringFormat(newCommands);
     setDriveCommands(newCommands);
   }
@@ -48,11 +55,26 @@ export default function DriveSystem({ commands }) {
     });
   }
 
-  useEffect(() => {
-    if (gamepad) {
-      updateCommands(new DriveController(gamepad)?.getCommands());
+  function updateController() {
+    if(gamepadRef.current) {
+      const currentCommands = commandsRef.current;
+      const newCommands = new DriveController(gamepadRef.current)?.getCommands(currentCommands);
+      if (newCommands.drive_mode === 'X') {
+        newCommands.drive_mode = currentCommands.drive_mode;
+      }
+      if(newCommands.wheel_orientation === 3) {
+        newCommands.wheel_orientation = currentCommands.wheel_orientation;
+      }
+      updateCommands({...newCommands});
     }
-  }, [gamepad]);
+}
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+        updateController();
+    }, 50);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div>

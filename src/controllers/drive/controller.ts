@@ -17,23 +17,26 @@ export default class DriveController {
         this.gamepad = gamepad;
     }
 
-    public getCommands(): DriveCommandDTO {
-        this.getMode();
+    public getCommands(currentCommands): DriveCommandDTO {
+        this.getMode(currentCommands.drive_mode);
         this.getSpeed();
-        this.getAngle();
-        this.getWheelOrientation();
+        this.getAngle(currentCommands.drive_mode);
+        this.getWheelOrientation(currentCommands.wheel_orientation);
         return this.command;
     }
 
-    private getMode() {
+    private getMode(currentMode) {
         if (this.gamepad?.buttons[this.mappings.spin_mode]?.pressed) {
             this.command.drive_mode = 'S';
         }
-        if (this.gamepad?.buttons[this.mappings.translate_mode]?.pressed) {
+        else if (this.gamepad?.buttons[this.mappings.translate_mode]?.pressed) {
             this.command.drive_mode = 'T';
         }
-        if (this.gamepad?.buttons[this.mappings.drive_mode]?.pressed) {
+        else if (this.gamepad?.buttons[this.mappings.drive_mode]?.pressed) {
             this.command.drive_mode = 'D';
+        }
+        else {
+            this.command.drive_mode = currentMode;
         }
     }
 
@@ -42,8 +45,8 @@ export default class DriveController {
         this.command.speed = this.gamepad?.buttons[this.mappings.enable_speed].pressed ? throttleSpeed : 0;
     }
 
-    private getAngle() {
-        switch (this.command.drive_mode) {
+    private getAngle(currentMode) {
+        switch (currentMode) {
             case 'S':
                 this.command.angle = 0;
                 break;
@@ -59,15 +62,18 @@ export default class DriveController {
         }
     }
 
-    private getWheelOrientation() {
+    private getWheelOrientation(currentOrientation) {
         if (this.gamepad?.buttons[this.mappings.wheel_orientation_0]?.pressed) {
             this.command.wheel_orientation = 0;
         }
-        if (this.gamepad?.buttons[this.mappings.wheel_orientation_1]?.pressed) {
+        else if (this.gamepad?.buttons[this.mappings.wheel_orientation_1]?.pressed) {
             this.command.wheel_orientation = 1;
         }
-        if (this.gamepad?.buttons[this.mappings.wheel_orientation_2]?.pressed) {
+        else if (this.gamepad?.buttons[this.mappings.wheel_orientation_2]?.pressed) {
             this.command.wheel_orientation = 2;
+        }
+        else {
+            this.command.wheel_orientation = currentOrientation;
         }
     }
 
