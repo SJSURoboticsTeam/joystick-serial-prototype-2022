@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useGamepads } from 'react-gamepads';
-import { ArmGamePad, Xbox360 } from '../controllers/arm/gamepad';
+import { ArmGamePad, LogitechExtreme, Xbox360 } from '../controllers/arm/gamepad';
 import {
     DEFAULT_ARM_COMMANDS,
     MIN_ROTUNDA_ANGLE,
@@ -98,6 +98,10 @@ export default function ArmSystem({ commands }) {
 
         if (gamePadID.includes('xbox') || gamePadID.includes('microsoft')) {
             return new Xbox360(gamepadRef.current);
+        }
+
+        else if (gamePadID.includes('logitech')) {
+            return new LogitechExtreme(gamepadRef.current);
         }
 
         else {return null;}
