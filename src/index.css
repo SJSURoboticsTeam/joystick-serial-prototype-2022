@@ -380,9 +380,9 @@ video {
   height: vh;
   width: vw;
   grid-template-columns: 1fr 2.65fr 1fr;
+  grid-template-rows: 1fr ;
 }
-#ov-main-camera{
-  background-image: url(Main\ Camera\ Test.png);
+#ov-main-cam{
   background-repeat: no-repeat;
   background-size: contain;
   aspect-ratio: 4/3;
@@ -393,6 +393,7 @@ video {
 #ov-camera-grid{
   display: grid;
   grid-template-columns: 1f;
+  overflow: hidden;
 } 
 
 #ov-tools{
@@ -406,6 +407,15 @@ video {
   border: 2px solid #565656;
   border-radius: 8px;
 }
+/* .ov-camera-toggle{
+  background-image: url(/src/components/OperationalView/oatmeal.gif);
+  background-size: contain;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  background-position: center;
+  aspect-ratio: 4/3;
+} */
+
 
 
 
