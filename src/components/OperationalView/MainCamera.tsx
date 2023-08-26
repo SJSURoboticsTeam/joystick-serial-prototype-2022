@@ -1,29 +1,36 @@
 import React from "react";
 import {useState} from "react"
-import cam1 from './Main_Camera_Test.png'
+import noCam from './Main_Camera_Test.png'
 import cam2 from './oatmeal.gif'
-//need to add more cameras
+//Todo: need to add more cameras
 
+//Todo: swap from div to img for cam
 
 export default function MainCamera({mainCam}){
-    var fileName = cam1;
+    var fileName = noCam;
 
     switch (mainCam)
     {
-        case 'top':
-            fileName = cam1;
+        case 'chassis':
+            fileName = noCam;
             break;
-        case 'front':
+        case 'mast':
             fileName = cam2
             break;
-        case 'back':
-            fileName = cam1;
+        case 'wheel_A':
+            fileName = noCam;
             break;
-        case 'left':
+        case 'wheel_B':
             fileName = cam2
             break;
-        case 'right':
-            fileName = cam1;
+        case 'wheel_C':
+            fileName = noCam;
+            break;
+        case 'arm':
+            fileName = cam2;
+            break;
+        default :
+            fileName = noCam;
             break;
     }
 

@@ -6,11 +6,13 @@ import { Style } from "util";
 export default function Menu({callback}) {
 
   const camArray = [
-    {title: "top"},
-    {title: "front"},
-    {title: "back"},
-    {title: "left"},
-    {title: "right"},
+    {title: "chassis"},
+    {title: "mast"},
+    {title: "wheel_A"},
+    {title: "wheel_B"},
+    {title: "wheel_C"},
+    {title: "arm"},
+    {title: "noCam"}
   ]
 
   return (
