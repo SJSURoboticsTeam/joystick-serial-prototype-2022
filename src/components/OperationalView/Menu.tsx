@@ -11,8 +11,7 @@ export default function Menu({callback}) {
     {title: "wheel_A"},
     {title: "wheel_B"},
     {title: "wheel_C"},
-    {title: "arm"},
-    {title: "noCam"}
+    {title: "arm"}
   ]
 
   return (
