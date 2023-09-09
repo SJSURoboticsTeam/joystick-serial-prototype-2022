@@ -1,5 +1,6 @@
 import React from "react";
 import {useState} from "react"
+import Camera from "../Camera";
 import noCam from './Main_Camera_Test.png'
 import cam2 from './oatmeal.gif'
 //Todo: need to add more cameras
@@ -8,20 +9,23 @@ import cam2 from './oatmeal.gif'
 
 export default function MainCamera({mainCam}){
     var fileName = noCam;
+    //Todo: add more cameras from rover
+    var testCam1 = 'http://192.168.1.119:8081/'
+    var testCam2 = 'http://192.168.1.196:8081/'
 
     switch (mainCam)
     {
         case 'chassis':
-            fileName = noCam;
+            fileName = testCam1;
             break;
         case 'mast':
-            fileName = cam2
+            fileName = testCam2;
             break;
         case 'wheel_A':
             fileName = noCam;
             break;
         case 'wheel_B':
-            fileName = cam2
+            fileName = cam2;
             break;
         case 'wheel_C':
             fileName = noCam;
@@ -34,18 +38,7 @@ export default function MainCamera({mainCam}){
             break;
     }
 
-    const camStyle = {
-        backgroundImage: `url(${fileName})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        width: '100%',
-        height: '100vh',
-        overflow: 'hidden',
-        aspectRatio: '4/3'
-      };
-
     return(
-        <div id = "ov-main-cam"style={camStyle}>
-        </div>
+        <Camera name={mainCam} src={fileName} />
     );
 }
