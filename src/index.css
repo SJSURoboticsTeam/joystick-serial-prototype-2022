@@ -416,6 +416,12 @@ video {
   overflow: hidden;
   aspect-ratio: 4/3;
 }
+
+.full-screen-view{
+  width: 100%;
+  height: 100vh;
+  background-color: #e70000;
+}
 /* .ov-camera-toggle{
   background-image: url(/src/components/OperationalView/oatmeal.gif);
   background-size: contain;

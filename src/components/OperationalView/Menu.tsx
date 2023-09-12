@@ -3,7 +3,7 @@ import Camera from "../Camera";
 import { useState } from "react";
 import { Style } from "util";
 
-export default function Menu({callback}) {
+export default function Menu({callback, toggleFullScreen} ) {
 
   const camArray = [
     {title: "chassis"},
@@ -13,15 +13,18 @@ export default function Menu({callback}) {
     {title: "wheel_C"},
     {title: "arm"}
   ]
-
+ 
   return (
       <div id="ov-camera-grid">
-      {camArray.map((cam) => (
-        <button onClick={() => callback(cam.title)}>
-          {cam.title}
-        </button>
-      ))}     
-       </div>
+        {camArray.map((cam) => (
+          <button onClick={() => callback(cam.title)}>
+            {cam.title}
+          </button>
+        ))}    
+        <button onClick={() => toggleFullScreen(true)}>
+          toggle Full Screen
+        </button> 
+      </div>
   );
 }
 

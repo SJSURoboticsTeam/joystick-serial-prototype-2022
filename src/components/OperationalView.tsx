@@ -3,9 +3,11 @@ import Menu from "./OperationalView/Menu";
 import Camera from "./Camera";
 import OVStatus from "./OperationalView/OVStatus";
 import MainCamera from "./OperationalView/MainCamera";
+import FullScreen from "./FullScreenView";
 
 export default function OperationalView({ commands, status }) {
   const [activeCam, setActiveCam] = useState(null)
+  const [fullScreen, setFullScreen] = useState(false)
   
   return (
     <div className="operational-view">
@@ -16,8 +18,8 @@ export default function OperationalView({ commands, status }) {
       {/* main */}
       <MainCamera mainCam = {activeCam}/>
       {/* right */}
-      <Menu callback= {setActiveCam}/>
-      {/* <Camera name="primary" src="http://192.168.1.153:8081/" /> */}
+      <Menu callback = {setActiveCam} toggleFullScreen = {setFullScreen}/>
+      <FullScreen handleFullscreen = {fullScreen}/>
     </div>
   );
 }
