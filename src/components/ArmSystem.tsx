@@ -40,6 +40,7 @@ export default function ArmSystem({ commands }) {
 
     useEffect(() => {
         commandsRef.current = armCommands;
+        commands.current = armStringFormat(armCommands);
     }, [armCommands]);
 
     useEffect(() => {
@@ -50,7 +51,6 @@ export default function ArmSystem({ commands }) {
     }, []);
 
     function updateCommands(newCommands) {
-        commands.current = armStringFormat(newCommands);
         setArmCommands(prev => ({...prev, ...newCommands}));
     }
 
@@ -67,7 +67,7 @@ export default function ArmSystem({ commands }) {
         updateCommands({ ...getCommands() });
     }
 
-    function getCommands(): ArmCommandDTO {
+    function getCommands() {
         let controller = getGamePad();
         if (!controller) {
             console.log('controller model not supported')
@@ -75,16 +75,13 @@ export default function ArmSystem({ commands }) {
         }
 
         let currentCommands = commandsRef.current;
-        let newCommands = DEFAULT_ARM_COMMANDS;
-
-        newCommands.rotunda_angle = controller.getRotundaAngle(currentCommands);
-        newCommands.shoulder_angle = controller.getShoulderAngle(currentCommands);
-        newCommands.elbow_angle = controller.getElbowAngle(currentCommands);
-        newCommands.wrist_roll_angle = controller.getWristRollAngle(currentCommands);
-        newCommands.wrist_pitch_angle = controller.getWristPitchAngle(currentCommands);
-        newCommands.end_effector_angle = controller.getEndEffectorAngle(currentCommands);
-        delete newCommands.speed;
-        return newCommands;
+        return {
+            rotunda_angle: controller.getRotundaAngle(currentCommands),
+            shoulder_angle: controller.getShoulderAngle(currentCommands),
+            elbow_angle: controller.getElbowAngle(currentCommands),
+            wrist_roll_angle: controller.getWristRollAngle(currentCommands),
+            end_effector_angle: controller.getEndEffectorAngle(currentCommands),
+        };
     }
 
     function getGamePad() {
