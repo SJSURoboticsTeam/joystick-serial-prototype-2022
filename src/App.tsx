@@ -13,6 +13,7 @@ import DriveSystem from './components/DriveSystem';
 import ScienceSystem from './components/ScienceSystem';
 import AutonomySystem from './components/AutonomySystem';
 import OperationalView from './components/OperationalView';
+import Mock from './components/Mock';
 
 function App() {
   const commands = useRef<string>(driveStringFormat(DEFAULT_DRIVE_COMMANDS));
@@ -55,11 +56,13 @@ function App() {
             <option className='btn btn__primary' value={"wifi"}>Wifi</option>
             <option className='btn btn__primary' value={"serial"}>Serial</option>
             <option className='btn btn__primary' value={"mimic"}>Mimic</option>
+            <option className='btn btn__primary' value={"mock"}>Mock Rover</option>
           </select>
         </div>
         {communicationMode === 'mimic' && <SerialWifi setStatus={setStatus} />}
         {communicationMode === 'wifi' && <Wifi commands={commands} setStatus={setStatus} />}
         {communicationMode === 'serial' && <Serial commands={commands} setStatus={setStatus} system={system} />}
+        {communicationMode === 'mock' && <Mock status={status} setStatus={setStatus} />}
       </header>
       {system === 'operational view' && <OperationalView commands={commands} status={status} />}
       {system !== 'operational view' &&
