@@ -13,10 +13,11 @@ export default function Mock({ status, setStatus }) {
         setIsConnected(false);
     }
 
-    async function writeCommands() {
+    async function writeStatus(s) {
         if (isConnected) {
             try {
-                const response = await axios.get(serverAddress, { params: { ...status }})
+                const params = {...s}
+                const response = await axios.get(serverAddress, { params })
                 const serverCommands = response.data
                 const newStatus = {
                     heartbeat_count: serverCommands?.HB || 0,
@@ -39,11 +40,11 @@ export default function Mock({ status, setStatus }) {
     useEffect(() => {
         const writeInterval = setInterval(() => {
             if (isConnected) {
-                writeCommands();
+                writeStatus(status);
             }
         }, 200);
         return () => clearInterval(writeInterval);
-    }, [isConnected]);
+    }, [isConnected, status]);
 
     return (
         <>
