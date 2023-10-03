@@ -1,18 +1,14 @@
-import React, { useState } from "react"
-import Camera from "./Camera";
 
-export default function FullScreen(handleFullscreen) {
-    const[fullScreen, setFullScreen] = useState(handleFullscreen)
-    const closeFullScreen = () => {
-        setFullScreen(!handleFullscreen);
-    }
+import MainCamera from "./OperationalView/MainCamera";
+
+export default function FullScreen({camNum}) {
+  const displayCam = Array.from({length: camNum}, (_, index) => {
+    return <MainCamera key={index}/>
+  }); 
 
     return(
-        <dialog className="full-screen-view" onClose={fullScreen}>
-            hello
-            <button onClick={() => closeFullScreen()}>
-                Return
-            </button>
-        </dialog>
+      <div className="fullscreen">
+        {displayCam}
+      </div>
     );
 }

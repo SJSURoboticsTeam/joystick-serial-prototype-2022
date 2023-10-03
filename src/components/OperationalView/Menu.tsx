@@ -3,7 +3,11 @@ import Camera from "../Camera";
 import { useState } from "react";
 import { Style } from "util";
 
-export default function Menu({callback, toggleFullScreen} ) {
+export default function Menu({callback, openMenu, closeMenu} ) {
+  const menuSelection = (title) => {
+    closeMenu(false)
+    callback(title)
+  }
 
   const camArray = [
     {title: "chassis"},
@@ -15,16 +19,13 @@ export default function Menu({callback, toggleFullScreen} ) {
   ]
  
   return (
-      <div id="ov-camera-grid">
+      <dialog className="ov-camera-grid" open={openMenu} onClose={menuSelection}>
         {camArray.map((cam) => (
-          <button onClick={() => callback(cam.title)}>
+          <button onClick={() => menuSelection(cam.title)}>
             {cam.title}
           </button>
         ))}    
-        <button onClick={() => toggleFullScreen(true)}>
-          toggle Full Screen
-        </button> 
-      </div>
+      </dialog>
   );
 }
 
