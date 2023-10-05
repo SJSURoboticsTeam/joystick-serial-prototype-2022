@@ -49,7 +49,7 @@ export default function MainCamera(){
         <div className="main-camera">
             <Menu callback = {setActiveCam} openMenu={openMenu} closeMenu={setOpenMenu}/>
             <button onClick={() => toggleMenu()}>
-                <Camera name={activeCam} src={fileName} />
+                <Camera name={activeCam} src={fileName} className={'camera'} />
             </button>
         </div>
     );
