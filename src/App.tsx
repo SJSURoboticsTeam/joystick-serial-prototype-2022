@@ -74,6 +74,7 @@ function App() {
           <Camera name="1" src="http://192.168.1.206:8081/" className={''}/>
           <Camera name="2" src="http://raspberrypi:8003/stream.mjpg" className={''}/>
           <Camera name="3" src="http://raspberrypi:8003/stream.mjpg" className={''}/>
+
         </div>
       }
     </div >

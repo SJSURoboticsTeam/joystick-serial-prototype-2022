@@ -40,18 +40,18 @@ export default function ArmSystem({ commands }) {
 
     useEffect(() => {
         commandsRef.current = armCommands;
+        commands.current = armStringFormat(armCommands);
     }, [armCommands]);
 
     useEffect(() => {
         const interval = setInterval(() => {
-            updateController();
+            if(getGamePad()) {updateController();}
         }, 125);
         return () => clearInterval(interval);
     }, []);
 
     function updateCommands(newCommands) {
-        commands.current = armStringFormat(newCommands);
-        setArmCommands(newCommands);
+        setArmCommands(prev => ({...prev, ...newCommands}));
     }
 
     function handleChange(e) {
@@ -64,10 +64,10 @@ export default function ArmSystem({ commands }) {
     }
 
     function updateController() {
-        updateCommands({ ...getCommands(), speed: armCommands.speed });
+        updateCommands({ ...getCommands() });
     }
 
-    function getCommands(): ArmCommandDTO {
+    function getCommands() {
         let controller = getGamePad();
         if (!controller) {
             console.log('controller model not supported')
@@ -75,17 +75,13 @@ export default function ArmSystem({ commands }) {
         }
 
         let currentCommands = commandsRef.current;
-        let commands = DEFAULT_ARM_COMMANDS;
-
-        commands.rotunda_angle = controller.getRotundaAngle(currentCommands);
-        commands.shoulder_angle = controller.getShoulderAngle(currentCommands);
-        commands.elbow_angle = controller.getElbowAngle(currentCommands);
-        commands.wrist_roll_angle = controller.getWristRollAngle(currentCommands);
-        commands.wrist_pitch_angle = controller.getWristPitchAngle(currentCommands);
-        commands.end_effector_angle = controller.getEndEffectorAngle(currentCommands);
-
-      
-        return commands;
+        return {
+            rotunda_angle: controller.getRotundaAngle(currentCommands),
+            shoulder_angle: controller.getShoulderAngle(currentCommands),
+            elbow_angle: controller.getElbowAngle(currentCommands),
+            wrist_roll_angle: controller.getWristRollAngle(currentCommands),
+            end_effector_angle: controller.getEndEffectorAngle(currentCommands),
+        };
     }
 
     function getGamePad() {
