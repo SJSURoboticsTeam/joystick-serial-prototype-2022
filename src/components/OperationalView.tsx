@@ -1,23 +1,23 @@
-import { useState } from "react";
-import Menu from "./OperationalView/Menu";
-import Camera from "./Camera";
 import OVStatus from "./OperationalView/OVStatus";
-import MainCamera from "./OperationalView/MainCamera";
+import FullScreen from "./FullScreenView";
+import { useState } from "react";
 
 export default function OperationalView({ commands, status }) {
-  const [activeCam, setActiveCam] = useState(null)
-  
-  return (
+  const [camNum, setCamNum] = useState(1)
+
+  return(
     <div className="operational-view">
       {/* left */}
       <div id = "ov-tools">
-        <OVStatus status = {status}/> 
+        <OVStatus status = {status}/>
+        <select className="cam-num"  onChange={(e) => {setCamNum(parseInt(e.target.value))}}>
+          <option className='btn btn__primary' value={1}>1 cam</option>
+          <option className='btn btn__primary' value={2}>2 cam</option>
+          <option className='btn btn__primary' value={3}>3 cam</option>
+        </select>
       </div>
-      {/* main */}
-      <MainCamera mainCam = {activeCam}/>
       {/* right */}
-      <Menu callback= {setActiveCam}/>
-      {/* <Camera name="primary" src="http://192.168.1.153:8081/" /> */}
+      <FullScreen camNum = {camNum}/>
     </div>
   );
 }
