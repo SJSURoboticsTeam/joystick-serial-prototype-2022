@@ -1,4 +1,3 @@
-import React from "react";
 import {useState} from "react"
 import Camera from "../Camera";
 import noCam from './Main_Camera_Test.png'
@@ -49,7 +48,7 @@ export default function MainCamera(){
         <div className="main-camera">
             <Menu callback = {setActiveCam} openMenu={openMenu} closeMenu={setOpenMenu}/>
             <button onClick={() => toggleMenu()}>
-                <Camera name={activeCam} src={fileName} className={'camera'} />
+                <Camera name={activeCam} src={fileName} className={activeCam}/>
             </button>
         </div>
     );
