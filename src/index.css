@@ -379,15 +379,18 @@ video {
   column-gap: 5px;
   height: vh;
   width: vw;
-  grid-template-columns: 1fr 2.65fr 1fr;
+  grid-template-columns: 0.5fr 3fr;
   grid-template-rows: 1fr ;
 }
-#ov-main-cam{
+.ov-main-cam{
+  flex: 1;
   background-repeat: no-repeat;
   background-size: contain;
   aspect-ratio: 4/3;
   align-items: center;
   overflow: hidden;
+  object-fit: contain;
+  max-height: 100%;
 }
 
 #ov-camera-grid{
@@ -415,15 +418,33 @@ video {
   height: 100vh;
   overflow: hidden;
   aspect-ratio: 4/3;
+  object-fit: contain;
 }
-/* .ov-camera-toggle{
-  background-image: url(/src/components/OperationalView/oatmeal.gif);
-  background-size: contain;
-  background-repeat: no-repeat;
-  overflow: hidden;
-  background-position: center;
-  aspect-ratio: 4/3;
-} */
+
+.fullscreen{
+  display: flex;
+  /* grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr); */
+  width: 100%;
+  height: 100vh;
+  overflow: contain;
+  align-items: center;
+}
+
+.cam-num{
+  height: 40px
+}
+
+.menu:not([open]){
+  display: none; 
+}
+
+.menu{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  transform: translate(-50%, -50%);
+}
+
 
 
 
