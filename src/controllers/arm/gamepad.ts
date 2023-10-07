@@ -20,6 +20,20 @@ import {
 function clamp(num: number, min: number, max: number) :number {
     return Math.min(Math.max(num, min), max);
 }
+
+//returns "Windows" by default
+function getClientPlatform() :string {
+    var USER_PLATFORM = window.navigator.userAgent;
+    var SUPPORTED_PLATFORMS: string[] = ['Linux', 'Mac', 'Windows'];
+    var CLIENT_OS = 'Windows';
+    SUPPORTED_PLATFORMS.forEach(function(PLATFORM){
+        if(USER_PLATFORM.indexOf(PLATFORM) != -1){
+            CLIENT_OS = PLATFORM;
+        }
+    });
+    return CLIENT_OS;
+}
+
 export interface ArmGamePad {
     gamepadInput: {[key: string]: number};
 
@@ -32,7 +46,6 @@ export interface ArmGamePad {
 }
 
 export class Xbox360 implements ArmGamePad {
-
     constructor(gamepad: Gamepad) {
         this.gamepad = gamepad;
     }
@@ -99,6 +112,10 @@ export class Xbox360 implements ArmGamePad {
         return input;
     }
 
+    getClientPlatform(){
+        let CLIENT_PLATFORM = getClientPlatform();
+    }
+
     gamepadInput: { [key: string]: number; } = {
         leftStickHorizontal: 0,
         leftTrigger: 6,
@@ -109,7 +126,6 @@ export class Xbox360 implements ArmGamePad {
         leftBumper: 4,
         rightBumper: 5
     }
-
     private gamepad: Gamepad;
 }
 
@@ -200,6 +216,8 @@ export class LogitechExtreme implements ArmGamePad {
 
     private gamepad: Gamepad;
 }
+
+alert(getClientPlatform());
 
 // ThrustMaster
 
