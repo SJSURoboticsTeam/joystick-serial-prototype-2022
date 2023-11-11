@@ -19,20 +19,23 @@ export default function ControllerConfiguration({commands}) {
   const [armCommands, setArmCommands] = useState<ArmCommandDTO>(DEFAULT_ARM_COMMANDS);
   const driveCommandsRef = useRef(driveCommands);
   const armCommandsRef = useRef(armCommands);
-
-
+  console.log(commands)
+  console.log(driveCommands)
+  console.log(armCommands)
+  console.log(driveCommandsRef)
+  console.log(armCommandsRef)
 
   function updateDriveCommands(newCommands) {
     driveCommandsRef.current = newCommands;
-    commands.driveCommands.current = driveStringFormat(newCommands);
-    console.log(commands);
+    commands.current.driveCommands = driveStringFormat(newCommands);
+    console.log(newCommands)
     setDriveCommands(newCommands);
   }
 
   function updateArmCommands (newCommands) {
     armCommandsRef.current = newCommands;
-    commands.armCommands.current = armStringFormat(newCommands);
-    console.log(commands);
+    commands.current.armCommands = armStringFormat(newCommands);
+    console.log(newCommands);
     setArmCommands(prev => ({...prev, ...newCommands}));
   }
 
@@ -88,10 +91,15 @@ export default function ControllerConfiguration({commands}) {
 
   useEffect(() => {
     const gamepadHandler = (event) => {
+     
       const connectedGamepads = Array.from(navigator.getGamepads()).filter(Boolean);
+      console.log(connectedGamepads)
       setConnectedGamepads(connectedGamepads);
     };
-
+  
+    window.addEventListener('gamepadconnected', gamepadHandler);
+    window.addEventListener('gamepaddisconnected', gamepadHandler);
+  
     return () => {
       window.removeEventListener('gamepadconnected', gamepadHandler);
       window.removeEventListener('gamepaddisconnected', gamepadHandler);
@@ -141,9 +149,12 @@ export default function ControllerConfiguration({commands}) {
                 <option value="Drive">Drive</option>
                 <option value="Arm">Arm</option>
               </select>
+            
             </li>
           ))}
+
         </ul>
+        <p>{JSON.stringify(armCommandsRef.current)}</p>
       </div>
     </div>
   );

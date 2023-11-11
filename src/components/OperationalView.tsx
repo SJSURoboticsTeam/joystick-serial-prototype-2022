@@ -20,7 +20,7 @@ export default function OperationalView({ ovCommands, commands, status }) {
 
       </div>
       {/* right */}
-      <FullScreen camNum = {camNum}/>
+      
     </div>
   );
 }

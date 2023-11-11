@@ -46,6 +46,8 @@ function App() {
         break;
     }
   }, [system]);
+  var gamepads = navigator.getGamepads();
+  console.log(gamepads);
 
   return (
     <div id="app">
