@@ -1,15 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useGamepads } from 'react-gamepads';
-import { DriveCommandDTO } from '../util/command-dto';
-import { driveStringFormat } from '../util/command-formats';
-import { ArmCommandDTO } from '../util/command-dto';
-import { armStringFormat } from '../util/command-formats';
+import { ArmCommandDTO, DriveCommandDTO } from '../util/command-dto';
+import { driveStringFormat, armStringFormat } from '../util/command-formats';
 import { LogitechExtreme, Xbox360 } from '../controllers/arm/gamepad';
 import {
   DEFAULT_DRIVE_COMMANDS,
   DEFAULT_ARM_COMMANDS,
 } from '../util/constants';
 import DriveController from '../controllers/drive/controller';
+import Wifi from './Wifi';
 
 export default function ControllerConfiguration({commands}) {
   const [connectedGamepads, setConnectedGamepads] = useState([]);
@@ -19,11 +17,9 @@ export default function ControllerConfiguration({commands}) {
   const [armCommands, setArmCommands] = useState<ArmCommandDTO>(DEFAULT_ARM_COMMANDS);
   const driveCommandsRef = useRef(driveCommands);
   const armCommandsRef = useRef(armCommands);
-  console.log(commands)
-  console.log(driveCommands)
-  console.log(armCommands)
-  console.log(driveCommandsRef)
-  console.log(armCommandsRef)
+
+
+ 
 
   function updateDriveCommands(newCommands) {
     driveCommandsRef.current = newCommands;
@@ -41,7 +37,7 @@ export default function ControllerConfiguration({commands}) {
 
   function getGamePad(gamepad) {
     if (!gamepad) {
-      console.log(`No controller at `);
+
       return null;
     }
   
@@ -91,12 +87,14 @@ export default function ControllerConfiguration({commands}) {
 
   useEffect(() => {
     const gamepadHandler = (event) => {
-     
-      const connectedGamepads = Array.from(navigator.getGamepads()).filter(Boolean);
-      console.log(connectedGamepads)
+      console.log('Gamepad event triggered');
+      console.log(navigator.getGamepads())
+      const connectedGamepads = Array.from(navigator.getGamepads()).filter(gamepad => gamepad && gamepad.connected);
       setConnectedGamepads(connectedGamepads);
     };
-  
+    const initialGamepads = Array.from(navigator.getGamepads()).filter(Boolean);
+    setConnectedGamepads(initialGamepads);
+    console.log('the other even is triggered')
     window.addEventListener('gamepadconnected', gamepadHandler);
     window.addEventListener('gamepaddisconnected', gamepadHandler);
   
@@ -134,33 +132,48 @@ export default function ControllerConfiguration({commands}) {
       setAssignedGamepads([...updatedAssignedGamepads]);
     }
   };
+  
 
   return (
-    <div>
-      <h2>Controller Configuration</h2>
-      <div>
-        <label>Available Gamepads:</label>
-        <ul>
-          {connectedGamepads.map((gamepad) => (
-            <li key={gamepad.id}>
-              Gamepad {gamepad.id}:
-              <select onChange={(e) => handleModeChange(gamepad, e.target.value)}>
+    <div id="ov-gamepad">
+      <label>Available Gamepads:</label>
+      <ul>
+        {connectedGamepads.map((gamepad, index) => (
+          <li key={gamepad.id}>
+            <div>
+              {gamepad.id.includes("Logitech") ? "Logitech" : "Xbox"}:
+            </div>
+            <div>
+              <select className="btn" onChange={(e) => handleModeChange(gamepad, e.target.value)}>
                 <option value="None">none</option>
                 <option value="Drive">Drive</option>
                 <option value="Arm">Arm</option>
               </select>
-            
-            </li>
-          ))}
-
-        </ul>
-        <p>{JSON.stringify(armCommandsRef.current)}</p>
-      </div>
+            </div>
+            {assignedGamepads[index]?.mode === "Drive" && (
+              <div>
+                  <Wifi
+                  commands={driveCommands}
+                  setStatus={DEFAULT_DRIVE_COMMANDS}
+                  endpoint="/drive"
+                  />
+              </div>
+            )}
+            {assignedGamepads[index]?.mode === "Arm" && (
+              <div>
+                  <Wifi
+                  commands={armCommands}
+                  setStatus={DEFAULT_ARM_COMMANDS}
+                  endpoint="/arm"
+                  />
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
-
-
 
 
 

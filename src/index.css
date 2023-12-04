@@ -377,8 +377,7 @@ video {
 .operational-view{
   display: grid;
   column-gap: 5px;
-  height: vh;
-  width: vw;
+  align-items: stretch;
   grid-template-columns: 0.5fr 3fr;
   grid-template-rows: 1fr ;
 }
@@ -422,6 +421,7 @@ video {
 }
 
 .fullscreen{
+  flex: 2;
   display: flex;
   /* grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr); */
@@ -445,6 +445,45 @@ video {
   transform: translate(-50%, -50%);
 }
 
+#ov-gamepad {
+  height: auto;
+  max-height: 250px;
+  background-color: white;
+  border: 2px solid #565656;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column; /* Adjusted for vertical layout */
+  justify-content: center;
+  padding: 5px;
+}
+
+
+#ov-gamepad label {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+#ov-gamepad ul {
+  list-style: none;
+  padding: 0;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+#ov-gamepad li {
+  margin-bottom: 10px;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#ov-gamepad select {
+  margin-left: 10px;
+  margin-right: 10px;
+}
 
 
 

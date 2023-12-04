@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 
-export default function Wifi({ commands, setStatus }) {
+export default function Wifi({ commands, setStatus, endpoint = null }) {
     const [isConnected, setIsConnected] = useState(false);
     const [serverAddress, setServerAddress] = useState("http://localhost:5000/endpoint");
 
@@ -37,7 +37,8 @@ export default function Wifi({ commands, setStatus }) {
 
     return (
         <>
-            <input autoComplete='off' className='input-text' type='text' value={serverAddress} onChange={e => setServerAddress(e.target.value)} />
+            {!endpoint ? <input autoComplete='off' className='input-text' type='text' value={serverAddress} onChange={e => setServerAddress(e.target.value)} />
+            : <></> }
             {isConnected ? <button className='btn btn__danger' onClick={disconnect}>Disconnect</button>
                 : <button className='btn btn__primary' onClick={connect}>Connect</button>}
         </>
