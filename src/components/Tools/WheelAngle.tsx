@@ -95,11 +95,11 @@ export default function WheelAngle({commands}){
         back = -0.378 + (-1.79 * absAngle) + (0.0366 * (absAngle ** 2)) + (-3.24E-04 * (absAngle ** 3));
         if(angle > 0)
         {
-            constDrive(angle, outer, back);
+            constDrive(angle, outer.toFixed(4), back.toFixed(4));
         }
         else if(angle < 0)
         {
-            constDrive(-outer, angle, -back);
+            constDrive(-outer.toFixed(4), angle, -back.toFixed(4));
         }
         else
         {
