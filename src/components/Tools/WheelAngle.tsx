@@ -1,5 +1,5 @@
 import React from "react";
-import{useState, useRef} from "react";
+import{useState, useRef, useEffect} from "react";
 import DriveController from "../../controllers/drive/controller";
 import { DriveCommandDTO } from "../../util/command-dto";
 import { DEFAULT_DRIVE_COMMANDS } from "../../util/constants";
@@ -8,84 +8,175 @@ import { MAX_TRANSLATE_ANGLE } from "../../util/constants";
 import TextSliderInput from "../Forms/TextSliderInput";
 import { Style } from "util";
 export default function WheelAngle({commands}){
-    const [angle1, setAngle1] = useState(0)
-    const [angle2, setAngle2] = useState(0)
-    const [angle3, setAngle3] = useState(0)
+    const [right, setRight] = useState(0)
+    const [left, setLeft] = useState(0)
+    const [back, setBack] = useState(0)
+    const [angleRover, setAngleRover] = useState(0)
 
-    const W1Style = {
+    const [mode, setMode] = useState("Unlock")
+
+    const RStyle = {
         width: '50px',
         height: '100px',
         backgroundColor: 'red',
-        transform:`rotate(${angle1}deg)`,
-        translate: '300px'
+        transform:`rotate(${right}deg)`,
+        translate: '600px',
+        borderRadius: "50px 50px 0px 0px"
    };
 
-   const W2Style = {
+   const LStyle = {
         width: '50px',
         height: '100px',
-        backgroundColor: 'red',
-        transform:`rotate(${angle2}deg)`,
-        translate: '0px 200px'
+        backgroundColor: 'blue',
+        transform:`rotate(${left}deg)`,
+        translate: '0px -100px',
+        borderRadius: "50px 50px 0px 0px"
     };
 
-    const W3Style = {
+    const BStyle = {
         width: '50px',
         height: '100px',
-        backgroundColor: 'red',
-        transform:`rotate(${angle3}deg)`,
-        translate: '600px 100px'
+        backgroundColor: 'green',
+        transform:`rotate(${back}deg)`,
+        translate: '300px 250px',
+        borderRadius: "50px 50px 0px 0px"
     };
 
     function handleChange(e) {
-        switch(e.target.name){
-            case 'angle1': 
-                setAngle1(e.target.value)
+        switch(mode)
+        {
+            case 'Unlock':
+                unlockDrive(e.target.name, e.target.value);
                 break;
-            case 'angle2':
-                setAngle2(e.target.value)
+            case 'Drive' :
+                if(e.target.name == "angleRover")
+                {
+                    setAngleRover(e.target.value)
+                    let temp = e.target.value
+                    handleDrive(temp);
+                }
                 break;
-            case 'angle3':
-                setAngle3(e.target.value)
+            case 'Translate' :
+                if(e.target.name == "angleRover")
+                {
+                    setAngleRover(e.target.value);
+                    let temp = e.target.value
+                    constDrive(temp, temp, temp);
+                }
+                break;
+            case 'Rotate' :
+                break;
+        }
+    }
+
+    function unlockDrive(angleType, angleParameter)
+    {
+        switch(angleType){
+            case 'Right': 
+                setRight(angleParameter)
+                break;
+            case 'Left':
+                setLeft(angleParameter)
+                break;
+            case 'Back':
+                setBack(angleParameter)
+                break;
+            default :
+                break;
+        }
+    }
+
+    function handleDrive(angle)
+    {
+        var outer;
+        var back;
+        var absAngle = Math.abs(angle);
+        outer = 0.392 + (0.744 * absAngle) + (-0.0187 * (absAngle ** 2)) + (1.84E-04 * (absAngle ** 3));
+        back = -0.378 + (-1.79 * absAngle) + (0.0366 * (absAngle ** 2)) + (-3.24E-04 * (absAngle ** 3));
+        if(angle > 0)
+        {
+            constDrive(angle, outer, back);
+        }
+        else if(angle < 0)
+        {
+            constDrive(-outer, angle, -back);
+        }
+        else
+        {
+            constDrive(0, 0, 0)
+        }
+    }
+
+    function constDrive(a1, a2, a3)
+    {
+        setRight(a1);
+        setLeft(a2);
+        setBack(a3);
+    }
+
+    function handleMode(e) {
+        switch(e.target.value){
+            case '0':
+                setMode("Unlock");
+                break;
+            case '1': 
+                setMode("Drive");
+                break;
+            case '2':
+                setMode("Translate");
+                break;
+            case '3':
+                setMode("Rotate");
+                constDrive(135, 45, 270);
                 break;
         }
     }
 
     return(
         <div>
+            <select className="mode-change"  onChange={(e) => {handleMode(e)}}>
+                <option className='unlock' value={0}>Unlock</option>
+                <option className='drive' value={1}>Drive</option>
+                <option className='translate' value={2}>Translate</option>
+                <option className='rotate' value={3}>Rotate</option>
+            </select>
             <TextSliderInput
-                name='angle1'
-                label='angle1'
+                name='Right'
+                label='Right'
                 min={-MAX_TRANSLATE_ANGLE}
                 max={MAX_TRANSLATE_ANGLE}
-                value={angle1}
+                value={right}
                 onChange={handleChange}
             />
             <TextSliderInput
-                name='angle2'
-                label='angle2'
+                name='Left'
+                label='Left'
                 min={-MAX_TRANSLATE_ANGLE}
                 max={MAX_TRANSLATE_ANGLE}
-                value={angle2}
+                value={left}
                 onChange={handleChange}
             />
             <TextSliderInput
-                name='angle3'
-                label='angle3'
+                name='Back'
+                label='Back'
                 min={-MAX_TRANSLATE_ANGLE}
                 max={MAX_TRANSLATE_ANGLE}
-                value={angle3}
+                value={back}
                 onChange={handleChange}
             />
-        <div className="two-d">
-            <div className="wheelAngle">
-                Drive Angle1: {angle1}
-                Drive Angle2: {angle2}
-                Drive Angle3: {angle3}
+            <TextSliderInput
+                name='angleRover'
+                label='angleRover'
+                min={-MAX_TRANSLATE_ANGLE}
+                max={MAX_TRANSLATE_ANGLE}
+                value={angleRover}
+                onChange={handleChange}
+            />
+            <div className="two-d">
+                <div className="Right Wheel" style={RStyle}/>
+                <div className="Left Wheel" style={LStyle}/>
+                <div className="Back Wheel" style={BStyle}/>
             </div>
-            <div className="Wheel" style={W1Style}/>
-            <div className="Whee2" style={W2Style}/>
-            <div className="Whee3" style={W3Style}/>
         </div>
-    </div>
     );
 }
