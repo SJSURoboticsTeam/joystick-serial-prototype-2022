@@ -3,11 +3,13 @@ import Camera from "../Camera";
 import noCam from './Main_Camera_Test.png'
 import cam2 from './oatmeal.gif'
 import Menu from "./Menu";
+import Kermit from "../../kermit.jpg"
+import Kermit2 from '../../kermit 2.jpg'
 //Todo: need to add more cameras
 
 //Todo: swap from div to img for cam
 
-export default function MainCamera(){
+export default function Pane(){
     const [openMenu, setOpenMenu] = useState(false)
     const [activeCam, setActiveCam] = useState(null)
 
@@ -22,34 +24,33 @@ export default function MainCamera(){
     switch (activeCam)
     {
         case 'chassis':
-            fileName = testCam1;
+            fileName = Kermit;
             break;
         case 'mast':
-            fileName = testCam2;
+            fileName = Kermit2;
             break;
         case 'wheel_A':
-            fileName = noCam;
+            fileName = Kermit;
             break;
         case 'wheel_B':
-            fileName = cam2;
+            fileName = Kermit2;
             break;
         case 'wheel_C':
-            fileName = noCam;
+            fileName = Kermit;
             break;
         case 'arm':
-            fileName = cam2;
+            fileName = Kermit2;
             break;
         default :
-            fileName = noCam;
+            fileName = Kermit;
             break;
     }
 
     return(
-        <div className="main-camera">
+        <div className="pane">
             <Menu callback = {setActiveCam} openMenu={openMenu} closeMenu={setOpenMenu}/>
-            <button onClick={() => toggleMenu()}>
-                <Camera name={activeCam} src={fileName} className={activeCam}/>
-            </button>
+            <Camera name={activeCam} src={fileName} className={activeCam}/>
+            <button className="pane-toggle" onClick={() => toggleMenu()}>...</button>
         </div>
     );
 }
