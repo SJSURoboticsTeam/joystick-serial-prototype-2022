@@ -3,29 +3,31 @@ import Camera from "../Camera";
 import { useState } from "react";
 import { Style } from "util";
 
-export default function Menu({callback, openMenu, closeMenu} ) {
-  const menuSelection = (title) => {
+export default function Menu({setActivePane, setPaneType, openMenu, closeMenu, } ) {
+  const menuSelection = (cam) => {
     closeMenu(false)
-    callback(title)
+    setActivePane(cam.title)
+    setPaneType(cam.type)
   }
 
   const camArray = [
-    {title: "chassis"},
-    {title: "mast"},
-    {title: "wheel_A"},
-    {title: "wheel_B"},
-    {title: "wheel_C"},
-    {title: "arm"}
+    {title: "chassis", type: "cam"},
+    {title: "mast", type: "cam"},
+    {title: "wheel_A", type: "cam"},
+    {title: "wheel_B", type: "cam"},
+    {title: "wheel_C", type: "cam"},
+    {title: "arm", type: "cam"},
+    {title: "2D drive sim", type: "widget"}
   ]
  
   return (
-      <dialog className="ov-camera-grid" open={openMenu} onClose={menuSelection}>
+      <div className="menu">
         {camArray.map((cam) => (
-          <button onClick={() => menuSelection(cam.title)}>
+          <button onClick={() => menuSelection(cam)}>
             {cam.title}
           </button>
         ))}    
-      </dialog>
+      </div>
   );
 }
 
