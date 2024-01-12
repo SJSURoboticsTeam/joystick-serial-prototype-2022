@@ -10,6 +10,10 @@ import DriveController from '../controllers/drive/controller';
 import Wifi from './Wifi';
 
 export default function ControllerConfiguration({commands}) {
+
+  //commands format is incorrect
+  // pass both arm and drive seperately
+  // or create useRefs
   const [connectedGamepads, setConnectedGamepads] = useState([]);
   const [assignedGamepads, setAssignedGamepads] = useState([]);
   //const gamepadRefs = useRef([]);
@@ -18,13 +22,14 @@ export default function ControllerConfiguration({commands}) {
   const driveCommandsRef = useRef(driveCommands);
   const armCommandsRef = useRef(armCommands);
 
-
+  const updatedDrive = useRef<string>(commands.current.driveCommands)
  
 
   function updateDriveCommands(newCommands) {
     driveCommandsRef.current = newCommands;
     commands.current.driveCommands = driveStringFormat(newCommands);
-    console.log(newCommands)
+    console.log('27', newCommands)
+    console.log('28', commands.current.driveCommands)
     setDriveCommands(newCommands);
   }
 
@@ -32,6 +37,7 @@ export default function ControllerConfiguration({commands}) {
     armCommandsRef.current = newCommands;
     commands.current.armCommands = armStringFormat(newCommands);
     console.log(newCommands);
+    console.log('commands', commands.current.armCommands)
     setArmCommands(prev => ({...prev, ...newCommands}));
   }
 
@@ -87,14 +93,11 @@ export default function ControllerConfiguration({commands}) {
 
   useEffect(() => {
     const gamepadHandler = (event) => {
-      console.log('Gamepad event triggered');
-      console.log(navigator.getGamepads())
       const connectedGamepads = Array.from(navigator.getGamepads()).filter(gamepad => gamepad && gamepad.connected);
       setConnectedGamepads(connectedGamepads);
     };
     const initialGamepads = Array.from(navigator.getGamepads()).filter(Boolean);
     setConnectedGamepads(initialGamepads);
-    console.log('the other even is triggered')
     window.addEventListener('gamepadconnected', gamepadHandler);
     window.addEventListener('gamepaddisconnected', gamepadHandler);
   
@@ -109,7 +112,7 @@ export default function ControllerConfiguration({commands}) {
       for (const assignedGamepad of assignedGamepads) {
         updateController(assignedGamepad)
       }
-    }, 125);
+    }, 2000);
   
     return () => clearInterval(interval);
   }, [assignedGamepads]);
@@ -171,6 +174,7 @@ export default function ControllerConfiguration({commands}) {
           </li>
         ))}
       </ul>
+  
     </div>
   );
 }
