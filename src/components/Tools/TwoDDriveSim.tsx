@@ -10,8 +10,8 @@ import { Style } from "util";
 
 
 export default function TwoDDriveSim({rover, dimension, reload}){
-    const [canvasWidth, setCanvasWidth] = useState(100); 
-    const [canvasHeight, setCanvasHeight] = useState(100);
+    var canvasWidth = dimension.width;
+    var canvasHeight = dimension.height;
     var wheelWidth = 25;
     var wheelHeight = 75;
     var roverWidth = 200;
@@ -180,8 +180,6 @@ export default function TwoDDriveSim({rover, dimension, reload}){
 
     useEffect(() => {
         var reloadSim = reload;
-        setCanvasWidth(dimension.width);
-        setCanvasHeight(dimension.height);
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
 
