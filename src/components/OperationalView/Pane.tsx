@@ -110,11 +110,11 @@ export default function Pane({rover, paneID, panelLayout, reload}){
             default:
                 break;
         }
-        console.log("pane: ", paneID, 
-                    " xS: ", xStart,
-                    " yS: ", yStart,
-                    " xE: ", xEnd,
-                    " yE: ", yEnd);
+        // console.log("pane: ", paneID, 
+        //             " xS: ", xStart,
+        //             " yS: ", yStart,
+        //             " xE: ", xEnd,
+        //             " yE: ", yEnd);
 
         return {xS: xStart,
                 yS: yStart,

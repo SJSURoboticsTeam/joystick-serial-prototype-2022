@@ -24,7 +24,7 @@ export default function OperationalView({ commands, status }) {
   // console.log(rover.left);
   // console.log(rover.back);
   // console.log(rover.angleRover);
-  // console.log(rover.mode);
+  //console.log(rover.mode);
 
   return(
     <div className="operational-view">

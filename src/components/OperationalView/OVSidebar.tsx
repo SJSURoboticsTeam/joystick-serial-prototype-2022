@@ -14,7 +14,6 @@ export default function OVSidebar({setPaneNum, rover, setRover, setPanelLayout, 
     function toggleControlBar()
     {
         setBar(0);
-        setRover({...rover, mode: modeRef.current});
     }
 
     return(

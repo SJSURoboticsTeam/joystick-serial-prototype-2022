@@ -3,8 +3,6 @@ import { MAX_TRANSLATE_ANGLE } from "../../util/constants";
 import { useState, useRef } from "react";
 
 export default function ControlBar({rover, setRover, reload, setReload, modeRef}){
-    
-
     function handleReload(){
         setReload(reload + 1);
     }
