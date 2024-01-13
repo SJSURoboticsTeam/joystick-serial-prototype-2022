@@ -1,15 +1,4 @@
-import React from "react";
-import Camera from "../Camera";
-import { useState } from "react";
-import { Style } from "util";
-
 export default function Menu({setActivePane, setPaneType, openMenu, closeMenu, } ) {
-  const menuSelection = (cam) => {
-    closeMenu(false)
-    setActivePane(cam.title)
-    setPaneType(cam.type)
-  }
-
   const camArray = [
     {title: "chassis", type: "cam"},
     {title: "mast", type: "cam"},
@@ -19,11 +8,17 @@ export default function Menu({setActivePane, setPaneType, openMenu, closeMenu, }
     {title: "arm", type: "cam"},
     {title: "2D drive sim", type: "widget"}
   ]
+
+  const menuSelection = (cam) => {
+    closeMenu(false)
+    setActivePane(cam.title)
+    setPaneType(cam.type)
+  }
  
   return (
       <div className="menu">
         {camArray.map((cam) => (
-          <button onClick={() => menuSelection(cam)}>
+          <button className="current-pane" onClick={() => menuSelection(cam)}>
             {cam.title}
           </button>
         ))}    

@@ -1,25 +1,24 @@
 import {useRef, useState, useLayoutEffect, useEffect} from "react"
 import Camera from "../Camera";
-import TwoDDriveSim from "../Tools/TwoDDriveSim";
-import noCam from './Main_Camera_Test.png';
-import cam2 from './oatmeal.gif';
 import Menu from "./Menu";
-import Kermit from "../../kermit.jpg";
-import Kermit2 from '../../kermit 2.jpg';
-import Kermit3 from '../../kermit3.gif';
+import noCam from "../../images/Main_Camera_Test.png"
+import Kermit from "../../images/kermit.jpg";
+import Kermit2 from '../../images/kermit 2.jpg';
+import Kermit3 from '../../images/kermit3.gif';
 import Widget from "./Widget";
 
 export default function Pane({rover, paneID, panelLayout, reload}){
+    let fileName = noCam;
+    let panePos = { xS: 0, yS: 0, xE: 0, yE: 0 }
     const [openMenu, setOpenMenu] = useState(false)
     const [activePane, setActivePane] = useState(null)
     const [paneType, setPaneType] = useState('cam')
     const targetRef = useRef(null);
-
     const [dimension, setDimension] = useState({
         width: 0,
         height: 0
     })
-    //size still needs work;
+
     const getSize = () => {
         const newWidth = targetRef.current.clientWidth;
         const newHeight = targetRef.current.clientHeight;
@@ -35,16 +34,11 @@ export default function Pane({rover, paneID, panelLayout, reload}){
         return () => resizeObserver.disconnect();
     }, []);
 
-    //console.log("pane: ", paneID, " Width: ", dimension.width, " Height: ", dimension.height);
-
     const toggleMenu = () => {
       setOpenMenu(true)
     }
-    var fileName = noCam;
-    //Todo: add more cameras from rover
-    var testCam1 = 'http://192.168.1.119:8081/'
-    var testCam2 = 'http://192.168.1.196:8081/'
-
+    
+    //Todo: add cameras from rover
     switch (activePane)
     {
         case 'chassis':
@@ -110,19 +104,12 @@ export default function Pane({rover, paneID, panelLayout, reload}){
             default:
                 break;
         }
-        // console.log("pane: ", paneID, 
-        //             " xS: ", xStart,
-        //             " yS: ", yStart,
-        //             " xE: ", xEnd,
-        //             " yE: ", yEnd);
 
         return {xS: xStart,
                 yS: yStart,
                 xE: xEnd,
                 yE: yEnd};
     }
-
-    var panePos = { xS: 0, yS: 0, xE: 0, yE: 0 }
 
     switch(panelLayout)
     {

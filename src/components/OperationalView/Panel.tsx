@@ -1,13 +1,8 @@
-import { Style } from "util";
-import Pane from "./OperationalView/Pane";
+import Pane from "./Pane";
 
 export default function Panel({paneNum, panelLayout, rover, reload}) {
   const displayPane = Array.from({length: paneNum}, (_, index) => {
-    return <Pane rover={rover} 
-            paneID={index} 
-            panelLayout={panelLayout} 
-            key={index}
-            reload={reload}/>
+    return <Pane rover={rover} paneID={index}  panelLayout={panelLayout} key={index} reload={reload}/>
   }); 
 
     return(

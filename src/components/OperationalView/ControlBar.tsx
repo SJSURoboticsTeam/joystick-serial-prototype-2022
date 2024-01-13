@@ -1,6 +1,5 @@
 import TextSliderInput from "../Forms/TextSliderInput";
 import { MAX_TRANSLATE_ANGLE } from "../../util/constants";
-import { useState, useRef } from "react";
 
 export default function ControlBar({rover, setRover, reload, setReload, modeRef}){
     function handleReload(){
@@ -16,16 +15,15 @@ export default function ControlBar({rover, setRover, reload, setReload, modeRef}
             case 'Drive' :
                 if(e.target.name == "angleRover")
                 {
-                    let temp = e.target.value
+                    const temp = e.target.value
                     handleDrive(temp);
                 }
                 break;
             case 'Translate' :
                 if(e.target.name == "angleRover")
                 {
-                    let temp = e.target.value
+                    const temp = e.target.value
                     setRover({ ...rover,right: temp, left: temp, back: temp, angleRover: e.target.value});
-
                 }
                 break;
             case 'Rotate' :
@@ -52,11 +50,9 @@ export default function ControlBar({rover, setRover, reload, setReload, modeRef}
 
     function handleDrive(angle)
     {
-        var outer;
-        var back;
-        var absAngle = Math.abs(angle);
-        outer = 0.392 + (0.744 * absAngle) + (-0.0187 * (absAngle ** 2)) + (1.84E-04 * (absAngle ** 3));
-        back = -0.378 + (-1.79 * absAngle) + (0.0366 * (absAngle ** 2)) + (-3.24E-04 * (absAngle ** 3));
+        const absAngle = Math.abs(angle);
+        const outer = 0.392 + (0.744 * absAngle) + (-0.0187 * (absAngle ** 2)) + (1.84E-04 * (absAngle ** 3));
+        const back = -0.378 + (-1.79 * absAngle) + (0.0366 * (absAngle ** 2)) + (-3.24E-04 * (absAngle ** 3));
         if(angle > 0)
         {
             setRover({ ...rover,right: angle, left: outer.toFixed(4), back: back.toFixed(4), angleRover: angle});
@@ -94,49 +90,50 @@ export default function ControlBar({rover, setRover, reload, setReload, modeRef}
     
     return(
         <div className="control-bar">
-            <h2 className="drive-control-header">
-                Drive Control
-            </h2>
-            <select className="mode-change" defaultValue={modeRef.current}  onChange={(e) => {handleMode(e)}}>
-                <option className='Unlock' value={"Unlock"}>Unlock</option>
-                <option className='Drive' value={"Drive"}>Drive</option>
-                <option className='Translate' value={"Translate"}>Translate</option>
-                <option className='Rotate' value={"Rotate"}>Rotate</option>
-            </select>
-            <TextSliderInput
-                name='Right'
-                label='Right'
-                min={-MAX_TRANSLATE_ANGLE}
-                max={MAX_TRANSLATE_ANGLE}
-                value={rover.right}
-                onChange={handleChange}
-            />
-            <TextSliderInput
-                name='Left'
-                label='Left'
-                min={-MAX_TRANSLATE_ANGLE}
-                max={MAX_TRANSLATE_ANGLE}
-                value={rover.left}
-                onChange={handleChange}
-            />
-            <TextSliderInput
-                name='Back'
-                label='Back'
-                min={-MAX_TRANSLATE_ANGLE}
-                max={MAX_TRANSLATE_ANGLE}
-                value={rover.back}
-                onChange={handleChange}
-            />
-            <TextSliderInput
-                name='angleRover'
-                label='angleRover'
-                min={-MAX_TRANSLATE_ANGLE}
-                max={MAX_TRANSLATE_ANGLE}
-                value={rover.angleRover}
-                onChange={handleChange}
-            />
-            <div>If the 2D simulation disappear, reload the 2D simulation.</div>
-            <button className="reload-button" onClick={handleReload}>Reload 2D Simulation</button>
+            <div className="drive-control">
+                <h2 className="drive-control-header">
+                    Drive Control
+                </h2>
+                <select className="mode-change" defaultValue={modeRef.current}  onChange={(e) => {handleMode(e)}}>
+                    <option className='Unlock' value={"Unlock"}>Unlock</option>
+                    <option className='Drive' value={"Drive"}>Drive</option>
+                    <option className='Translate' value={"Translate"}>Translate</option>
+                    <option className='Rotate' value={"Rotate"}>Rotate</option>
+                </select>
+                <TextSliderInput
+                    name='Right'
+                    label='Right'
+                    min={-MAX_TRANSLATE_ANGLE}
+                    max={MAX_TRANSLATE_ANGLE}
+                    value={rover.right}
+                    onChange={handleChange}
+                />
+                <TextSliderInput
+                    name='Left'
+                    label='Left'
+                    min={-MAX_TRANSLATE_ANGLE}
+                    max={MAX_TRANSLATE_ANGLE}
+                    value={rover.left}
+                    onChange={handleChange}
+                />
+                <TextSliderInput
+                    name='Back'
+                    label='Back'
+                    min={-MAX_TRANSLATE_ANGLE}
+                    max={MAX_TRANSLATE_ANGLE}
+                    value={rover.back}
+                    onChange={handleChange}
+                />
+                <TextSliderInput
+                    name='angleRover'
+                    label='angleRover'
+                    min={-MAX_TRANSLATE_ANGLE}
+                    max={MAX_TRANSLATE_ANGLE}
+                    value={rover.angleRover}
+                    onChange={handleChange}
+                />
+                <button className="reload-button" onClick={handleReload}>Reload 2D Simulation</button>
+            </div>
         </div>
     )
 }
