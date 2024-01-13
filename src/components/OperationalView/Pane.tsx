@@ -1,13 +1,13 @@
 import {useRef, useState, useLayoutEffect, useEffect} from "react"
 import Camera from "../Camera";
 import Menu from "./Menu";
-import noCam from "../../images/Main_Camera_Test.png"
-import Kermit from "../../images/kermit.jpg";
-import Kermit2 from '../../images/kermit 2.jpg';
-import Kermit3 from '../../images/kermit3.gif';
 import Widget from "./Widget";
 
 export default function Pane({rover, paneID, panelLayout, reload}){
+    const noCam = "/images/Main_Camera_Test.png"
+    const Kermit = "/images/kermit.jpg";
+    const Kermit2 = '/images/kermit 2.jpg';
+    const Kermit3 = '/public/images/kermit3.gif';
     let fileName = noCam;
     let panePos = { xS: 0, yS: 0, xE: 0, yE: 0 }
     const [openMenu, setOpenMenu] = useState(false)
@@ -37,7 +37,7 @@ export default function Pane({rover, paneID, panelLayout, reload}){
     const toggleMenu = () => {
       setOpenMenu(true)
     }
-    
+
     //Todo: add cameras from rover
     switch (activePane)
     {
