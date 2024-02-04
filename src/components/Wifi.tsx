@@ -3,7 +3,7 @@ import axios from 'axios'
 
 export default function Wifi({ commands, setStatus, endpoint = null }) {
     const [isConnected, setIsConnected] = useState(false);
-    const [serverAddress, setServerAddress] = useState("http://localhost:5000/endpoint");
+    const [serverAddress, setServerAddress] = useState(`http://localhost:5000/${endpoint}`);
 
     function connect() {
         setIsConnected(true);
@@ -16,7 +16,8 @@ export default function Wifi({ commands, setStatus, endpoint = null }) {
     async function writeCommands() {
         if (isConnected) {
             try {
-                const responseStatus = await axios.post(serverAddress, JSON.parse(commands.current))
+                let com = endpoint ? commands : JSON.parse(commands.current)
+                const responseStatus = await axios.post(serverAddress, com);
                 setStatus(responseStatus.data);
             }
             catch (error) {

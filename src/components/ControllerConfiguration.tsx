@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ArmCommandDTO, DriveCommandDTO } from '../util/command-dto';
 import { driveStringFormat, armStringFormat } from '../util/command-formats';
 import { LogitechExtreme, Xbox360 } from '../controllers/arm/gamepad';
+import { useGamepads } from 'react-gamepads';
 import {
   DEFAULT_DRIVE_COMMANDS,
   DEFAULT_ARM_COMMANDS,
@@ -11,44 +12,84 @@ import Wifi from './Wifi';
 
 export default function ControllerConfiguration({commands}) {
 
-  //commands format is incorrect
-  // pass both arm and drive seperately
-  // or create useRefs
-  const [connectedGamepads, setConnectedGamepads] = useState([]);
-  const [assignedGamepads, setAssignedGamepads] = useState([]);
-  //const gamepadRefs = useRef([]);
+  const [gamepads, setGamepads] = useState<Gamepad[]>([]);
+  const [modes, setModes] = useState<string[]>([]);
+
   const [driveCommands, setDriveCommands] = useState<DriveCommandDTO>(DEFAULT_DRIVE_COMMANDS);
   const [armCommands, setArmCommands] = useState<ArmCommandDTO>(DEFAULT_ARM_COMMANDS);
   const driveCommandsRef = useRef(driveCommands);
   const armCommandsRef = useRef(armCommands);
-
-  const updatedDrive = useRef<string>(commands.current.driveCommands)
+  const [driveStatus, setDrive] = useState<DriveCommandDTO>();
+  const [armStatus, setArm] = useState<ArmCommandDTO>();
+  const gamepadsRef = useRef(gamepads);
+  //const gamepadRef = useRef(assignedGamepads[0].gamepad);
+  useGamepads((gamepads) => {
+    if (gamepads[0]) {
+      const connectedGamepads = Object.values(gamepads);
+      setGamepads(connectedGamepads);
+    }
+  });
  
+  useEffect(() => {
+   
+    gamepadsRef.current = gamepads;
+  }, [gamepads]);
+
+  // Use a ref to keep track of assignedGamepads
+
+  
+  // useEffect(() => {
+  //   console.log('use assign')
+  //   assignedGamepadsRef.current = assignedGamepads;
+  // }, [assignedGamepads]);
+ 
+  // useEffect(() => {
+  //   const gamepadHandler = () => {
+  //     // Update the gamepads array whenever the connected gamepads change
+  //     const updatedGamepads = Array.from(navigator.getGamepads()).filter((gamepad) => gamepad && gamepad.connected);
+  //     console.log('updating');
+  //     setGamepads(updatedGamepads);
+  
+  //     // Update the controllers for assigned gamepads
+  //     for (const assignedGamepad of assignedGamepadsRef.current) {
+  //       console.log('assigneed', assignedGamepad);
+  //       updateController(assignedGamepad);
+  //     }
+  //   };
+  
+  //   // Initial setup
+  //   const initialGamepads = Array.from(navigator.getGamepads()).filter(Boolean);
+  //   setGamepads(initialGamepads);
+  
+  //   window.addEventListener('gamepadconnected', gamepadHandler);
+  //   window.addEventListener('gamepaddisconnected', gamepadHandler);
+  
+  //   return () => {
+  //     window.removeEventListener('gamepadconnected', gamepadHandler);
+  //     window.removeEventListener('gamepaddisconnected', gamepadHandler);
+  //   };
+  // }, [assignedGamepads]);
+  
 
   function updateDriveCommands(newCommands) {
+    console.log(newCommands)
     driveCommandsRef.current = newCommands;
     commands.current.driveCommands = driveStringFormat(newCommands);
-    console.log('27', newCommands)
-    console.log('28', commands.current.driveCommands)
+   
     setDriveCommands(newCommands);
   }
 
   function updateArmCommands (newCommands) {
     armCommandsRef.current = newCommands;
     commands.current.armCommands = armStringFormat(newCommands);
-    console.log(newCommands);
-    console.log('commands', commands.current.armCommands)
     setArmCommands(prev => ({...prev, ...newCommands}));
   }
 
   function getGamePad(gamepad) {
     if (!gamepad) {
-
       return null;
     }
-  
     const gamePadID = gamepad.id.toLowerCase();
-  
     if (gamePadID.includes('xbox') || gamePadID.includes('microsoft')) {
       return new Xbox360(gamepad);
     } else if (gamePadID.includes('logitech')) {
@@ -59,91 +100,74 @@ export default function ControllerConfiguration({commands}) {
   }
 
   function updateController(gamepad) {
-    console.log('updating', gamepad.mode)
-    if  (gamepad.mode === 'Drive'){
+    const mode = modes[gamepads.findIndex((gp) => gp.index === gamepad.index)];
+    console.log("updating drive")
+    if (mode === 'Drive') {
       const currentCommands = driveCommandsRef.current;
-      const newCommands = new DriveController(gamepad.gamepad)?.getCommands(currentCommands);
-      if (newCommands.drive_mode === 'X') {
-        newCommands.drive_mode = currentCommands.drive_mode;
-      }
-      if(newCommands.wheel_orientation === 3) {
-        newCommands.wheel_orientation = currentCommands.wheel_orientation;
-      }
+      const newCommands = new DriveController(gamepad)?.getCommands(currentCommands);
+  
       updateDriveCommands({...newCommands});
-    }else {
-      let controller = getGamePad(gamepad.gamepad);
+    } else if (mode === 'Arm') {
+      let controller = getGamePad(gamepad);
       if (!controller) {
         console.log('controller model not supported');
         return armCommandsRef.current;
       }
-      
-      let currentCommands = armCommandsRef.current;
+  
+      const currentCommands = armCommandsRef.current;
       const newCommands = {
-          rotunda_angle: controller.getRotundaAngle(currentCommands),
-          shoulder_angle: controller.getShoulderAngle(currentCommands),
-          elbow_angle: controller.getElbowAngle(currentCommands),
-          wrist_roll_angle: controller.getWristRollAngle(currentCommands),
-          end_effector_angle: controller.getEndEffectorAngle(currentCommands)
-      }
-
+        rotunda_angle: controller.getRotundaAngle(currentCommands),
+        shoulder_angle: controller.getShoulderAngle(currentCommands),
+        elbow_angle: controller.getElbowAngle(currentCommands),
+        wrist_roll_angle: controller.getWristRollAngle(currentCommands),
+        end_effector_angle: controller.getEndEffectorAngle(currentCommands)
+      };
       updateArmCommands({...newCommands});
     }
-
   }
+    
 
-  useEffect(() => {
-    const gamepadHandler = (event) => {
-      const connectedGamepads = Array.from(navigator.getGamepads()).filter(gamepad => gamepad && gamepad.connected);
-      setConnectedGamepads(connectedGamepads);
-    };
-    const initialGamepads = Array.from(navigator.getGamepads()).filter(Boolean);
-    setConnectedGamepads(initialGamepads);
-    window.addEventListener('gamepadconnected', gamepadHandler);
-    window.addEventListener('gamepaddisconnected', gamepadHandler);
+  const handleModeChange = (gamepadInstance, mode) => {
+    setModes((prevModes) => {
+      const index = gamepads.findIndex((gp) => gp.id === gamepadInstance.id);
+      const updatedModes = [...prevModes];
   
-    return () => {
-      window.removeEventListener('gamepadconnected', gamepadHandler);
-      window.removeEventListener('gamepaddisconnected', gamepadHandler);
-    };
-  }, []);
+      if (mode === "None") {
+        updatedModes[index] = undefined;
+      } else {
+        updatedModes[index] = mode; // Update the mode
+      }
+  
+      return updatedModes;
+    });
+  };
+  
+
+
 
   useEffect(() => {
+    
     const interval = setInterval(() => {
-      for (const assignedGamepad of assignedGamepads) {
-        updateController(assignedGamepad)
+      for (const gamepad of gamepads) {
+        
+        updateController(gamepad);
       }
     }, 2000);
   
     return () => clearInterval(interval);
-  }, [assignedGamepads]);
+  }, []);
 
-  const handleModeChange = (gamepadInstance, mode) => {
-    if (mode === "None") {
-      // remove from assigned gamepad
-      const updatedAssignedGamepads = assignedGamepads.filter((entry) => entry.gamepad !== gamepadInstance);
-      setAssignedGamepads(updatedAssignedGamepads);
-    } else {
-      // change the mode or add new gamepad
-      const updatedAssignedGamepads = [...assignedGamepads];
-      const existingEntry = assignedGamepads.find((entry) => entry.gamepad === gamepadInstance);
-      if (existingEntry) {
-        existingEntry.mode = mode;
-      } else {
-        updatedAssignedGamepads.push({ gamepad: gamepadInstance, mode: mode }); // Fix mode property
-      }
-  
-      setAssignedGamepads([...updatedAssignedGamepads]);
-    }
-  };
   
 
   return (
     <div id="ov-gamepad">
       <label>Available Gamepads:</label>
+  
       <ul>
-        {connectedGamepads.map((gamepad, index) => (
+        {gamepads.map((gamepad, index) => (
           <li key={gamepad.id}>
             <div>
+            
               {gamepad.id.includes("Logitech") ? "Logitech" : "Xbox"}:
             </div>
             <div>
@@ -153,29 +177,39 @@ export default function ControllerConfiguration({commands}) {
                 <option value="Arm">Arm</option>
               </select>
             </div>
-            {assignedGamepads[index]?.mode === "Drive" && (
-              <div>
-                  <Wifi
-                  commands={driveCommands}
-                  setStatus={DEFAULT_DRIVE_COMMANDS}
-                  endpoint="/drive"
-                  />
-              </div>
-            )}
-            {assignedGamepads[index]?.mode === "Arm" && (
-              <div>
-                  <Wifi
-                  commands={armCommands}
-                  setStatus={DEFAULT_ARM_COMMANDS}
-                  endpoint="/arm"
-                  />
-              </div>
-            )}
+            {/* {gamepad.axes.map((axisValue, axisIndex) => (
+            <div key={axisIndex}>
+              <div style={{ width: `${Math.abs(axisValue) * 50}px`, height: '20px', background: 'green' }} />
+              <div>{`Axis ${axisIndex}: ${axisValue.toFixed(2)}`}</div>
+            </div>
+              ))} */}
+            
+
+            {modes[index] === "Drive" && (
+            <div>
+              <Wifi
+                commands={driveCommands}
+                setStatus={setDrive}
+                endpoint="drive"
+              />
+            </div>
+          )}
+          {modes[index] === "Arm" && (
+            <div>
+              <Wifi
+                commands={commands.current.armCommands}
+                setStatus={setArm}
+                endpoint="arm"
+              />
+            </div>
+          )}
           </li>
         ))}
       </ul>
+      
   
     </div>
+    
   );
 }
 
