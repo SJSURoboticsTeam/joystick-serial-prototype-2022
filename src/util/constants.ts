@@ -6,7 +6,8 @@ export const DEFAULT_DRIVE_COMMANDS: DriveCommandDTO = {
     drive_mode: 'D',
     wheel_orientation: 0,
     speed: 0,
-    angle: 0
+    angle: 0,
+    led_status: 1
 };
 
 export const DEFAULT_ARM_COMMANDS: ArmCommandDTO = {
@@ -31,6 +32,12 @@ export const DRIVE_MODES = [
     { label: "Spin", value: "S" },
     { label: "Translate", value: "T" },
     { label: "Drive", value: "D" }
+];
+
+export const LED_COLORS = [
+    { label: "Red", value: 1},
+    { label: "Blue", value: 2},
+    { label: "Green", value: 3}
 ];
 
 export const WHEEL_ORIENTATIONS = [

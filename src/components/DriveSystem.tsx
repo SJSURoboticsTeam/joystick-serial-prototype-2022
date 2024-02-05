@@ -4,6 +4,7 @@ import { useGamepads } from 'react-gamepads';
 import {
   WHEEL_ORIENTATIONS,
   DRIVE_MODES,
+  LED_COLORS,
   DEFAULT_DRIVE_COMMANDS,
   MIN_DRIVE_SPEED,
   MAX_DRIVE_SPEED,
@@ -110,6 +111,13 @@ export default function DriveSystem({ commands }) {
           value={driveCommands.angle}
           onChange={handleChange}
           disabled={driveCommands.drive_mode === 'S'}
+        />
+        <DropdownButtonSelector
+          name='led_status'
+          label='Beacon Color'
+          options={LED_COLORS}
+          value={driveCommands.led_status}
+          onChange={handleChange}
         />
         <FooterButtons onResetClick={resetCommands} />
       </form>

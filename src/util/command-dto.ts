@@ -5,6 +5,7 @@ export interface DriveCommandDTO {
     drive_mode: string;
     speed: number;
     angle: number;
+    led_status: number;
 }
 
 export interface ArmCommandDTO {

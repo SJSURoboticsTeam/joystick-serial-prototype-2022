@@ -2,7 +2,7 @@ import { ArmCommandDTO, DriveCommandDTO, autonomyCommandDTO } from "./command-dt
 
 
 export function driveStringFormat(commands: DriveCommandDTO): string {
-    return `{"HB":${commands.heartbeat_count},"IO":${commands.is_operational},"WO":${commands.wheel_orientation},"DM":"${commands.drive_mode}","CMD":[${commands.speed},${commands.angle}]}`;
+    return `{"HB":${commands.heartbeat_count},"IO":${commands.is_operational},"WO":${commands.wheel_orientation},"DM":"${commands.drive_mode}","CMD":[${commands.speed},${commands.angle}],"LS":${commands.led_status}}`;
 };
 
 export function armStringFormat(commands: ArmCommandDTO): string {
