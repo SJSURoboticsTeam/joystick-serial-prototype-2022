@@ -16,7 +16,6 @@ import OperationalView from './components/OperationalView';
 
 function App() {
   const commands = useRef<string>(driveStringFormat(DEFAULT_DRIVE_COMMANDS));
-  const ovCommands = useRef({})
   const [status, setStatus] = useState<ArmCommandDTO | DriveCommandDTO>();
   const [communicationMode, setCommunicationMode] = useState('wifi');
   const [system, setSystem] = useState('drive');
@@ -35,12 +34,6 @@ function App() {
       case 'science':
         // TODO: Add science commands format
         break;
-      case 'operational view':
-        ovCommands.current = {
-            armCommands: armStringFormat(DEFAULT_ARM_COMMANDS),
-            driveCommands: driveStringFormat(DEFAULT_DRIVE_COMMANDS)
-      }
-      break;
       default:
         commands.current = driveStringFormat(DEFAULT_DRIVE_COMMANDS);
         break;
@@ -68,7 +61,7 @@ function App() {
         {communicationMode === 'wifi' && <Wifi commands={commands} setStatus={setStatus} />}
         {communicationMode === 'serial' && <Serial commands={commands} setStatus={setStatus} system={system} />}
       </header>
-      {system === 'operational view' && <OperationalView ovCommands={ovCommands} commands={commands} status={status} />}
+      {system === 'operational view' && <OperationalView commands={commands} status={status} />}
       {system !== 'operational view' &&
         <div className="grid-container">
           {system === 'arm' && <ArmSystem commands={commands} />}

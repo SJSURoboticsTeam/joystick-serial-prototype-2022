@@ -3,7 +3,8 @@ import FullScreen from "./FullScreenView";
 import ControllerConfiguration from "./ControllerConfiguration";
 import { useState } from "react";
 
-export default function OperationalView({ ovCommands, commands, status }) {
+
+export default function OperationalView({commands, status }) {
   const [camNum, setCamNum] = useState(1)
 
   return(
@@ -16,7 +17,7 @@ export default function OperationalView({ ovCommands, commands, status }) {
           <option className='btn btn__primary' value={2}>2 cam</option>
           <option className='btn btn__primary' value={3}>3 cam</option>
         </select>
-        <ControllerConfiguration commands={ovCommands}/>
+        <ControllerConfiguration/>
 
       </div>
       {/* right */}
