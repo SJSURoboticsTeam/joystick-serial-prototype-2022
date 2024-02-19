@@ -23,8 +23,8 @@ export class Default implements DriveMapping {
 }
 
 export class Xbox360 implements DriveMapping {
-    speed = 1;                  // left stick up/down
-    angle = 2;                  // right stick left/right
+    speed = 7;                  // left stick up/down
+    angle = 0;                  // right stick left/right
     enable_speed = 7;           // right bumper
     spin_mode = 2;              // X
     translate_mode = 3;         // Y

@@ -59,7 +59,7 @@ export const NUMBER_OF_ARM_KEYS = 4;
 export const MIN_DRIVE_SPEED = -100;
 export const MAX_DRIVE_SPEED = 100;
 
-export const MAX_DRIVE_ANGLE = 12;
+export const MAX_DRIVE_ANGLE = 90;
 export const MAX_TRANSLATE_ANGLE = 45;
 
 export const MIN_ARM_SPEED = 1;

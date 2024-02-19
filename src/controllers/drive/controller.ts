@@ -19,10 +19,22 @@ export default class DriveController {
 
     public getCommands(currentCommands): DriveCommandDTO {
         this.getMode(currentCommands.drive_mode);
-        this.getSpeed();
-        this.getAngle(currentCommands.drive_mode);
-        this.getWheelOrientation(currentCommands.wheel_orientation);
+        // this.getSpeed();
+        this.getCommand(currentCommands.drive_mode);
+        // this.getWheelOrientation(currentCommands.wheel_orientation);
         return this.command;
+    }
+    private getTranslateAngle() { 
+        const xAxis = this.gamepad?.axes[0];
+        const yAxis = this.gamepad?.axes[1];
+        return Math.floor(xAxis * 80);
+    }
+
+    private getTranslateSpeed() {
+        const xAxis = this.gamepad?.axes[0];
+        const yAxis = this.gamepad?.axes[1];
+        
+        return Math.floor(Math.sqrt(xAxis * xAxis + yAxis * yAxis) * 40);
     }
 
     private getMode(currentMode) {
@@ -40,21 +52,26 @@ export default class DriveController {
         }
     }
 
-    private getSpeed() {
-        const throttleSpeed = parseInt((this.gamepad?.axes[this.mappings.speed] * -20).toFixed(0)) * 5;
-        this.command.speed = this.gamepad?.buttons[this.mappings.enable_speed].pressed ? throttleSpeed : 0;
+    private getBumperSpeed() {
+        console.log(this.gamepad?.buttons[this.mappings.speed].value);
+        const forwardAxis = this.gamepad?.buttons[this.mappings.speed].value;
+        const backwardAxis =  this.gamepad?.buttons[6].value;
+        return Math.floor((forwardAxis - backwardAxis) * 40);
     }
 
-    private getAngle(currentMode) {
+    private getCommand(currentMode) {
         switch (currentMode) {
             case 'S':
                 this.command.angle = 0;
+                this.command.speed = this.getBumperSpeed();
                 break;
             case 'T':
-                this.command.angle = parseInt((this.gamepad?.axes[this.mappings.angle] * MAX_TRANSLATE_ANGLE).toFixed(0));
+                this.command.angle = this.getTranslateAngle();
+                this.command.speed = this.getBumperSpeed();
                 break;
             case 'D':
                 this.command.angle = parseInt((this.gamepad?.axes[this.mappings.angle] * MAX_DRIVE_ANGLE).toFixed(0));
+                this.command.speed = this.getBumperSpeed();
                 break;
             default:
                 this.command.angle = 0;

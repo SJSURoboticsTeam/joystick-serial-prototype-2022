@@ -23,12 +23,14 @@ export default function DriveSystem({ commands }) {
   const gamepadRef = useRef(gamepad);
 
   useGamepads((gamepads) => {
+    // console.log(gamepads);
     if (gamepads[0]) {
       setGamepad(gamepads[0]);
     }
   });
 
   useEffect(() => {
+    // console.log(gamepad);
     gamepadRef.current = gamepad;
   }, [gamepad])
 
