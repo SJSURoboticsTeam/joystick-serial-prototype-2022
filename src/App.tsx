@@ -12,7 +12,7 @@ import SerialWifi from './components/SerialWifi';
 import DriveSystem from './components/DriveSystem';
 import ScienceSystem from './components/ScienceSystem';
 import AutonomySystem from './components/AutonomySystem';
-import OperationalView from './components/OperationalView';
+import OperationalView from './components/OperationalView/OperationalView';
 
 function App() {
   const commands = useRef<string>(driveStringFormat(DEFAULT_DRIVE_COMMANDS));
