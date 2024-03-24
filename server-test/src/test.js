@@ -54,7 +54,10 @@ function createNivoBoxPlotData(sharedData, value) {
     }
 }
 
-export async function endpointTest(timespan, rate, apiEndpoints, testName) {    
+export async function endpointTest(timespan, rate, apiEndpoints, testName) {  
+    console.log("hurdur") 
+    console.log(timespan)
+    console.log(rate) 
     return new Promise((resolve=> {
         let testResults = {}
         let sharedNivoData = {}
@@ -85,6 +88,7 @@ export async function endpointTest(timespan, rate, apiEndpoints, testName) {
             
             fetchStartTime = performance.now();
             (function (closureIndex, closureStartTime){
+                console.log("in")
                 let api = apiEndpoints[closureIndex]
                 let fetchPromise = fetch(api.endpoint, api.init)
                     .then(response => {

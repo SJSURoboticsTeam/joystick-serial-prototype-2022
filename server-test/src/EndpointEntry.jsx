@@ -1,26 +1,66 @@
 import { useState } from 'react'
 
 
-const EndpointEntry = ({addEndpoint}) => {
+const EndpointEntry = ({endpoints, addEndpoint}) => {
 
-    const [endpoint, setEndpoint] = useState({})
-    const [method, setMethod] = useState("")
+    const [method, setMethod] = useState("GET")
     const [api, setAPI] = useState("")
-    const [header, setHeader] = useState("")
+    const [header, setHeader] = useState({})
 
     const methodChange = (event) => {
+        console.log('method change')
+        console.log(event.target.value)
+        
         setMethod(event.target.value)
     }
 
     const apiChange = (event) => {
-
+        console.log(event.target.value)
+        setAPI(event.target.value)
     }
 
-    const headerChange = (event) => {
+    const changeTabKey = (event) => {
+        console.log("tab")
+        if (event.key === 'Tab') {
+            event.preventDefault()
+            let index = event.target.selectionStart
+            event.target.value = event.target.value.substring(0, index) + '\t' + event.target.value.substring(index)
+            event.target.selectionStart = e.target.selectionEnd = index + 1;
+        }
         
     }
+
+    const bodyChange = (event) => {
+        let header
+        header = JSON.parse(event.target.value)
+        setHeader(header)
+       
+    }
+
+    const handleAddEndpoint = (event) => {
+
+        let endpoint = {
+            endpoint: api,
+            init : {
+                method: method,
+                cache: "no-cache",
+                mode: "no-cors"
+            }
+        }
+        
+        if (method == "POST") {
+            endpoint.init.headers = {'Content-Type': 'application/json'}
+            endpoint.init.body = JSON.stringify(header)
+        }
+
+        console.log(endpoint)
+
+        addEndpoint([...endpoints, endpoint])
+        console.log(endpoints)
+
+    }
+
     return (
-        
         <div>
 
             <div>
@@ -28,14 +68,18 @@ const EndpointEntry = ({addEndpoint}) => {
                     <option value="GET">GET</option>
                     <option value="POST">POST</option>
                 </select>
-                <input placeholder="API URL"></input>
+                <input placeholder="API URL" onChange={apiChange}></input>
             </div>
 
             <div>
-                <textarea></textarea>
+                {method === 'POST' && <textarea
+                    onInput={bodyChange} 
+                    onKeyDown={changeTabKey} 
+                > </textarea>}
             </div>
 
-            <button>Add Endpoint</button>
+            <button onClick={handleAddEndpoint} > Add Endpoint</button>
+            
         </div>
     )
 }
